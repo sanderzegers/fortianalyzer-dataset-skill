@@ -69,7 +69,7 @@ When a user asks for help with a dataset query:
 - Always include `$filter` in WHERE — it provides mandatory time/device scope
 - Write `${...}` macro logic inline unless the macro is confirmed working (see the macro status table in faz-sql-reference.md). Many, e.g. `${USER}` and `${THREAT_*}`, don't expand in custom datasets
 - Use `devname` directly for device names. FAZ joins it onto every log row, so no `devtable_ext` join is needed
-- If FAZ reports "Missing columns", the column doesn't exist for that log type. Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
+- If FAZ reports "Missing columns", the column doesn't exist for that log type (unless the error starts with `MERGE:`, see Common Mistakes #12). Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
 - Use `coalesce(sentdelta,sentbyte,0)` / `coalesce(rcvddelta,rcvdbyte,0)` for bytes
 - Use `bitAnd(logflag,bitOr(1,32))>0` for bandwidth (includes long-lived sessions)
 - Use `bitAnd(logflag,1)>0` for session counts
