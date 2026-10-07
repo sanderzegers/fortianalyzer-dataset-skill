@@ -498,6 +498,8 @@ ORDER BY hits DESC
 9. **epid/euid < 1024** — system IDs, null out before joining
 10. **`$filter-drilldown` inside hcache** — must go on outer query only
 11. **ClickHouse camelCase function names** — FAZ exposes string/regex helpers in snake_case. Use `regexp_extract`, `regexp_replace` — NOT `regexExtract`, `replaceRegexpOne`, etc. When unsure, mirror the casing of functions already documented (e.g. `regexp_replace`)
+12. **Outer ORDER BY on an inner-only column** — outer ORDER BY may only use final SELECT names or aggregates of them (`ORDER BY sum(totalnum)`). FAZ re-applies it in a merge step that only sees output columns: the dataset test passes, but the report fails with `MERGE: ... Missing columns`. Sort by the output alias
+
 ---
 
 ## Canonical Enum Values (FortiOS)
