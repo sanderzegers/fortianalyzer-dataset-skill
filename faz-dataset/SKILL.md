@@ -1,3 +1,4 @@
+---
 name: faz-dataset
 description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns.
 ---
@@ -83,6 +84,8 @@ How to ask:
 - For each question, offer the likely options and say which one you'd use by default, so the user can just confirm.
 - Don't ask about things that are already clear from the request or earlier in the conversation, or about choices that don't change the result (column alias names, formatting, sort order). Decide those yourself.
 - If the request is fully clear, don't ask; write the query straight away.
+- If a tool for tappable multiple-choice questions is available (e.g. `ask_user_input_v0` on claude.ai, `AskUserQuestion` in Claude Code), ask through it instead of in prose: one tool question per open question, 2–4 short options each, with your default option first and marked "(default)". For answers that can't be buttons (column names, domains), offer an option such as "I'll paste the column list" and ask for the text once it's picked. After calling the tool, stop and wait for the answer.
+
 
 **Example:**
 User: "FortiMail report with average mails per day and max mails per hour per recipient"
