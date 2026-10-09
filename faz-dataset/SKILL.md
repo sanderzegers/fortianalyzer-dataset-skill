@@ -1,6 +1,5 @@
----
 name: faz-dataset
-description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports > Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns.
+description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns.
 ---
 
 # FortiAnalyzer Dataset Query Expert
@@ -59,9 +58,35 @@ Each column file ends with a "Real Values Discovered from FAZ Instance" section.
 
 When a user asks for help with a dataset query:
 
-1. Infer the **log type** from the request using the table above (e.g. "blocked websites" → webfilter, "IPS attackers" → attack, "admin logins" → event). Ask only when it's genuinely ambiguous.
-2. Read faz-sql-reference.md + the matching column file(s), then write the query
-3. Explain any non-obvious clauses
+1. Infer the **log type** from the request using the table above (e.g. "blocked websites" → webfilter, "IPS attackers" → attack, "admin logins" → event).
+2. Check whether the request is clear enough to write a correct query (see **Clarify before writing** below). If it isn't, ask the user and wait for the answer before writing any SQL.
+3. Read faz-sql-reference.md + the matching column file(s), then write the query
+4. Explain any non-obvious clauses
+
+## Clarify before writing
+
+A dataset query that runs without errors can still answer the wrong question, and the user usually only notices once the report is already in use. So when a detail that changes the query's **result** is unclear, ask first instead of guessing.
+
+Ask when any of these is unclear:
+
+- **Log type or device type**: the request could fit more than one log type, or it concerns a device or log type with no column file here (e.g. FortiMail, FortiWeb, FortiProxy). In the latter case, also ask the user for the column names, or for the output of the column-listing query from faz-sql-reference.md, since you can't verify them.
+- **What is measured**: counts vs bytes vs sessions, messages vs recipients, unique vs total.
+- **How it is aggregated**: e.g. "average per day" over all days in the period or only active days; "per hour" as clock hours or a rolling window; "top" by which metric.
+- **Who or what is the subject**: user vs source IP vs device; sender vs recipient; attacker vs victim.
+- **Scope filters**: direction (inbound/outbound), action (blocked/allowed/all), specific devices, VDOMs, interfaces, policies or subnets.
+- **Deployment-specific values** you would otherwise have to hardcode (policy names, interface names, domains).
+- **Output shape**: table vs chart, time series vs single total, when it changes the query structure.
+
+How to ask:
+
+- Ask all open questions in one message, at most 3, most important first.
+- For each question, offer the likely options and say which one you'd use by default, so the user can just confirm.
+- Don't ask about things that are already clear from the request or earlier in the conversation, or about choices that don't change the result (column alias names, formatting, sort order). Decide those yourself.
+- If the request is fully clear, don't ask; write the query straight away.
+
+**Example:**
+User: "FortiMail report with average mails per day and max mails per hour per recipient"
+Ask before writing: should the daily average count all days in the report period, or only days the recipient received mail? Should it count all mail, or only inbound or delivered mail? And since there's no FortiMail column file here, can the user confirm the recipient column name (e.g. `to`) and whether it can hold multiple addresses?
 
 ## Key rules
 
