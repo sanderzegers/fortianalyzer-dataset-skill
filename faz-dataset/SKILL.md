@@ -1,6 +1,6 @@
 ---
 name: faz-dataset
-description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns.
+description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns for FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs.
 ---
 
 # FortiAnalyzer Dataset Query Expert
@@ -43,6 +43,21 @@ For column names, read **only the files matching the log types needed**:
 
 Do NOT read column files that are not needed for the current query.
 
+### Other Fortinet devices
+
+FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs have their own tables and their own column names. The FortiGate files above and cols-common.md don't apply to them; read only the product file:
+
+| Device (type number) | Log types | File |
+|---|---|---|
+| FortiMail (4) | `history`, `emailfilter`, `virus`, `event` | [fortimail.md](fortimail.md) |
+| FortiWeb (5) | `attack`, `traffic`, `event` | [fortiweb.md](fortiweb.md) |
+| FortiADC (20) | `traffic`, `event`, `attack` | [fortiadc.md](fortiadc.md) |
+| FortiSandbox (10) | `malware`, `netalert`, `event` | [fortisandbox.md](fortisandbox.md) |
+| FortiManager (1), FortiAnalyzer (7) | `event`, `appevent` | [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |
+| FortiAuthenticator (12) | `event` | [fortiauthenticator.md](fortiauthenticator.md) |
+
+The same `$log-<type>` macro means a different table per device type: FortiWeb's `$log-attack` is not FortiGate's. The device type comes from the report or dataset settings in FAZ, not from the SQL, so ask which device the dataset is for when the request doesn't say. FortiMail, FortiWeb and FortiADC name the device column `device_id` (not `devid`) and the severity `pri` (not `level`); FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator use `devid` and `level`.
+
 `$log-netscan` belongs to the FortiGate network vulnerability scanner of FortiOS 5.x, which current FortiOS no longer has, so it has no column file. For endpoint vulnerability reports, use FortiClient logs (`$log-fct-event`, `$log-fct-netscan`); ask the user for the columns or run the column-listing query from faz-sql-reference.md.
 
 `$log-siem` is a FAZ-internal table that FortiGate logs don't fill (empty, without the usual log fields), so it has no column file. For SIEM/SOC reports on events and incidents, use `$event` / `$incident` (cols-soc-tables.md).
@@ -74,7 +89,7 @@ A dataset query that runs without errors can still answer the wrong question, an
 
 Ask when any of these is unclear:
 
-- **Log type or device type**: the request could fit more than one log type, or it concerns a device or log type with no column file here (e.g. FortiMail, FortiWeb, FortiProxy). In the latter case, also ask the user for the column names, or for the output of the column-listing query from faz-sql-reference.md, since you can't verify them.
+- **Log type or device type**: the request could fit more than one log type or device, or it concerns a device or log type with no column file here (e.g. FortiProxy, FortiDDoS). In the latter case, also ask the user for the column names, or for the output of the column-listing query from faz-sql-reference.md, since you can't verify them.
 - **What is measured**: counts vs bytes vs sessions, messages vs recipients, unique vs total.
 - **How it is aggregated**: e.g. "average per day" over all days in the period or only active days; "per hour" as clock hours or a rolling window; "top" by which metric.
 - **Who or what is the subject**: user vs source IP vs device; sender vs recipient; attacker vs victim.
@@ -93,14 +108,14 @@ How to ask:
 
 **Example:**
 User: "FortiMail report with average mails per day and max mails per hour per recipient"
-Ask before writing: should the daily average count all days in the report period, or only days the recipient received mail? Should it count all mail, or only inbound or delivered mail? And since there's no FortiMail column file here, can the user confirm the recipient column name (e.g. `to`) and whether it can hold multiple addresses?
+Ask before writing: should the daily average count all days in the report period, or only days the recipient received mail? Should it count all mail, or only inbound mail that wasn't rejected? (fortimail.md has the columns: `$log-history`, recipient in `` `to` ``, one recipient per row.)
 
 ## Key rules
 
 - Always use `$log-{type}` as the table in FROM — never hardcode `sp1_FGT_tlog` etc.
 - Always include `$filter` in WHERE — it provides mandatory time/device scope
 - Write `${...}` macro logic inline unless the macro is confirmed working (see the macro status table in faz-sql-reference.md). Many, e.g. `${USER}` and `${THREAT_*}`, don't expand in custom datasets
-- Use `devname` directly for device names. FAZ joins it onto every log row, so no `devtable_ext` join is needed
+- Use `devname` directly for device names. FAZ joins it onto every log row (all device types), so no `devtable_ext` join is needed
 - If FAZ reports "Missing columns", the column doesn't exist in that FAZ log table (unless the error starts with `MERGE:`, see Common Mistakes #12). That's never caused by the FortiGate's FortiOS version, because FAZ defines the same columns for all devices. Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
 - An older FortiOS leaves newer fields empty instead of failing. Packet/duration deltas need FortiOS 7.4+, and zones and GenAI fields need 7.6/7.6.4+. Warn the user when a report depends on them (see version-differences.md)
 - `$log-attack` holds IPS rows (`subtype='ips'`) and DoS anomaly rows (`subtype='anomaly'`). Always filter on `subtype`
