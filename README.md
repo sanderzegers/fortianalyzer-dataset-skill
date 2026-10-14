@@ -38,6 +38,7 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
   - `sentpktdelta`, `rcvdpktdelta`, `durationdelta`: FortiOS 7.4+.
   - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
   - GenAI fields in app-control logs: FortiOS 7.6.4+.
+- **FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAuthenticator:** columns and types were read from the FAZ schema, values were sampled from production logs, and every example query in the product files was run. The checks found traps a FortiGate-trained query falls into, e.g. `device_id` instead of `devid`, FortiMail's `;`-joined `disposition`, a FortiSandbox `level` that is `alert` even for clean files, and a `timestamp` column in FortiManager/FortiAnalyzer logs that breaks the usual `$flex_timestamp AS timestamp`. FortiAnalyzer's own logs weren't available; its tables were verified by schema only.
 - **Quirks that hold on every version:**
   - `utmevent` is always NULL in traffic logs, because FortiOS doesn't send it. Use `countips > 0` and the other `count*` columns.
   - SSL logs use `tlsver`/`cipher`/`sni`, not `sslversion`/`sslcipher`.
@@ -60,7 +61,22 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
 | FortiClient Event / Traffic | `$log-fct-event` / `$log-fct-traffic` | `cols-fct-event.md` / `cols-tlog.md` |
 | SSL, SSH, WAF, Security, GTP, Content, VoIP, Protocol, Anomaly, ICAP, Virtual Patch | `$log-<type>` | `cols-<type>.md` |
 
+Other Fortinet devices that log to FAZ have their own tables and column names, documented in one file per product:
+
+| Device | Log types | File |
+|---|---|---|
+| FortiMail | `history`, `emailfilter`, `virus`, `event` | `fortimail.md` |
+| FortiWeb | `attack`, `traffic`, `event` | `fortiweb.md` |
+| FortiADC | `traffic`, `event`, `attack` | `fortiadc.md` |
+| FortiSandbox | `malware`, `netalert`, `event` | `fortisandbox.md` |
+| FortiManager, FortiAnalyzer | `event`, `appevent` | `fortimanager-fortianalyzer.md` |
+| FortiAuthenticator | `event` | `fortiauthenticator.md` |
+
 It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`), and the `fv_*` materialized views.
+
+## Version
+
+Current version: **0.3.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 
@@ -104,4 +120,4 @@ Topics covered: query structure, execution model, macros, hcache, performance, a
 
 ## Disclaimer
 
-This is an independent community project. It is not affiliated with, endorsed by, or supported by Fortinet. FortiAnalyzer and FortiGate are trademarks of Fortinet, Inc.
+This is an independent community project. It is not affiliated with, endorsed by, or supported by Fortinet. FortiAnalyzer, FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager and FortiAuthenticator are trademarks of Fortinet, Inc.
