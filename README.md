@@ -24,6 +24,15 @@ ORDER BY totalnum DESC
 
 Claude also explains the non-obvious parts. Here, that's why `direction` decides which IP is the victim, why `subtype='ips'` keeps DoS anomaly rows out (they share the attack table), and why the `${THREAT_*}` macros are written out inline: they don't expand in custom datasets.
 
+## Investigating with a live FAZ
+
+When Claude can run SQL against your FAZ (for example through an MCP server that exposes a `faz_query` tool), the skill also answers questions straight from the logs: "who released quarantined mail and why", "what did the sandbox find in that attachment", "is this mailbox under a newsletter flood". [investigating.md](faz-dataset/investigating.md) gives Claude a method for that:
+
+- find where an event is really logged before concluding it isn't,
+- explore large volumes with counts, `msg` templates and hashed identities before reading individual rows,
+- correlate across tables and across device types (FortiMail ↔ FortiSandbox by SHA-256), one query per device type,
+- verify a time-based match with a second key before reporting it.
+
 ## Tested on live FortiAnalyzers
 
 The skill was checked against two FAZ 7.6 instances. Their FortiGates run **FortiOS 7.6.7, 7.4.12 and 7.2.10**, so every rule was tested across three FortiOS releases:
@@ -39,6 +48,8 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
   - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
   - GenAI fields in app-control logs: FortiOS 7.6.4+.
 - **FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAuthenticator:** columns and types were read from the FAZ schema, values were sampled from production logs, and every example query in the product files was run. The checks found traps a FortiGate-trained query falls into, e.g. `device_id` instead of `devid`, FortiMail's `;`-joined `disposition`, a FortiSandbox `level` that is `alert` even for clean files, and a `timestamp` column in FortiManager/FortiAnalyzer logs that breaks the usual `$flex_timestamp AS timestamp`. FortiAnalyzer's own logs weren't available; its tables were verified by schema only.
+- **FortiMail log model** ([fortimail-logmodel.md](faz-dataset/fortimail-logmodel.md)): where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`), and the `session_id` links between history, checks, sandbox stages and SMTP delivery lines. Mapped on one production deployment, about 2.4 million messages over 30 days. The release-audit, newsletter-flood and delivery-status patterns were run against it; deployment-specific numbers are marked as such.
+- **Dialect checks:** `WITH TOTALS` fails, grouping by a `LIKE`/`match()` result on a `LowCardinality` column fails, and both FAZ snake_case and ClickHouse regex function names work. Macros resolve within the selected device type, so one dataset can't join two device types.
 - **Quirks that hold on every version:**
   - `utmevent` is always NULL in traffic logs, because FortiOS doesn't send it. Use `countips > 0` and the other `count*` columns.
   - SSL logs use `tlsver`/`cipher`/`sni`, not `sslversion`/`sslcipher`.
@@ -76,7 +87,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.3.1**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.4.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 

@@ -1,11 +1,16 @@
 ---
 name: faz-dataset
-description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets. Knows FAZ macros, log table structure, column names, hcache, and common query patterns for FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs.
+description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets, and for investigating questions directly in FAZ logs through a SQL tool such as the faz_query MCP. Knows FAZ macros, log table structure, column names, hcache, where events are logged, how records link across tables and devices, and common query patterns for FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs.
 ---
 
 # FortiAnalyzer Dataset Query Expert
 
 You are an expert at writing **FortiAnalyzer dataset queries** — SQL written in the FAZ GUI dialect that users enter under **Reports > Datasets** (or Report Templates > Chart Dataset).
+
+The skill has two modes:
+
+- **Writing a dataset**: the user wants a query for a report or chart. Follow "Your job" below.
+- **Investigating**: the user wants a question answered from the logs, and a tool that runs SQL against FAZ is available (e.g. the `faz_query` MCP tool). Also read [investigating.md](investigating.md): it covers finding where an event is logged, exploring large volumes with templates and hashes, correlating across tables and device types, and verifying a finding before reporting it.
 
 Always read [faz-sql-reference.md](faz-sql-reference.md) first — it covers macros, filter variables, time variables, hcache patterns, helper functions, common mistakes, and query patterns.
 
@@ -43,20 +48,22 @@ For column names, read **only the files matching the log types needed**:
 
 Do NOT read column files that are not needed for the current query.
 
+For FortiMail, [fortimail-logmodel.md](fortimail-logmodel.md) maps where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`) and which keys link records. Read it when a report or question involves admin or quarantine actions, delivery status, or more than one table. The other product files list columns and values only, so for them, search every log type as investigating.md describes before concluding that something isn't logged.
+
 ### Other Fortinet devices
 
 FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs have their own tables and their own column names. The FortiGate files above and cols-common.md don't apply to them; read only the product file:
 
 | Device (type number) | Log types | File |
 |---|---|---|
-| FortiMail (4) | `history`, `emailfilter`, `virus`, `event` | [fortimail.md](fortimail.md) |
+| FortiMail (4) | `history`, `emailfilter`, `virus`, `event` | [fortimail.md](fortimail.md), plus [fortimail-logmodel.md](fortimail-logmodel.md) for events, links and cross-table patterns |
 | FortiWeb (5) | `attack`, `traffic`, `event` | [fortiweb.md](fortiweb.md) |
 | FortiADC (20) | `traffic`, `event`, `attack` | [fortiadc.md](fortiadc.md) |
 | FortiSandbox (10) | `malware`, `netalert`, `event` | [fortisandbox.md](fortisandbox.md) |
 | FortiManager (1), FortiAnalyzer (7) | `event`, `appevent` | [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |
 | FortiAuthenticator (12) | `event` | [fortiauthenticator.md](fortiauthenticator.md) |
 
-The same `$log-<type>` macro means a different table per device type: FortiWeb's `$log-attack` is not FortiGate's. The device type comes from the report or dataset settings in FAZ, not from the SQL, so ask which device the dataset is for when the request doesn't say. FortiMail, FortiWeb and FortiADC name the device column `device_id` (not `devid`) and the severity `pri` (not `level`); FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator use `devid` and `level`.
+The same `$log-<type>` macro means a different table per device type: FortiWeb's `$log-attack` is not FortiGate's, and with FortiMail selected `$log-malware` is FortiMail's own `virus` table. One query or dataset reads one device type; to correlate two devices, query each and carry the keys across (investigating.md). The device type comes from the report or dataset settings in FAZ, not from the SQL, so ask which device the dataset is for when the request doesn't say. FortiMail, FortiWeb and FortiADC name the device column `device_id` (not `devid`) and the severity `pri` (not `level`); FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator use `devid` and `level`.
 
 `$log-netscan` belongs to the FortiGate network vulnerability scanner of FortiOS 5.x, which current FortiOS no longer has, so it has no column file. For endpoint vulnerability reports, use FortiClient logs (`$log-fct-event`, `$log-fct-netscan`); ask the user for the columns or run the column-listing query from faz-sql-reference.md.
 
