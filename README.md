@@ -76,7 +76,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.3.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.3.1**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 
@@ -108,7 +108,7 @@ Or ask a FAZ dataset question, and the skill triggers automatically.
 - `###(subquery)###` hcache with `/*SkipSTART*/ORDER BY.../*SkipEND*/`. The outer query only re-aggregates columns the hcache returns
 - `ipstr()` for IPs, `nullifna()` for `user`/`app` fields
 - `${...}` macros only where confirmed working; everything else is written out inline
-- FAZ helpers in snake_case (`regexp_replace`, `ip_subnet`), and ClickHouse functions such as `isIPAddressInRange()` where tested
+- FAZ helpers (`regexp_replace`, `ip_subnet`) and only ClickHouse functions that were tested in FAZ (`extract`, `isIPAddressInRange()`); no `WITH TOTALS`
 
 ## Documentation
 

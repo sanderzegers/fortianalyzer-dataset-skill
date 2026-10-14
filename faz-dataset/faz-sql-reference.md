@@ -387,7 +387,7 @@ Rules: always DROP before CREATE, name as `rpt_tmptbl_N`, separate with `;`, fin
 | `bitAnd(a, b)` / `bitOr(a, b)` | Bitwise operations for logflag |
 | `lower(col)` | Lowercase string — use for case-insensitive compare on `utmevent`, `threat`, etc. |
 | `regexp_replace(col, pattern, replacement)` | Regex string replacement (e.g. strip OS build suffix) |
-| `regexp_extract(col, pattern)` | Extract first regex match — e.g. `regexp_extract(switchphysicalport, '(\\d+)$')` for trailing digits. **Use snake_case, NOT ClickHouse `regexExtract`** |
+| `regexp_extract(col, pattern)` | Extract first regex match — e.g. `regexp_extract(switchphysicalport, '(\\d+)$')` for trailing digits. ClickHouse `extract(col, pattern)` works too (Common Mistakes #11) |
 | `timestampDiff('unit', col1, col2)` | Difference between two timestamps; units: `'second'`, `'millisecond'`, `'nanosecond'` |
 | `severity_s2i(col)` | Severity string → integer for sort (FCT vulnerability severity) |
 | `fct_webcat(threat)` | FortiClient web category from threat field |
@@ -499,8 +499,11 @@ ORDER BY hits DESC
 8. **HAVING vs WHERE** — can't `WHERE sum(x) > 0`, use `HAVING sum(x) > 0`
 9. **epid/euid < 1024** — system IDs, null out before joining
 10. **`$filter-drilldown` inside hcache** — must go on outer query only
-11. **ClickHouse camelCase function names** — FAZ exposes string/regex helpers in snake_case. Use `regexp_extract`, `regexp_replace` — NOT `regexExtract`, `replaceRegexpOne`, etc. When unsure, mirror the casing of functions already documented (e.g. `regexp_replace`)
+11. **Regex function names** — both the FAZ snake_case helpers (`regexp_extract`, `regexp_replace`) and the ClickHouse names (`extract`, `regexpExtract`, `replaceRegexpOne`, `replaceRegexpAll`, `match`) work in the dataset test (FAZ 7.6, tested October 2026). `regexExtract` doesn't exist in either.
 12. **Outer ORDER BY on an inner-only column** — outer ORDER BY may only use final SELECT names or aggregates of them (`ORDER BY sum(totalnum)`). FAZ re-applies it in a merge step that only sees output columns: the dataset test passes, but the report fails with `MERGE: ... Missing columns`. Sort by the output alias
+13. **`WITH TOTALS`** — not supported: the query fails with `unimplemented 7`. Compute the total in a separate query or with `UNION ALL`
+14. **Grouping by a boolean from a `LowCardinality` column** — `GROUP BY match(classifier, 'x')` or a `LIKE` result fails with `LowCardinality(UInt8) is not supported`. Cast the column first: `match(CAST(ifNull(col, '') AS String), 'x')`, or group by an `if(..., 'yes', 'no')` built on the cast value
+15. **Macros resolve within the dataset's device type** — `$log-<type>` always maps to a table of the selected device type, and some names are aliases (with FortiMail selected, `$log-malware` is FortiMail's `virus` table). A query that runs doesn't prove it read the table you meant. With `$log-` macros, one dataset can't join logs of two device types
 
 ---
 
@@ -616,6 +619,8 @@ The FAZ SQL dialect (ANTLR4 grammar) supports:
 **Type casting:** CAST(x AS type), `::type` shorthand, VARCHAR, DECIMAL types
 
 **Other:** JSON attribute access, array constructors, subscript access, column aliases, table aliases
+
+**Not supported:** `WITH TOTALS` (fails with `unimplemented 7`). Tested and working: `WITH` CTEs, scalar subqueries in SELECT, `quantile`/`quantileIf`/`quantileExact`, window functions with `PARTITION BY`, `ARRAY JOIN`, `uniqExact`/`uniqExactIf`, `cityHash64`
 
 ---
 
