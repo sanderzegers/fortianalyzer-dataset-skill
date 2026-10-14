@@ -242,8 +242,7 @@ Use `$log` or `$log-{category}` as the FROM table. The engine resolves these to 
 - Cross-category queries require separate log sources joined via subqueries or temp tables.
 - Never hardcode `sp1_FGT_tlog` or similar view names — these are internal and not ADOM-scoped.
 
-**Log types in ClickHouse but NOT exposed as `$log-` variables:**
-`waf`, `voip`, `ssh`, `ssl`, `netscan`, `gtp`, `protocol`, `security` — these exist in the raw ClickHouse schema but the FAZ query engine does not provide `$log-waf` etc. To query them you must hardcode the internal view name (not recommended in GUI datasets). For full column details for each log source, see §16.
+**Further log types:** `$log-ssl`, `$log-ssh`, `$log-waf`, `$log-voip`, `$log-gtp`, `$log-protocol`, `$log-security`, `$log-siem` and `$log-netscan` also work as `$log-` variables (tested on FAZ 7.6). Never hardcode the internal view names. `$log-netscan` holds logs of the FortiOS 5.x network vulnerability scanner, which current FortiOS no longer has. For full column details for each log source, see §16.
 
 > For the full column schema of each log source, see §16 (Column Reference by Log Source).
 
@@ -295,15 +294,15 @@ WHERE $last3day_period $filter AND ...
 ```
 
 ### `$pre_period`
-The period immediately before the current report window. Used for before/after comparison queries — e.g. "this week vs last week". Must appear before `$filter` (same syntax as `$last3day_period`).
+The period immediately before the current report window. Used for before/after comparison queries — e.g. "this week vs last week". It expands to a condition **ending in `and`**, so it must be followed by another condition: before `$filter` (same syntax as `$last3day_period`), or `1=1` when used on its own.
 
 ```sql
 -- Compare current period vs previous period session counts
 SELECT
-    sum(CASE WHEN $pre_period THEN 1 ELSE 0 END) AS sessions_prev,
-    sum(CASE WHEN $filter    THEN 1 ELSE 0 END) AS sessions_curr
+    sum(CASE WHEN $pre_period 1=1 THEN 1 ELSE 0 END) AS sessions_prev,
+    sum(CASE WHEN $filter THEN 1 ELSE 0 END) AS sessions_curr
 FROM $log-traffic
-WHERE ($pre_period OR $filter) AND (bitAnd(logflag,1)>0)
+WHERE (($pre_period 1=1) OR ($filter)) AND (bitAnd(logflag,1)>0)
 ```
 
 ### `$adom_oid`
@@ -451,11 +450,11 @@ Use hcache when **any** of the following apply:
 
 **1. You need to filter on a computed or aliased column**
 
-The most common reason. ClickHouse cannot reference a SELECT alias in the same query's WHERE clause. Hcache makes the computed column available for filtering in the outer query.
+Tested on FAZ 7.6: ClickHouse does accept a SELECT alias in the same query's WHERE clause, so a plain `WHERE user_src IS NOT NULL` works. Hcache is still the better pattern when the computed column is reused, re-aggregated or shared with other datasets, because the expensive scan is cached.
 
 ```sql
--- Need to filter on coalesce result? Must use hcache.
-SELECT user_src, count(*) AS sessions
+-- Filter on the coalesce result in the outer query (cached inner scan)
+SELECT user_src, sum(sessions) AS sessions
 FROM ###(
     SELECT coalesce(nullifna(`user`), nullifna(`unauthuser`), ipstr(`srcip`)) AS user_src,
            count(*) AS sessions
@@ -463,7 +462,7 @@ FROM ###(
     WHERE $filter AND (bitAnd(logflag,1)>0)
     GROUP BY user_src
 )### t
-WHERE user_src IS NOT NULL   -- filtering on computed alias — only possible via hcache
+WHERE user_src IS NOT NULL   -- filter on the computed alias in the outer query
 GROUP BY user_src
 ORDER BY sessions DESC
 ```
@@ -477,7 +476,8 @@ When you aggregate at fine granularity in the inner query (e.g. per-user-per-app
 -- Outer: coarser (user totals only)
 SELECT user_src, sum(bandwidth) AS bandwidth
 FROM ###(
-    SELECT user_src, app, $flex_timestamp AS ts,
+    SELECT coalesce(nullifna(`user`), nullifna(`unauthuser`), ipstr(`srcip`)) AS user_src,
+           app, $flex_timestamp AS ts,
            sum(coalesce(sentdelta,sentbyte,0)+coalesce(rcvddelta,rcvdbyte,0)) AS bandwidth
     FROM $log-traffic
     WHERE $filter AND (bitAnd(logflag,bitOr(1,32))>0)
@@ -511,12 +511,14 @@ Skip hcache when:
 -- Simple enough — no hcache needed
 SELECT catdesc, count(*) AS hits
 FROM $log-webfilter
-WHERE $filter AND utmaction = 'block' AND catdesc IS NOT NULL
+WHERE $filter AND action = 'blocked' AND catdesc IS NOT NULL
 GROUP BY catdesc
 ORDER BY hits DESC
 ```
 
 ### Basic syntax
+
+Template: `col_a`/`col_b`/`col_c` are placeholders for real columns.
 
 ```sql
 SELECT col_a, sum(col_b) AS total
@@ -901,11 +903,11 @@ left(string_agg(distinct url, ','), 1000) AS url_list
 ```
 
 ### `lower(col)`
-Lowercase a string. Use for case-insensitive comparison on `utmevent`, `threat`, `subtype` etc.
+Lowercase a string. Use for case-insensitive comparison on `eventtype`, `threat`, `subtype` etc.
 
 ```sql
-WHERE lower(utmevent) = 'webfilter'
-WHERE lower(utmevent) IN ('antivirus', 'antimalware')
+WHERE lower(eventtype) = 'ftgd_blk'
+WHERE lower(threat) LIKE '%trojan%'
 WHERE lower(threat) LIKE '%botnet%'
 ```
 
@@ -990,7 +992,6 @@ SELECT
     count(*) AS requests
 FROM $log-webfilter
 WHERE $filter
-  AND utmevent IN ('webfilter','banned-word','web-content','command-block','script-filter')
   AND hostname IS NOT NULL
 GROUP BY user_src
 ORDER BY requests DESC
@@ -1044,7 +1045,7 @@ ORDER BY hodex
 ### Pattern D: Hour-of-Day / Day-of-Week Distribution
 
 ```sql
-SELECT $hour_of_day AS hourstamp, sum(totalnum) AS totalnum
+SELECT hourstamp, sum(totalnum) AS totalnum
 FROM ###(
     SELECT $hour_of_day AS hourstamp,
            action, count(*) AS totalnum
@@ -1053,7 +1054,7 @@ FROM ###(
     GROUP BY hourstamp, action
     /*SkipSTART*/ORDER BY totalnum DESC/*SkipEND*/
 )### t
-WHERE action = 'block'
+WHERE action = 'blocked'
 GROUP BY hourstamp
 ORDER BY hourstamp
 ```
@@ -1075,7 +1076,7 @@ SELECT
     CASE WHEN direction = 'incoming' THEN ipstr(dstip) ELSE ipstr(srcip) END AS attacker,
     count(*) AS totalnum
 FROM $log-attack
-WHERE $filter
+WHERE $filter AND subtype = 'ips'
 GROUP BY victim, attacker
 ORDER BY totalnum DESC
 ```
@@ -1167,14 +1168,16 @@ SELECT srcip FROM $log-traffic WHERE $filter GROUP BY srcip
 
 ### Mistake 2: Filtering on computed columns without hcache
 
+On FAZ 7.6 (ClickHouse) the first form below actually works, because ClickHouse resolves SELECT aliases in WHERE. Prefer the hcache form anyway when the result is reused, so the scan is cached.
+
 ```sql
--- WRONG — can't filter on coalesce result in same query
+-- Works on FAZ 7.6, but uncached
 SELECT coalesce(nullifna(`user`), ipstr(srcip)) AS user_src
 FROM $log-traffic
-WHERE $filter AND user_src IS NOT NULL   -- user_src doesn't exist at WHERE time
+WHERE $filter AND user_src IS NOT NULL
 GROUP BY user_src
 
--- CORRECT — use hcache or subquery
+-- PREFERRED — hcache, reusable and cached
 SELECT user_src, count(*) AS sessions
 FROM ###(
     SELECT coalesce(nullifna(`user`), ipstr(`srcip`)) AS user_src
@@ -1335,8 +1338,7 @@ ORDER BY hodex
 SELECT catdesc, count(*) AS blocked_requests
 FROM $log-webfilter
 WHERE $filter
-  AND utmevent IN ('webfilter','banned-word','web-content','command-block','script-filter')
-  AND utmaction IN ('block','blocked','blk')
+  AND action = 'blocked'
   AND catdesc IS NOT NULL
 GROUP BY catdesc
 ORDER BY blocked_requests DESC
@@ -1389,7 +1391,7 @@ FROM ###(
         count(*) AS totalnum,
         sum(CASE WHEN action NOT IN ('detected','pass_session') THEN 1 ELSE 0 END) AS blocked
     FROM $log-attack
-    WHERE $filter AND nullifna(attack) IS NOT NULL
+    WHERE $filter AND subtype = 'ips' AND nullifna(attack) IS NOT NULL
     GROUP BY attack
     /*SkipSTART*/ORDER BY totalnum DESC/*SkipEND*/
 )### t
@@ -1573,8 +1575,8 @@ The richest log type. Represents completed or sampled firewall sessions.
 
 | Column | Type | Description |
 |---|---|---|
-| **`utmaction`** | LowCardinality(String) | UTM action: `allow`, `block`, `passthrough` |
-| **`utmevent`** | LowCardinality(String) | UTM event type: `webfilter`, `app-ctrl`, `ips`, `av`, `dns` |
+| **`utmaction`** | LowCardinality(String) | UTM action: `allow`, `block`, or empty (no UTM involved) |
+| **`utmevent`** | LowCardinality(String) | Always NULL in FortiGate traffic logs, because FortiOS doesn't send it. Use the `count*` columns |
 | `utmsubtype` | Nullable(String) | UTM sub-event type |
 | `utmref` | Nullable(String) | UTM reference (links to UTM log) |
 | **`attack`** | LowCardinality(String) | IPS attack name (summary on traffic row) |
@@ -1738,8 +1740,6 @@ Dedicated app-ctrl UTM log (as opposed to summary fields on traffic rows).
 | **`cat`** | Nullable(UInt8) | Numeric web category ID |
 | **`catdesc`** | LowCardinality(String) | Category description (e.g. `"Search Engines"`) |
 | **`action`** | LowCardinality(String) | `passthrough`, `blocked`, `warning`, `authenticate`, `override` |
-| **`utmaction`** | LowCardinality(String) | `allow`, `block` |
-| `utmevent` | LowCardinality(String) | `webfilter`, `banned-word`, `web-content`, `command-block`, `script-filter` |
 | **`filtertype`** | LowCardinality(String) | What matched: `category`, `urlfilter`, `keyword`, `ftgd` |
 | `ruletype` | LowCardinality(String) | Rule type |
 | `urltype` | LowCardinality(String) | URL type |
@@ -1768,14 +1768,10 @@ Dedicated app-ctrl UTM log (as opposed to summary fields on traffic rows).
 | `videotitle` | Nullable(String) | Video title |
 | `sentbyte` | Nullable(UInt64) | Session bytes sent |
 | `rcvdbyte` | Nullable(Int64) | Session bytes received |
-| `eventtype` | LowCardinality(String) | `ftgd-cat`, `ftgd-err`, `ftgd-block`, `urlfilter`, `override` |
+| `eventtype` | LowCardinality(String) | `ftgd_allow`, `ftgd_blk`, `ftgd_err`, `urlfilter`, `urlmonitor` (seen on FortiOS 7.2–7.6; underscore, not hyphen) |
 | `tdinfoid` / `tdtype` | — | Threat DB info |
 
-> **UTM event filter for webfilter logs:**
-> ```sql
-> AND utmevent IN ('webfilter','banned-word','web-content','command-block','script-filter')
-> ```
-> This is `${WEB_UTM_EVENT}` macro expansion.
+> **No `utmevent`/`utmaction` in webfilter logs.** The webfilter table has neither column, so a filter on them fails with "Missing columns". Every row in `$log-webfilter` is already a web filter event. Use `action` and `eventtype`.
 
 ---
 
@@ -2176,10 +2172,10 @@ Common string column values to use in WHERE clauses.
 `passthrough`, `blocked`, `detected`, `block`, `pass`, `reset`, `dropped`
 
 ### `utmaction` (traffic UTM summary)
-`allow`, `block`, `passthrough`
+`allow`, `block`, or empty
 
 ### `utmevent` (traffic UTM event type)
-`webfilter`, `app-ctrl`, `ips`, `av`, `dns`, `emailfilter`, `dlp`, `file-filter`, `ssh`, `ssl`
+Always NULL in FortiGate traffic logs. Use `countweb>0`, `countips>0` and the other `count*` columns
 
 ### `apprisk`
 `critical`, `high`, `medium`, `low`, `elevated`

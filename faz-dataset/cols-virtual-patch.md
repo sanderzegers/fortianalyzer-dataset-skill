@@ -1,79 +1,41 @@
-# `$log-virtual-patch` — Application Firewall Virtual Patch
+# `$log-virtual-patch` — Virtual Patching
 
-Virtual-patch logs capture App Firewall (WAF) virtual patch events — security policy violations detected by FortiGate's virtual patching engine. These logs are generated when the Application Firewall profile's virtual patch feature matches traffic against known vulnerability signatures (e.g., SQL injection, XSS, command injection in web applications).
+Virtual-patch logs are FortiGate UTM logs (`type=utm`, `subtype=virtual-patch`, log category 24, added in FortiOS 7.4.1). The FortiOS 7.6 Log Message Reference lists two event types: `ot-vpatch` (64600 OT_VPATCH_BLOCK "Traffic was blocked by an OT virtual patch", 64601 OT_VPATCH_LOG) and `localin-vpatch` (64610 LOCALIN_VPATCH_BLOCK "Traffic was blocked by local-in virtual patch", 64611 LOCALIN_VPATCH_LOG). Full logid example: `2400064600`. Older builds logged local-in virtual patch hits as IPS signature logs (`$log-attack`, `msg` starting with `vPatch:`), per the FortiOS administration guide.
 
-All common columns apply (see cols-common.md).
+> **No separate virtual-patch table.** FAZ 7.6 offers no `virtual-patch` log type for FortiGate in faz_list_types. The `$log-virtual-patch` macro resolves to the **security table** — the same table as `$log-security` (see cols-security.md), which also holds the CASB and FortiSwitch flow columns. Fortinet's FAZ documentation does not say where these logs are stored. All FortiOS 7.6 virtual-patch fields below exist in that table; filter on `subtype='virtual-patch'` (value unverified). Columns named `vwpv*` (listed in earlier versions of this file) **don't exist**.
+
+## Columns (FortiOS 7.6 virtual-patch fields that exist in the table)
 
 | Column | Type | Description |
 |---|---|---|
-| **`vwpolicyid`** | Nullable(UInt32) | Virtual patch policy ID |
-| **`vwpolicyname`** | LowCardinality(String) | Virtual patch policy name — use `nullifna()` |
-| **`vwpv`** | LowCardinality(String) | Virtual patch version/identifier |
-| **`vwpvname`** | LowCardinality(String) | Virtual patch name (vulnerability signature) — use `nullifna()` |
-| **`vwpvaction`** | LowCardinality(String) | Action taken by virtual patch |
-| **`vwpvseverity`** | LowCardinality(String) | Severity of the virtual patch match |
-| **`vwpvcate`** | LowCardinality(String) | Virtual patch category — OWASP category or similar |
-| **`vwpvattack`** | LowCardinality(String) | Virtual patch attack name — exploit description |
-| **`vwpvruleid`** | Nullable(UInt32) | Virtual patch rule ID |
-| **`vwpvprotocol`** | Nullable(String) | Protocol matched by virtual patch |
-| **`vwpvport`** | Nullable(UInt16) | Port matched by virtual patch |
-| `srcip` | Nullable(IPv6) | Source IP — always use `ipstr()` for display |
-| `dstip` | Nullable(IPv6) | Destination IP — always use `ipstr()` for display |
-| `srcport` | Nullable(UInt16) | Source port |
-| `dstport` | Nullable(UInt16) | Destination port |
-| `proto` | Nullable(UInt8) | IP protocol number |
-| `service` | Nullable(String) | Service name |
-| `app` | LowCardinality(String) | Application name — may be `"N/A"`, use `nullifna()` |
-| `user` | LowCardinality(String) | Authenticated user — may be `"N/A"` |
-| `action` | LowCardinality(String) | Overall action: `accept`, `close`, `client-rst`, `server-rst`, `deny`, `timeout` |
-| `level` | LowCardinality(String) | Logging level |
-| `devname` | LowCardinality(String) | Device name |
-| `vd` | LowCardinality(String) | VDOM name |
-| `sessionid` | Nullable(UInt64) | Session ID |
-| `policyid` | Nullable(UInt32) | Firewall policy ID |
-| `duration` | Nullable(UInt32) | Session duration in seconds |
-| `sentbyte` / `rcvdbyte` | Nullable(UInt64) | Bytes sent/received |
-| `sentdelta` / `rcvddelta` | Nullable(UInt64) | Delta bytes for long-lived sessions |
-| `sentpkt` / `rcvdpkt` | Nullable(UInt64) | Packets sent/received |
-| `srccountry` | LowCardinality(String) | Source country name |
-| `dstcountry` | LowCardinality(String) | Destination country name |
-| `srcintf` | LowCardinality(String) | Source interface |
-| `dstintf` | LowCardinality(String) | Destination interface |
-| `srczone` | Nullable(String) | Source zone |
-| `dstzone` | Nullable(String) | Destination zone |
-| `srcmac` | Nullable(String) | Source MAC address |
-| `dstmac` | Nullable(String) | Destination MAC address |
-| `httpmethod` | Nullable(String) | HTTP method (`GET`, `POST`, etc.) |
-| `url` | Nullable(String) | Request URL |
-| `hostname` | Nullable(String) | Host header |
-| `statuscode` | Nullable(UInt16) | HTTP status code |
-| `catdesc` | Nullable(String) | Application category description |
-| `appcat` | Nullable(String) | Application category |
-| `apprisk` | Nullable(String) | Application risk level |
-| `attack` | Nullable(String) | Attack/signature name (if correlated) |
-| `severity` | Nullable(String) | Overall severity |
-| `utmaction` | LowCardinality(String) | UTM action: `allow`, `block`, `blocked`, `pass`, `passthrough`, `quarantined`, `reset` |
-| `utmevent` | LowCardinality(String) | UTM event type: `app-ctrl`, `appfirewall`, `ips`, `webfilter` |
-| `crscore` | Nullable(UInt32) | Campaign rule score |
-| `craction` | Nullable(UInt32) | Campaign rule action |
-| `crlevel` | Nullable(String) | Campaign rule level |
-| `vrf` | Nullable(UInt32) | VRF ID |
-| `slot` | Nullable(UInt32) | Hardware slot |
-| `logid` | Nullable(String) | Log ID |
-| `policytype` | Nullable(String) | Policy type |
-| `policymode` | LowCardinality(String) | Policy mode: `flow`, `proxy` |
-| `transid` | Nullable(UInt32) | Transaction ID |
-| `tz` | LowCardinality(String) | Timezone |
-| `custom_field1` | Nullable(String) | Custom field 1 |
-| `dtime` | Nullable(DateTime64(3)) | Device time |
-| `eventtime` | Nullable(UInt64) | Event timestamp in microseconds |
-| `srcname` | LowCardinality(String) | Source hostname / device name |
-| `srcdomain` | LowCardinality(String) | Source domain |
-| `srcuuid` | Nullable(UUID) | Source address object UUID |
-| `dstuuid` | Nullable(UUID) | Destination address object UUID |
-| `poluuid` | Nullable(UUID) | Policy UUID |
-| `msg` | Nullable(String) | Human-readable log message |
+| **`eventtype`** | — | `ot-vpatch` or `localin-vpatch` (per log reference) |
+| **`action`** | — | Action taken |
+| **`attack`** / **`attackid`** | — | Virtual-patch signature name / ID |
+| `attackcontext` / `attackcontextid` | — | Attack context data / ID |
+| **`severity`** | — | Signature severity |
+| `msg` | — | Log message (added in 7.6.1) |
+| `hostname` / **`url`** / `httpmethod` / `agent` / `referralurl` | — | HTTP request details |
+| `rawdata` / `rawdataid` | — | Raw data / its ID |
+| `forwardedfor` / `trueclntip` | — | X-Forwarded-For value / true client IP |
+| **`profile`** / `profilegroup` | — | Virtual-patch profile / profile group |
+| `service` / `proto` / `direction` / `sessionid` / `vrf` | — | Service / protocol number / direction / session ID / VRF |
+| **`srcip`** / `srcport` / `psrcport` / **`dstip`** / **`dstport`** / `pdstport` | — | Endpoints (`p*` = port fields as documented) |
+| `srcintf` / `srcintfrole` / `dstintf` / `dstintfrole` / `srczone` / `dstzone` | — | Interfaces, roles, zones |
+| `srccountry` / `dstcountry` / `srcdomain` | — | GeoIP / source domain |
+| `user` / `group` / `authserver` / `dstuser` / `dstauthserver` / `unauthuser` / `unauthusersource` / `fctuid` | — | User identity |
+| **`policyid`** / `poluuid` / `policytype` / `policymode` | — | Firewall policy |
+| `eventtime` / `tz` / `logid` / `type` / `subtype` / `level` | — | Log identification |
 
-## Zero Data in Last Hour
+## Key Pattern
 
-No virtual-patch log rows were found in the last hour. All fields are documented from the FortiAnalyzer schema only. No real enum values are available — expected values will emerge when virtual-patch logging becomes active.
+```sql
+-- Virtual-patch hits by signature and target
+SELECT eventtype, attack, ipstr(dstip) AS target, action, count(*) AS hits
+FROM $log-virtual-patch
+WHERE $filter AND subtype = 'virtual-patch'
+GROUP BY eventtype, attack, target, action
+ORDER BY hits DESC
+LIMIT 50
+```
+
+Schema verified on FAZ 7.6 (column names exist). No log data was available, so values are unverified — run `SELECT <col>, count(*) ... GROUP BY <col>` first. Run `SELECT subtype, count(*) FROM $log-security WHERE $filter GROUP BY subtype` to confirm which subtypes land in this table.

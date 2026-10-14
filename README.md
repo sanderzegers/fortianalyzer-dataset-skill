@@ -13,7 +13,7 @@ FROM ###(
            (CASE WHEN direction='incoming' THEN ipstr(srcip) ELSE ipstr(dstip) END) AS victim,
            count(*) AS totalnum
     FROM $log-attack
-    WHERE $filter
+    WHERE $filter AND subtype='ips'
     GROUP BY source, victim
     /*SkipSTART*/ORDER BY totalnum DESC/*SkipEND*/
 )### t
@@ -22,24 +22,26 @@ GROUP BY victim
 ORDER BY totalnum DESC
 ```
 
-Claude also explains the non-obvious parts. Here, that's why `direction` decides which IP is the victim, and why the `${THREAT_*}` macros are written out inline: they don't expand in custom datasets.
+Claude also explains the non-obvious parts. Here, that's why `direction` decides which IP is the victim, why `subtype='ips'` keeps DoS anomaly rows out (they share the attack table), and why the `${THREAT_*}` macros are written out inline: they don't expand in custom datasets.
 
-## Tested on a live FortiAnalyzer 7.6
+## Tested on live FortiAnalyzers
 
-Every rule in this skill was checked by running queries on a real FAZ 7.6 under Reports > Datasets. Anything that failed
-was fixed and re-tested:
+The skill was checked against two FAZ 7.6 instances. Their FortiGates run **FortiOS 7.6.7, 7.4.12 and 7.2.10**, so every rule was tested across three FortiOS releases:
 
 - **Generated queries:** top IPS victims, sessions per subnet by application, malicious websites with source IPs, and failed admin logins per device over time all ran correctly.
-- **Reference patterns:** every core pattern the skill copies from (Top-N, hcache, bandwidth, time series, IPS block rate, attacker/victim) has been run. The one broken pattern was fixed and re-tested.
-- **Columns:** real column lists were dumped for traffic, event, webfilter, attack, virus, app-ctrl, dns, dlp, file-filter and ssl. Documented columns that don't exist were confirmed with direct SELECTs.
+- **Reference patterns:** every core pattern the skill copies from (Top-N, hcache, bandwidth, time series, IPS block rate, attacker/victim) has been run.
+- **Columns:** every column named in the column files for traffic, event, webfilter, app-ctrl, attack, virus, dns, dlp, file-filter, ssl and voip exists in the FAZ schema. For ten of these, the full schema was compared between both FAZes and is identical. For log types without sample data, the column names were checked against the schema, which works on empty tables too.
 - **Macros:**
   - These expand in custom datasets: `${REPORT_SESSION}`, `${REPORT_SESSION_WITH_LONGLIVE}`, `${BLOCKED_ACTION}`.
   - These fail, so the skill writes them out inline: `${USER}`, `${THREAT_*}`, `${LEVEL2SEVID}`.
-- **Version-specific quirks** that the skill knows about:
-  - On 7.6, `utmevent` is empty in traffic logs. Use `countips > 0` and the other `count*` columns instead.
-  - SSL logs use `tlsver`/`cipher`, not `sslversion`/`sslcipher`.
-
-Where FAZ 7.6 and FAZ 8.0 differ, the column files list both sets and label each one. Anything not yet tested is marked as unverified.
+- **FortiOS version differences.** FAZ defines the table columns, so a query never fails because of a FortiGate's FortiOS version. Older FortiOS just leaves newer fields empty. The skill knows which fields are version-gated, proven against both Fortinet's per-version log reference and real data (rules: [version-differences.md](faz-dataset/version-differences.md), method and evidence: [docs/fortios-version-testing.md](docs/fortios-version-testing.md)):
+  - `sentpktdelta`, `rcvdpktdelta`, `durationdelta`: FortiOS 7.4+.
+  - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
+  - GenAI fields in app-control logs: FortiOS 7.6.4+.
+- **Quirks that hold on every version:**
+  - `utmevent` is always NULL in traffic logs, because FortiOS doesn't send it. Use `countips > 0` and the other `count*` columns.
+  - SSL logs use `tlsver`/`cipher`/`sni`, not `sslversion`/`sslcipher`.
+  - `$log-attack` mixes IPS and DoS anomaly rows. Filter on `subtype`.
 
 ## Supported log types
 
@@ -56,7 +58,7 @@ Where FAZ 7.6 and FAZ 8.0 differ, the column files list both sets and label each
 | Email Filter | `$log-emailfilter` | `cols-emailfilter.md` |
 | File Filter | `$log-file-filter` | `cols-file-filter.md` |
 | FortiClient Event / Traffic | `$log-fct-event` / `$log-fct-traffic` | `cols-fct-event.md` / `cols-tlog.md` |
-| SSL, SSH, WAF, Network Scan, Security, GTP, Content, VoIP, Protocol, SIEM, Anomaly, ICAP, Virtual Patch | `$log-<type>` | `cols-<type>.md` |
+| SSL, SSH, WAF, Security, GTP, Content, VoIP, Protocol, Anomaly, ICAP, Virtual Patch | `$log-<type>` | `cols-<type>.md` |
 
 It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`), and the `fv_*` materialized views.
 

@@ -1,5 +1,7 @@
 # FortiAnalyzer SQL Dialect Reference
 
+> **FortiOS versions:** FAZ defines the log table columns, so every FortiGate gets the same columns whatever its FortiOS version. Older FortiOS simply leaves newer fields empty. For the fields that are version-gated, and for `logver` checks, see [version-differences.md](version-differences.md).
+
 ## Pipeline
 
 ```
@@ -19,7 +21,7 @@ GUI Dataset SQL
 | `$log-traffic` | Traffic/firewall sessions |
 | `$log-webfilter` | Web filter events |
 | `$log-app-ctrl` | Application control |
-| `$log-attack` | IPS/attack events |
+| `$log-attack` | IPS signature events (`subtype='ips'`) **and** DoS anomaly events (`subtype='anomaly'`). Always filter on `subtype` |
 | `$log-virus` | Antivirus events |
 | `$log-event` | System/device events |
 | `$log-dlp` | Data loss prevention |
@@ -94,12 +96,12 @@ ORDER BY hodex
 
 ## ${MACRO} Expansions
 
-> **Custom datasets:** not every `${...}` macro expands in GUI datasets. An unexpanded macro fails with a syntax error at `$`. Tested status:
+> **Custom datasets:** not every `${...}` macro expands in GUI datasets. An unexpanded macro fails with a syntax error at `$`. Tested on two FAZ 7.6 instances with FortiOS 7.2, 7.4 and 7.6 logs. FAZ expands the macros, so the result doesn't depend on the FortiOS version:
 >
 > | Status | Macros |
 > |---|---|
-> | Confirmed working (FAZ 7.6) | `${REPORT_SESSION}`, `${REPORT_SESSION_WITH_LONGLIVE}`, `${BLOCKED_ACTION}` |
-> | Confirmed failing (FAZ 7.6) | `${USER}`, `${THREAT_SRCIP}`, `${THREAT_DSTIP}`, `${LEVEL2SEVID}` |
+> | Confirmed working | `${REPORT_SESSION}`, `${REPORT_SESSION_WITH_LONGLIVE}`, `${BLOCKED_ACTION}` |
+> | Confirmed failing | `${USER}`, `${THREAT_SRCIP}`, `${THREAT_DSTIP}`, `${LEVEL2SEVID}` |
 > | Unverified | all others |
 > | Pattern so far | The logflag macros work, while the CASE/coalesce-expression macros fail. This is a hypothesis for the untested macros, not a rule |
 >
@@ -139,7 +141,7 @@ UTM event macros:
 | `${ATTACK_UTM_EVENT}` | `utmevent in ('ips')` |
 | `${EMAIL_UTM_EVENT}` | `utmevent in ('general-email-log', 'spamfilter')` |
 
-> **FAZ 7.6 (tested):** `utmevent` is empty on every traffic row, so the `utmevent in (...)` macros match nothing. In traffic logs, use the counters: `countweb>0`, `countapp>0`, `countips>0`, `countav>0`, `countdns>0` or `countssl>0`. `${WEB_SESSION}` still works, because it checks `countweb>0` first. `${AV_UTM_EVENT}` depends on whether the blank is `''` or NULL (untested). Prefer `countav>0`.
+> **`utmevent` is always NULL in traffic logs.** FortiOS doesn't send it there: it's absent from the forward-traffic field list in 7.2, 7.4 and 7.6, and NULL on every row tested. So all `utmevent ...` macros, including `${AV_UTM_EVENT}`, match nothing on traffic logs. Use the counters instead: `countweb>0`, `countapp>0`, `countips>0`, `countav>0`, `countdns>0` or `countssl>0`. `${WEB_SESSION}` still works, because it checks `countweb>0` first.
 | `${EMAIL_SEND_SERVICE}` | `service IN ('smtp','SMTP','25/tcp','587/tcp','smtps','SMTPS','465/tcp')` |
 | `${EMAIL_RECV_SERVICE}` | `service IN ('pop3','POP3','110/tcp','imap','IMAP','143/tcp','imaps','IMAPS','993/tcp','pop3s','POP3S','995/tcp')` |
 
@@ -200,7 +202,7 @@ Executes inner subquery once, caches result, outer query reads from cache. Use w
 - Multiple datasets share the same base scan
 - Time series queries (standard pattern)
 
-**Basic syntax:**
+**Basic syntax** (template: `col_a`/`col_b`/`col_c` are placeholders):
 ```sql
 SELECT col_a, sum(col_b) AS total
 FROM ###(
@@ -363,13 +365,13 @@ Rules: always DROP before CREATE, name as `rpt_tmptbl_N`, separate with `;`, fin
 |---|---|
 | `ipstr(col)` | IPv6 col → clean IPv4/IPv6 string — **always use for display/compare** |
 | `nullifna(col)` | Returns NULL if value is `"N/A"`, `"n/a"`, or `"null"` — use on `user`, `app` etc. |
-| `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` | Canonical user identity expression. Tested on FAZ 7.6: the same user can appear in several cases (`jdoe` / `JDOE`) across auth sources, and MAC-based auth puts a MAC address in `user`. Wrapping it in `lower()` merges the case variants but lowercases every name shown. Mention the case variants and ask the user whether to add `lower()` |
+| `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` | Canonical user identity expression. Tested: the same user can appear in several cases (`jdoe` / `JDOE`) across auth sources, and MAC-based auth puts a MAC address in `user`. Wrapping it in `lower()` merges the case variants but lowercases every name shown. Mention the case variants and ask the user whether to add `lower()` |
 | `from_itime(col)` | Unix epoch Int32 → readable datetime string |
 | `from_dtime(col)` | Device time → readable datetime string |
 | `logid_to_int(logid)` | logid String → Int for numeric compare |
 | `root_domain(hostname)` | `mail.google.com` → `google.com` |
 | `app_group_name(app)` | App to a service-style group (`DNS`, `HTTP`, `LDAP`, `SNMP`, `TCP_High_Ports`), falling back to `proto/port` such as `tcp/27001` |
-| `ip_subnet(col)` | IP to its **fixed /24** as a string, e.g. `10.149.10.0/24`. It doesn't know the real configured subnet size |
+| `ip_subnet(col)` | IP to its **fixed /24** as a string, e.g. `192.0.2.57` → `192.0.2.0/24`. It doesn't know the real configured subnet size |
 | `isIPAddressInRange(ipstr(col), 'cidr')` | Tests whether an IP is in a CIDR range. Use it to map real subnets in a `CASE` (falling back to `ip_subnet()`) or to filter a range. Tested and working in FAZ |
 | `virusid_to_str(virusid)` | Numeric virus ID → string name |
 | `incid_to_str(incid)` | Numeric incident ID → `"INC-00042"` |
@@ -395,7 +397,7 @@ Rules: always DROP before CREATE, name as `rpt_tmptbl_N`, separate with `;`, fin
 
 ## Common Query Patterns
 
-Patterns A–F and the time series example above were all tested on FAZ 7.6. The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
+Patterns A–F and the time series example above were all tested on FAZ 7.6 (FortiOS 7.2–7.6 logs). The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
 
 ### Pattern A: Simple Top-N
 ```sql
@@ -462,7 +464,7 @@ FROM ###(
            count(*) AS totalnum,
            sum(CASE WHEN action NOT IN ('detected','pass_session') THEN 1 ELSE 0 END) AS blocked
     FROM $log-attack
-    WHERE $filter AND nullifna(attack) IS NOT NULL
+    WHERE $filter AND subtype='ips' AND nullifna(attack) IS NOT NULL
     GROUP BY attack
     /*SkipSTART*/ORDER BY totalnum DESC/*SkipEND*/
 )### t
@@ -478,7 +480,7 @@ SELECT
     ipstr(CASE WHEN direction='incoming' THEN srcip ELSE dstip END) AS victim,
     count(*) AS hits
 FROM $log-attack
-WHERE $filter
+WHERE $filter AND subtype='ips'
 GROUP BY attacker, victim
 ORDER BY hits DESC
 ```
@@ -488,7 +490,7 @@ ORDER BY hits DESC
 ## Common Mistakes
 
 1. **Missing `$filter`** — always include on raw log queries
-2. **Filter on computed column without hcache** — `WHERE user_src IS NOT NULL` requires hcache
+2. **Filter on computed column**: `WHERE user_src IS NOT NULL` on a SELECT alias works on FAZ 7.6 (ClickHouse resolves aliases), but prefer hcache when the result is reused, so the scan is cached
 3. **Raw IP display** — always use `ipstr(srcip)`, not raw `srcip`
 4. **N/A strings** — use `nullifna(user)` not `user IS NOT NULL`
 5. **logflag missing** — traffic queries without `bitAnd(logflag,1)>0` inflate counts
@@ -508,10 +510,11 @@ This is the authoritative list for closed-set fields. The "Real Values Discovere
 
 ### `action` (traffic): `accept`, `deny`, `close`, `drop`, `server-rst`, `client-rst`, `timeout`, `ip-conn`
 ### `action` (UTM): `passthrough`, `blocked`, `detected`, `block`, `pass`, `pass_session`, `reset`, `dropped`
-### `utmaction`: `allow`, `block`, `blocked`, `pass`, `passthrough`, `quarantined`, `reset`. FAZ 7.6 tested: only `allow`, `block` or empty
-### `utmevent`: `webfilter`, `app-ctrl`, `ips`, `av`, `dns`, `emailfilter`, `dlp`, `file-filter`, `ssh`, `ssl`. FAZ 7.6 tested: always empty in traffic logs. Filter on `countX>0` instead (see UTM event macros)
+### `utmaction` (traffic): `allow`, `block`, or empty when no UTM was involved. These were the only values on FortiOS 7.2.10, 7.4.12 and 7.6.7 (~160 M rows). Other log types and FortiClient logs may use `passthrough` and other values
+### `utmevent`: always NULL in FortiGate traffic logs (FortiOS doesn't send it). Filter on `countX>0` instead (see UTM event macros)
 ### `apprisk`: `critical`, `high`, `elevated`, `medium`, `low`
-### `direction` (UTM/IPS logs): `incoming`, `outgoing`
+### `direction` (UTM/IPS logs): `incoming`, `outgoing`. Traffic logs have **no** `direction` column
+### `subtype` (attack): `ips`, `anomaly`
 ### `level`: `emergency`, `alert`, `critical`, `error`, `warning`, `notice`, `information`, `debug`
 ### `subtype` (traffic): `forward`, `local`, `multicast`, `sniffer`, `ztna`
 ### `subtype` (event): `system`, `router`, `vpn`, `user`, `endpoint`, `ha`, `compliance`, `connector`, `wad`, `wanopt`, `wireless`, `netscan`, `security-rating`
@@ -522,7 +525,7 @@ This is the authoritative list for closed-set fields. The "Real Values Discovere
 ## Column Type Gotchas
 
 - **IP columns** (`srcip`, `dstip`): `Nullable(IPv6)` — IPv4 stored as `::ffff:192.168.1.1`. Always `ipstr()`.
-- **`sentbyte` vs `sentdelta`**: use `coalesce(sentdelta, sentbyte, 0)` — delta for long-lived, byte for closed sessions. `sentbyte` is cumulative on interim logs. On FAZ 7.6, `sum(sentbyte)` alone came out ~1,600× too high.
+- **`sentbyte` vs `sentdelta`**: use `coalesce(sentdelta, sentbyte, 0)` — delta for long-lived, byte for closed sessions. `sentbyte` is cumulative on interim logs. In testing, `sum(sentbyte)` alone came out ~1,600× too high.
 - **`itime` vs `dtime`**: `$filter` filters on `itime`; use `from_dtime(dtime)` for device-local time display.
 - **`logid`**: `LowCardinality(String)` — use `logid_to_int(logid)` for numeric compare.
 - **`N/A` sentinels**: `user`, `unauthuser`, `app` columns use `"N/A"` instead of NULL — always `nullifna()`.
@@ -637,6 +640,7 @@ ORDER BY sum(totalnum) DESC
 Custom-dataset equivalent, tested and working: use `$log-attack` and `WHERE $filter`, and drop `$filter-drilldown`.
 
 ### Window function — SD-WAN device down time tracking
+Structure from a built-in dataset. `logdev_id` and logids `220001`/`220002` don't exist in FortiGate event logs ("Missing columns"), so for FortiGate use `devid` and the link up/down logids of your environment. The nesting below was tested on FAZ 7.6 with `devid` and FortiGate event logs.
 ```sql
 SELECT devid, link_status,
     (CASE WHEN link_status=0 THEN sum(etime-stime) END) AS down_time
@@ -644,7 +648,7 @@ FROM (
     SELECT devid, status_rank, max(link_status) AS link_status,
            min(timestamp) AS stime, max(timestamp) AS etime
     FROM (
-        SELECT devid, timestamp, link_status, status_switch,
+        SELECT devid, timestamp, link_status,
             sum(abs(coalesce(status_switch, 0)))
                 OVER (PARTITION BY devid ORDER BY timestamp
                       ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS status_rank
@@ -658,13 +662,13 @@ FROM (
                     (CASE WHEN logid='220002' THEN 1 ELSE 0 END) AS link_status
                 FROM $log
                 WHERE $filter AND logid_to_int(logid) IN (220001, 220002)
-            ) t
-            GROUP BY timestamp, devid ORDER BY timestamp
-        ) t
-    ) t
-) t
-WHERE status_rank IS NOT NULL
-GROUP BY devid, status_rank HAVING min(timestamp) != max(timestamp)
+            ) t1
+        ) t2
+    ) t3
+    WHERE status_rank IS NOT NULL
+    GROUP BY devid, status_rank
+    HAVING min(timestamp) != max(timestamp)
+) t4
 GROUP BY devid, link_status
 ORDER BY down_time DESC
 ```

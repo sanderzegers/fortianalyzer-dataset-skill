@@ -54,7 +54,7 @@ GROUP BY os_family
 ORDER BY cnt DESC
 ```
 
-## Endpoint Status Columns (moved from cols-elog.md, unverified against schema)
+## Endpoint Status Columns (column names verified on FAZ 7.6; values unverified)
 
 | Column | Type | Description |
 |---|---|---|

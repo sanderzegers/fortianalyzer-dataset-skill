@@ -21,8 +21,8 @@ All common columns apply (see cols-common.md).
 | `sscname` | Nullable(String) | Safe Search enforced CNAME |
 | `eventtype` | LowCardinality(String) | `dns-query`, `domain`, `botnet` |
 | `error` | Nullable(String) | DNS error |
-| `tdthreatname` / `tdthreattype` / `tdtype` / `tdwfcate` / `tdinfoid` / `tdscantime` | — | Inline threat detection fields (seen on FAZ 7.6) |
-| `echmsg` | — | Encrypted Client Hello message (seen on FAZ 7.6) |
+| `tdthreatname` / `tdthreattype` / `tdtype` / `tdwfcate` / `tdinfoid` / `tdscantime` | — | Inline threat detection fields |
+| `echmsg` | — | Encrypted Client Hello message |
 
 ## Key Patterns
 

@@ -9,7 +9,7 @@ All common columns apply (see cols-common.md).
 | **`cat`** | Nullable(UInt8) | Numeric web category ID |
 | **`catdesc`** | LowCardinality(String) | Category description (e.g. `"Search Engines"`) |
 | **`action`** | LowCardinality(String) | `passthrough`, `blocked` (tested), plus `warning`, `authenticate`, `override` per schema. Use `action = 'blocked'` for blocks |
-| **`filtertype`** | LowCardinality(String) | What matched: `category`, `urlfilter`, `keyword`, `ftgd` |
+| **`filtertype`** | LowCardinality(String) | What matched. Empty on every row in the FortiOS 7.2–7.6 sample, so prefer `eventtype` |
 | `ruletype` | LowCardinality(String) | Rule type |
 | `reqtype` | LowCardinality(String) | `direct`, `referral` |
 | **`keyword`** | Nullable(String) | Matched keyword (banned-word events) |
@@ -26,7 +26,7 @@ All common columns apply (see cols-common.md).
 | `risklevel` | LowCardinality(String) | URL risk level |
 | `videoid` / `videocategoryid` / `videotitle` | — | YouTube/video fields |
 | `sentbyte` / `rcvdbyte` | Nullable | Session bytes |
-| `eventtype` | LowCardinality(String) | `ftgd-cat`, `ftgd-err`, `ftgd-block`, `urlfilter`, `override` |
+| `eventtype` | LowCardinality(String) | `ftgd_allow`, `ftgd_blk`, `ftgd_err`, `urlfilter`, `urlmonitor` (seen on FortiOS 7.2–7.6; underscore, not hyphen) |
 | `from` / `to` | LowCardinality(String) | Email from/to (webmail) |
 | `direction` | — | `incoming` / `outgoing` |
 | `srccountry` / `dstcountry` | — | Country (`Reserved` = private IP) |

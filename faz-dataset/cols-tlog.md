@@ -11,13 +11,15 @@ Richest log type. Represents completed or sampled firewall sessions. All common 
 | **`sentdelta`** | Nullable(UInt64) | Delta bytes sent — long-lived sessions (prefer over `sentbyte`) |
 | **`rcvddelta`** | Nullable(UInt64) | Delta bytes received — long-lived sessions (prefer over `rcvdbyte`) |
 | `sentpkt` / `rcvdpkt` | Nullable(Int64) | Packets sent/received |
-| `sentpktdelta` / `rcvdpktdelta` | Nullable(UInt32) | Delta packets |
+| `sentpktdelta` / `rcvdpktdelta` | Nullable(UInt32) | Delta packets. **FortiOS 7.4+**, empty on 7.2 (see version-differences.md) |
 | **`duration`** | Nullable(UInt32) | Session duration in seconds |
-| `durationdelta` | Nullable(UInt32) | Delta duration |
+| `durationdelta` | Nullable(UInt32) | Delta duration. **FortiOS 7.4+**, empty on 7.2 |
 | `wanin` / `wanout` | Nullable(UInt64) | WAN bytes in/out |
 | `lanin` / `lanout` | Nullable(UInt64) | LAN bytes in/out |
 
-> **Bytes pattern:** `coalesce(sentdelta, sentbyte, 0)` — delta exists for long-lived sessions, byte for closed. Always use this form for bandwidth queries.
+> **Bytes pattern:** `coalesce(sentdelta, sentbyte, 0)` — delta exists for long-lived sessions, byte for closed. Always use this form for bandwidth queries. The byte deltas exist on every FortiOS version tested (7.2.10–7.6.7).
+>
+> **Packets/duration:** `coalesce(sentpktdelta, sentpkt, 0)` / `coalesce(durationdelta, duration, 0)`. On FortiOS 7.2 the packet/duration deltas are always NULL, so the sum falls back to cumulative values and overcounts long-lived sessions there.
 > **logflag for bandwidth:** use `bitAnd(logflag,bitOr(1,32))>0` to include long-lived sessions.
 
 ## NAT
@@ -46,8 +48,8 @@ Richest log type. Represents completed or sampled firewall sessions. All common 
 
 | Column | Type | Description |
 |---|---|---|
-| **`utmaction`** | LowCardinality(String) | UTM action. FAZ 7.6 (tested): only `allow`, `block` or empty (no UTM involved) |
-| **`utmevent`** | LowCardinality(String) | UTM event type. **Always empty on FAZ 7.6** (tested, 74M rows). Use the `count*` columns below instead |
+| **`utmaction`** | LowCardinality(String) | UTM action: only `allow`, `block` or empty (no UTM involved). Same on FortiOS 7.2.10, 7.4.12 and 7.6.7 (~160 M rows) |
+| **`utmevent`** | LowCardinality(String) | **Always empty.** FortiOS doesn't send `utmevent` in traffic logs (absent from the log ID 13 field list in 7.2, 7.4 and 7.6; empty on ~160 M rows). Use the `count*` columns below instead |
 | `utmsubtype` | Nullable(String) | UTM sub-event |
 | **`attack`** | LowCardinality(String) | IPS attack name (summary) |
 | **`virus`** | LowCardinality(String) | AV virus name (summary) |
@@ -57,7 +59,7 @@ Richest log type. Represents completed or sampled firewall sessions. All common 
 | `countav` / `countdlp` / `countemail` / `countips` / `countweb` | Nullable(UInt32) | UTM event counts per type |
 | `countff` / `countssh` / `countssl` / `countdns` / `countwaf` | Nullable(UInt32) | UTM event counts per type |
 
-On FAZ 7.6, `countX > 0` is the working way to find traffic sessions a UTM feature touched (tested: `countweb`, `countapp`, `countips`, `countav`, `countdns`, `countssl`). For example, `WHERE $filter AND countips > 0` finds sessions with an IPS event.
+On every FortiOS version, `countX > 0` is the working way to find traffic sessions a UTM feature touched (tested: `countweb`, `countapp`, `countips`, `countav`, `countdns`, `countssl`). For example, `WHERE $filter AND countips > 0` finds sessions with an IPS event.
 | `threats` | Array(String) | Threat names |
 | `threattyps` | Array(String) | Threat types |
 | `threatwgts` | Array(Int32) | Threat weights |
@@ -172,15 +174,6 @@ Observed values from querying `query_logs` on the live FAZ instance (2026-09-28)
 | `elevated` | Elevated risk |
 | `high` | High risk |
 
-### `utmevent` (UTM Event)
-
-| Value | Notes |
-|---|---|
-| `AV.1` / `AV.2` / `AV.3` | Antivirus events |
-| `ips.1` / `ips.2` / `ips.3` / `ips.4` | IPS events |
-
-> **FAZ 8.0 sample, not seen on 7.6.** On 7.6, `utmevent` is empty on every row, so these can be neither confirmed nor ruled out there. Don't filter on them. Use `countX > 0` instead.
-
 ### `level` (Traffic)
 
 | Value | Notes |
@@ -190,26 +183,7 @@ Observed values from querying `query_logs` on the live FAZ instance (2026-09-28)
 
 ### `srczone` / `dstzone`
 
-| Value | Notes |
-|---|---|
-| `LAN` | Local area network |
-| `WLAN` | Wireless LAN |
-| `WAN` | Wide area network |
-
-### `vdom`
-
-| Value | Notes |
-|---|---|
-| `root` | Default VDOM |
-
-### `profiletype`
-
-| Value | Notes |
-|---|---|
-| `application-control` | App control profile |
-| `ips` | IPS profile |
-| `antivirus` | Antivirus profile |
-
+Sent from **FortiOS 7.6** onward and only when interfaces are grouped in zones. Empty in every sample (7.2.10, 7.4.12 and 7.6.7). Zone names are admin-defined, so group by them instead of hardcoding them. For mixed FortiOS estates, group by `srcintf` / `dstintf`.
 
 ### `policytype` (Policy Type)
 
@@ -229,10 +203,8 @@ Observed SD-WAN quality strings from FAZ traffic logs:
 
 | Pattern | Notes |
 |---|---|
-| `Seq_num(N H1_ISP1_1 VPN_INTERNAL), alive, latency: X.XXX, selected` | VPN tunnel quality |
-| `Seq_num(N Falcon_root EXTERNAL-SDWAN), alive, sla(0x1), gid(0), cfg_order(N), local cost(N), selected` | External SD-WAN |
-| `Seq_num(N Meadow_root EXTERNAL-SDWAN), alive, sla(0x1), gid(0), cfg_order(N), local cost(N), selected` | External SD-WAN |
-| `Seq_num(N EDGE_ISP1_1 VPN_INTERNAL), alive, latency: X.XXX, selected` | Edge ISP tunnel |
+| `Seq_num(N {SITE}_ISP1_{N} {HEALTHCHECK}), alive, latency: X.XXX, selected` | VPN tunnel quality |
+| `Seq_num(N {ISPNAME}_root {HEALTHCHECK}), alive, sla(0x1), gid(0), cfg_order(N), local cost(N), selected` | External SD-WAN member |
 
 > **Pattern:** `Seq_num({NUM} {TUNNEL-NAME} {ZONE}), alive, sla({HEX}), gid({NUM}), cfg_order({NUM}), local cost({NUM}), selected`
 > **Key fields:** `sla(0x1)` = SLA target met, `selected` = active path, `alive` = healthy
@@ -242,36 +214,18 @@ Observed SD-WAN quality strings from FAZ traffic logs:
 
 Free-text, admin-defined names — every deployment differs. Never assume specific values; ask the user for the policy name or group by `policyname` / `policyid` instead of filtering.
 
-### `direction`
-
-| Value | Notes |
-|---|---|
-| `in` | Inbound |
-| `out` | Outbound |
-
 ### `utmaction` (UTM Action)
 
 | Value | Notes |
 |---|---|
-| `allow` | Allowed. Seen on FAZ 7.6 |
-| `block` | Blocked. Seen on FAZ 7.6 |
-| (empty) | No UTM involved. Seen on FAZ 7.6, ~75% of rows |
-| `blocked` / `pass` / `passthrough` / `quarantined` / `reset` | FAZ 8.0 sample only, not seen on 7.6 |
+| `allow` | Allowed |
+| `block` | Blocked |
+| (empty) | No UTM involved, ~75–80 % of rows |
 
 
-## Real `srczone` / `dstzone` Values
+## Real `vd` Values
 
-| Value | Notes |
-|---|---|
-| `LAN` | Local area network |
-| `WLAN` | Wireless LAN |
-| `WAN` | Wide area network |
-
-## Real `vdom` Values
-
-| Value | Notes |
-|---|---|
-| `root` | Default VDOM |
+The VDOM column is **`vd`** (there's no `vdom` column). Single-VDOM FortiGates log `root`.
 
 ## Real `devtype` Values
 
