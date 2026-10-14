@@ -26,10 +26,9 @@ All common columns apply (see cols-common.md).
 | `viruscat` | Nullable(String) | Virus category |
 | `itype` / `dtype` | Nullable(String) | Infection type / detection type |
 | `sharename` / `pathname` | Nullable(String) | SMB share/path (file server AV) |
-| `icbaction` / `icbverdict` / `icbseverity` / `icbconfidence` / `icbfiletype` / `icbfileid` / `icberror` | — | Inline cloud-based scan fields (seen on FAZ 7.6) |
-| `cdrcontent` / `contentencoding` | — | CDR content / content encoding (seen on FAZ 7.6) |
-| `hostname` / `url` / `referralurl` / `httpmethod` | — | Web transfer fields (seen on FAZ 7.6) |
-| `filesize` | Nullable(UInt64) | File size in bytes. **FAZ 8.0 sample data only.** Fails with "Missing columns" on 7.6 |
+| `icbaction` / `icbverdict` / `icbseverity` / `icbconfidence` / `icbfiletype` / `icbfileid` / `icberror` | — | Inline cloud-based scan fields |
+| `cdrcontent` / `contentencoding` | — | CDR content / content encoding |
+| `url` / `referralurl` / `httpmethod` | — | Web transfer fields. There is **no** `hostname` or `filesize` column in the virus table ("Missing columns") |
 
 ## Key Pattern
 

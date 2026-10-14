@@ -45,8 +45,6 @@
 | `srczone` | Nullable(String) | Source zone |
 | `dstzone` | Nullable(String) | Destination zone |
 | `profilegroup` | Nullable(String) | Profile group name |
-| `srcuuid_name` | LowCardinality(String) | Source address object name |
-| `dstuuid_name` | LowCardinality(String) | Destination address object name |
 | `eventtime` | Nullable(UInt64) | Event timestamp in microseconds |
 | `tz` | LowCardinality(String) | Timezone |
 | `custom_field1` | Nullable(String) | Custom field 1 |

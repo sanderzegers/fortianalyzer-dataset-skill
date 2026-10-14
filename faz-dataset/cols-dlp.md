@@ -25,7 +25,7 @@ All common columns apply (see cols-common.md).
 | `eventtype` | LowCardinality(String) | DLP event type |
 | `subservice` | Nullable(String) | Sub-service |
 | `sentbyte` / `rcvdbyte` | — | Bytes |
-| `infectedfilename` / `infectedfiletype` / `infectedfilesize` / `infectedfilelevel` | — | Inner file that matched (e.g. inside an archive) — seen on FAZ 7.6 |
+| `infectedfilename` / `infectedfiletype` / `infectedfilesize` / `infectedfilelevel` | — | Inner file that matched (e.g. inside an archive) |
 
 ## Real Values Discovered from FAZ Instance
 
@@ -41,15 +41,9 @@ All common columns apply (see cols-common.md).
 | `monitor` | Monitored |
 | `exempt` | Exempted |
 
-### `category` (DLP Category)
+### `filtercat` / `filtertype`
 
-| Value | Notes |
-|---|---|
-| `credit-card` | Credit card numbers |
-| `ssn` | Social Security Numbers |
-| `confidential` | Confidential content |
-| `pii` | Personally identifiable information |
-| `custom` | Custom patterns |
+There's no `category` column. The DLP match category is `filtercat`, and the filter type is `filtertype`. Seen on FortiOS 7.4.12 (24 h): `filtercat='file'` with `filtertype='none'` and `action='block'` on every row. Other values depend on the DLP sensor configuration, so run `GROUP BY filtercat, filtertype` before filtering.
 
 ### `subtype` (DLP Subtype)
 

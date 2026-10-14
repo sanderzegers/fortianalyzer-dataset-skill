@@ -1,148 +1,53 @@
 # `$log-waf` — Web Application Firewall
 
-All common columns apply (see cols-common.md).
+WAF logs are FortiGate UTM logs (`type=utm`, `subtype=waf`, log category 12) written by a Web Application Firewall security profile on a firewall policy. The FortiOS 7.6 Log Message Reference lists six event types: `waf-signature` (30248 SIGNATURE_BLOCK, 30249 SIGNATURE_PASS, 30250 SIGNATURE_ERASE), `waf-custom-signature` (30251/30252 BLOCK/PASS), `waf-http-method` (30253 METHOD_BLOCK), `waf-http-constraint` (30257/30258 CONSTRAINTS_BLOCK/PASS), `waf-address-list` (30255 ADDRESS_LIST_BLOCK) and `waf-url-access` (30259/30260/30261 URL_ACCESS_PERMIT/BYPASS/BLOCK). All common columns apply (see cols-common.md).
+
+> Names like `wafaction`, `wafattack`, `wafattackid`, `wafseverity`, `wafprofile`, `wafvulnerability`, `serverip`, `serverport`, `statuscode`, `requestheader`, `requestbody`, `hostname`, `domain` and `intfrole` **don't exist** and fail with "Missing columns". Use `srcip`/`dstip`, `profile`, `severity`, `name` and `url`.
+
+## Columns
 
 | Column | Type | Description |
 |---|---|---|
-| **`wafaction`** | LowCardinality(String) | WAF action: `block`, `pass` |
-| **`wafseverity`** | LowCardinality(String) | WAF severity: `critical`, `high`, `medium`, `low` |
-| `wafprofile` | Nullable(String) | WAF profile name applied |
-| **`wafvulnerability`** | Nullable(String) | Vulnerability category matched |
-| **`wafattack`** | Nullable(String) | Specific OWASP CRS attack name |
-| `wafattackid` | Nullable(UInt32) | WAF attack ID |
-| `httpmethod` | LowCardinality(String) | HTTP method |
-| `statuscode` | Nullable(UInt16) | HTTP response status code |
-| **`action`** | LowCardinality(String) | Firewall action: `block`, `pass` |
-| **`level`** | LowCardinality(String) | Log severity level |
-| `policyid` | Nullable(UInt64) | WAF policy ID |
-| `url` | Nullable(String) | Requested URL path |
-| `hostname` | Nullable(String) | Requested hostname / virtual IP |
-| `dstport` | Nullable(UInt16) | Destination port |
-| `dstip` | Nullable(IPv6) | Destination IP |
-| `srcip` | Nullable(IPv6) | Source IP — use `ipstr()` |
-| `srcport` | Nullable(UInt16) | Source port |
-| `service` | Nullable(String) | Application service |
-| `domain` | Nullable(String) | Request domain |
-| `requestbody` | Nullable(String) | HTTP request body (truncated) |
-| `requestheader` | Nullable(String) | HTTP request headers |
-| `serverip` | Nullable(IPv6) | Server IP (virtual IP) |
-| `serverport` | Nullable(UInt16) | Server port |
-| `policytype` | Nullable(String) | Policy type |
-| `vdom` | Nullable(String) | Virtual domain |
-| `device` | Nullable(String) | FortiGate device name |
-| `interface` | Nullable(String) | Inbound interface |
-| `intfrole` | Nullable(String) | Interface role |
+| **`eventtype`** | — | WAF event type (see list above) |
+| **`action`** | — | Action taken |
+| **`name`** | — | Method or custom signature name |
+| `eventid` | — | Event ID |
+| **`severity`** | — | Severity |
+| `constraint` | — | Violated HTTP protocol constraint (waf-http-constraint events) |
+| **`url`** / `httpmethod` / `agent` / `referralurl` | — | Request URL / HTTP method / user agent / referer |
+| `ratemethod` | — | Rate method |
+| `rawdata` | — | Raw request data |
+| `msg` | — | Log message |
+| **`profile`** / `profilegroup` | — | WAF profile / profile group |
+| `service` / `proto` / `direction` / `sessionid` / `transid` | — | Service / protocol number / direction / session ID / transaction ID |
+| **`srcip`** / `srcport` / **`dstip`** / **`dstport`** | — | Client and server endpoints |
+| `srcintf` / `srcintfrole` / `dstintf` / `dstintfrole` | — | Interfaces and roles |
+| `srczone` / `dstzone` / `srccountry` / `dstcountry` / `srcdomain` | — | Zones / GeoIP countries / source domain |
+| `srcuuid` / `dstuuid` | — | Address object UUIDs |
+| **`user`** / `group` / `authserver` / `dstuser` / `dstauthserver` | — | User identity |
+| `unauthuser` / `unauthusersource` / `fctuid` | — | Unauthenticated user / source / FortiClient UID |
+| **`policyid`** / `poluuid` / `policytype` | — | Firewall policy |
+| `eventtime` / `tz` | — | Device event time / time zone |
+| `logid` / `type` / `subtype` / `level` | — | Log identification |
 
 ## Key Patterns
 
 ```sql
--- Blocked WAF requests grouped by vulnerability
-SELECT wafvulnerability, wafattack, wafseverity, count(*) AS cnt
-FROM $log-waf
-WHERE $filter AND wafaction = 'block'
-GROUP BY wafvulnerability, wafattack, wafseverity
-ORDER BY cnt DESC
-
--- Top WAF profiles by block count
-SELECT wafprofile, action, count(*) AS cnt
+-- Top WAF hits by event type, signature and target
+SELECT eventtype, name, ipstr(dstip) AS server, count(*) AS hits
 FROM $log-waf
 WHERE $filter
-GROUP BY wafprofile, action
-ORDER BY cnt DESC
+GROUP BY eventtype, name, server
+ORDER BY hits DESC
+LIMIT 50
 
--- HTTP method distribution for WAF events
-SELECT httpmethod, wafaction, count(*) AS cnt
+-- Top attacking clients per action
+SELECT ipstr(srcip) AS client, action, count(*) AS hits
 FROM $log-waf
 WHERE $filter
-GROUP BY httpmethod, wafaction
-ORDER BY cnt DESC
+GROUP BY client, action
+ORDER BY hits DESC
+LIMIT 20
 ```
 
-## Real Values Discovered from FAZ Instance
-
-### `wafaction` (WAF Action)
-
-Observed values from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `block` | Request blocked by WAF policy |
-| `pass` | Request passed (allowed through) |
-
-### `wafseverity` (WAF Severity)
-
-Observed values from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `critical` | Critical severity matches |
-| `high` | High severity matches |
-| `medium` | Medium severity matches |
-| `low` | Low severity matches |
-
-### `wafvulnerability` (WAF Vulnerability)
-
-Observed vulnerability categories from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `SQL Injection` | SQL injection attempts |
-| `XSS` | Cross-site scripting |
-| `Remote File Inclusion` | RFI attacks |
-| `Command Injection` | OS command injection |
-
-### `wafattack` (WAF Attack)
-
-Observed OWASP CRS attack names from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `SQL Injection Attack: Common SQL Injection Detected` | SQL injection detection |
-| `XSS Attack Detected` | Cross-site scripting detection |
-| `Remote File Inclusion Attack Detected` | RFI detection |
-| `Command Injection Attack` | Command injection detection |
-
-### `httpmethod` (HTTP Method)
-
-Observed HTTP methods from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `GET` | HTTP GET requests |
-| `POST` | HTTP POST requests |
-| `PUT` | HTTP PUT requests |
-| `DELETE` | HTTP DELETE requests |
-| `HEAD` | HTTP HEAD requests |
-| `OPTIONS` | HTTP OPTIONS requests |
-| `PATCH` | HTTP PATCH requests |
-
-### `statuscode` (HTTP Status Code)
-
-Observed status codes from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `200` | OK — request succeeded |
-| `403` | Forbidden — WAF blocked |
-| `404` | Not Found |
-| `500` | Internal Server Error |
-| `502` | Bad Gateway |
-| `503` | Service Unavailable |
-
-### `action` (Firewall Action)
-
-Observed firewall actions from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `block` | Request blocked |
-| `pass` | Request allowed |
-
-### `level` (Log Severity)
-
-Observed log levels from FAZ WAF logs:
-
-| Value | Notes |
-|---|---|
-| `information` | Routine WAF events |
-| `warning` | WAF alerts and blocks |
+Schema verified on FAZ 7.6 (column names exist). No log data was available, so values are unverified — run `SELECT <col>, count(*) ... GROUP BY <col>` first.

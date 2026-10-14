@@ -282,7 +282,7 @@ Custom SSIDs observed:
 | `RoomCast-{NUM}` | Conference room AP |
 | `RoomCast-{NUM}` | Conference room AP |
 
-### `slahealthcheck` (SLA Healthcheck)
+### `healthcheck` (SD-WAN health check name)
 
 | Value | Notes |
 |---|---|
@@ -360,9 +360,9 @@ Custom SSIDs observed:
 | Value | Notes |
 |---|---|
 | `wan1` / `wan2` | WAN interfaces |
-| `H1_ISP1_1` / `H1_ISP1_1_0` / `H1_ISP1_1_1` | ISP1 tunnel interfaces |
-| `H1_ISP2_1` | ISP2 tunnel interface |
-| `Meadow_root` / `Falcon_root` | ISP interfaces |
+| `{SITE}_ISP1_{N}` / `{SITE}_ISP1_{N}_{N}` | ISP1 tunnel interfaces (IPsec dial-up instances get a `_{N}` suffix) |
+| `{SITE}_ISP2_{N}` | ISP2 tunnel interface |
+| `{ISPNAME}_root` | ISP interfaces (VDOM-link / zone names) |
 | `lan1` / `lan2` / `lan3` / `lan4` | LAN interfaces |
 
 ### `cpu` / `mem` / `disk` (System Resources)
@@ -408,11 +408,8 @@ Observed device IDs from FAZ event logs:
 
 | Value | Notes |
 |---|---|
-| `FGT70GTK26048654` | FortiGate 70G serial |
-| `FG120GTK25026557` | FortiGate 120G serial |
-| `FG120GTK26007050` | FortiGate 120G serial |
-| `FG120GTK26012083` | FortiGate 120G serial |
-| `FG120GTK25027087` | FortiGate 120G serial |
+| `FGT70G{SERIAL}` | FortiGate 70G serial (prefix = model, then a unique number) |
+| `FG120G{SERIAL}` | FortiGate 120G serial |
 
 > **Pattern:** `FG{MODEL}{YEAR}{SERIAL}` — match with `devid LIKE '%GTK%'`.
 
@@ -487,7 +484,7 @@ Observed UI methods from FAZ event logs:
 | `jsconsole` | JavaScript console |
 | `ssl-vpn` | SSL VPN |
 
-### `slahealthcheck` (SLA Healthcheck)
+### `healthcheck` (SD-WAN health check name)
 
 Observed health check names from FAZ event logs:
 

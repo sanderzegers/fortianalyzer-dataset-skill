@@ -19,19 +19,20 @@ Dedicated app-ctrl UTM log (distinct from UTM summary fields on traffic rows). A
 | `filesize` | Nullable(UInt64) | File size (for file-type detection) |
 | `filename` | Nullable(String) | Filename if applicable |
 | `crscore` / `craction` / `crlevel` | — | Compound risk score fields |
-| `hostname` / `url` / `dstname` | — | Destination host / URL / name (seen on FAZ 7.6) |
-| `cloudgenai` / `aiuser` / `prompt` / `model` / `usecase` | — | GenAI app fields (AI service, user, prompt text, model, use case) — seen on FAZ 7.6 |
+| `hostname` / `url` / `dstname` | — | Destination host / URL / name |
+| `cloudgenai` / `aiuser` / `prompt` / `model` / `usecase` / `dcgeo` | — | GenAI app fields (AI service, user, prompt text, model, use case, data-center geo). **Sent only by FortiOS 7.6.4+**, empty on older FortiGates (see version-differences.md) |
 
 ## Key Pattern
 
 ```sql
--- Top apps by bandwidth
-SELECT app_group_name(app) AS app_group, appcat, sum(bandwidth) AS bandwidth
+-- Top apps by bandwidth. App-ctrl logs carry no byte counts (sentbyte/rcvdbyte
+-- are empty on FortiOS 7.2-7.6), so bandwidth per app comes from traffic logs
+SELECT app_group, appcat, sum(bandwidth) AS bandwidth
 FROM ###(
     SELECT app_group_name(app) AS app_group, appcat,
-           sum(coalesce(sentbyte,0)+coalesce(rcvdbyte,0)) AS bandwidth
-    FROM $log-app-ctrl
-    WHERE $filter AND nullifna(app) IS NOT NULL
+           sum(coalesce(sentdelta,sentbyte,0)+coalesce(rcvddelta,rcvdbyte,0)) AS bandwidth
+    FROM $log-traffic
+    WHERE $filter AND (bitAnd(logflag,bitOr(1,32))>0) AND nullifna(app) IS NOT NULL
     GROUP BY app_group, appcat
     /*SkipSTART*/ORDER BY bandwidth DESC/*SkipEND*/
 )### t

@@ -2,6 +2,8 @@
 
 All common columns apply (see cols-common.md).
 
+> **`$log-attack` holds two kinds of rows.** `subtype='ips'` rows are IPS signature hits (logid 0419016384 and similar). `subtype='anomaly'` rows are DoS-policy anomalies such as `udp_flood` (logid 0720018432/0720018433). On one test site, anomalies were about 94 % of the rows. **Add `subtype='ips'` to IPS reports** and `subtype='anomaly'` to DoS reports. `$log-anomaly` is not a separate table: it returns the same rows as `$log-attack`.
+
 | Column | Type | Description |
 |---|---|---|
 | **`attack`** | LowCardinality(String) | Attack/signature name — use `nullifna()` |
@@ -11,10 +13,10 @@ All common columns apply (see cols-common.md).
 | `ref` | Nullable(String) | External reference URL |
 | `attackcontext` | Nullable(String) | Attack context data |
 | `attackcontextid` | Nullable(String) | Attack context ID |
-| `count` | Nullable(UInt32) | Hit count (aggregated events) |
-| `threat` | LowCardinality(String) | Threat name |
-| `threattype` | LowCardinality(String) | Threat type |
-| `threatlevel` | Nullable(Int8) | Numeric threat level |
+| `count` | Nullable(UInt32) | Hit count. Anomaly rows only (aggregated DoS events) |
+| `threat` | LowCardinality(String) | Threat name. Anomaly rows only |
+| `threattype` | LowCardinality(String) | Threat type (`ips` on anomaly rows, empty on IPS signature rows) |
+| `threatlevel` | Nullable(Int8) | Numeric threat level. Anomaly rows only |
 | `icmpid` / `icmptype` / `icmpcode` | Nullable(String) | ICMP fields for ICMP-based attacks |
 | **`action`** | LowCardinality(String) | `detected`, `blocked`, `dropped`, `reset`, `pass_session` |
 
@@ -94,7 +96,7 @@ Observed threat names from FAZ attack logs:
 |---|---|
 | `udp_flood` | UDP flood attack |
 
-### `attacktype` / `threattype`
+### `threattype`
 
 | Value | Notes |
 |---|---|

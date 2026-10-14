@@ -27,16 +27,14 @@ For column names, read **only the files matching the log types needed**:
 | SSH | [cols-ssh.md](cols-ssh.md) |
 | File Filter | [cols-file-filter.md](cols-file-filter.md) |
 | WAF | [cols-waf.md](cols-waf.md) |
-| Network Scan | [cols-netscan.md](cols-netscan.md) |
-| Security | [cols-security.md](cols-security.md) |
+| Security table (virtual patch, CASB, FortiSwitch flow) | [cols-security.md](cols-security.md) |
 | GTP | [cols-gtp.md](cols-gtp.md) |
 | Content Security (FTP/SMTP/IMAP/POP3) | [cols-content.md](cols-content.md) |
 | VoIP | [cols-voip.md](cols-voip.md) |
 | Protocol | [cols-protocol.md](cols-protocol.md) |
-| SIEM Forwarder | [cols-siem.md](cols-siem.md) |
-| Anomaly | [cols-anomaly.md](cols-anomaly.md) |
-| ICAP | [cols-icap.md](cols-icap.md) |
-| Virtual Patch | [cols-virtual-patch.md](cols-virtual-patch.md) |
+| Anomaly (same table as IPS/Attack — filter `subtype='anomaly'`) | [cols-anomaly.md](cols-anomaly.md) |
+| ICAP (no own table — stored in the protocol table) | [cols-icap.md](cols-icap.md) |
+| Virtual Patch (no own table — stored in the security table) | [cols-virtual-patch.md](cols-virtual-patch.md) |
 | FortiClient Event | [cols-fct-event.md](cols-fct-event.md) |
 | FortiClient Traffic | Same as cols-tlog.md (FCT shares tlog columns) |
 | ADOM reference tables (`$ADOM_ENDPOINT`, `$ADOM_ENDUSER`, `devtable_ext`, etc.) | [cols-adom-tables.md](cols-adom-tables.md) |
@@ -44,6 +42,12 @@ For column names, read **only the files matching the log types needed**:
 | Materialized views (`fv_*` — built-in dashboards only) | [cols-fv-views.md](cols-fv-views.md) |
 
 Do NOT read column files that are not needed for the current query.
+
+`$log-netscan` belongs to the FortiGate network vulnerability scanner of FortiOS 5.x, which current FortiOS no longer has, so it has no column file. For endpoint vulnerability reports, use FortiClient logs (`$log-fct-event`, `$log-fct-netscan`); ask the user for the columns or run the column-listing query from faz-sql-reference.md.
+
+`$log-siem` is a FAZ-internal table that FortiGate logs don't fill (empty, without the usual log fields), so it has no column file. For SIEM/SOC reports on events and incidents, use `$event` / `$incident` (cols-soc-tables.md).
+
+Also read [version-differences.md](version-differences.md) when the user mentions FortiOS versions or a mixed-version estate, when a column comes back empty, or when the query uses packet/duration deltas, `srczone`/`dstzone` or GenAI app-control fields.
 
 ## Enum values
 
@@ -97,7 +101,9 @@ Ask before writing: should the daily average count all days in the report period
 - Always include `$filter` in WHERE — it provides mandatory time/device scope
 - Write `${...}` macro logic inline unless the macro is confirmed working (see the macro status table in faz-sql-reference.md). Many, e.g. `${USER}` and `${THREAT_*}`, don't expand in custom datasets
 - Use `devname` directly for device names. FAZ joins it onto every log row, so no `devtable_ext` join is needed
-- If FAZ reports "Missing columns", the column doesn't exist for that log type (unless the error starts with `MERGE:`, see Common Mistakes #12). Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
+- If FAZ reports "Missing columns", the column doesn't exist in that FAZ log table (unless the error starts with `MERGE:`, see Common Mistakes #12). That's never caused by the FortiGate's FortiOS version, because FAZ defines the same columns for all devices. Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
+- An older FortiOS leaves newer fields empty instead of failing. Packet/duration deltas need FortiOS 7.4+, and zones and GenAI fields need 7.6/7.6.4+. Warn the user when a report depends on them (see version-differences.md)
+- `$log-attack` holds IPS rows (`subtype='ips'`) and DoS anomaly rows (`subtype='anomaly'`). Always filter on `subtype`
 - Use `coalesce(sentdelta,sentbyte,0)` / `coalesce(rcvddelta,rcvdbyte,0)` for bytes
 - Use `bitAnd(logflag,bitOr(1,32))>0` for bandwidth (includes long-lived sessions)
 - Use `bitAnd(logflag,1)>0` for session counts

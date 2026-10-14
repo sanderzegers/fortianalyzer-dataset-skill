@@ -99,15 +99,14 @@ LEFT JOIN devtable_ext d ON log.dvid = d.dvid
 
 ```sql
 SELECT
-    coalesce(f_user, eu.euname, ipstr(t.srcip)) AS user_src,
-    coalesce(ep.epname, ipstr(t.srcip)) AS ep_src,
+    coalesce(f_user, eu.euname, ipstr(log_data.srcip)) AS user_src,
+    coalesce(ep.epname, ipstr(log_data.srcip)) AS ep_src,
     sum(bandwidth) AS bandwidth
 FROM (
-    SELECT srcip,
-           coalesce(nullifna(`user`), nullifna(`unauthuser`)) AS f_user,
+    SELECT srcip, f_user,
            (CASE WHEN epid < 1024 THEN NULL ELSE epid END) AS ep_id,
            (CASE WHEN euid < 1024 THEN NULL ELSE euid END) AS eu_id,
-           sum(coalesce(sentdelta,sentbyte,0)+coalesce(rcvddelta,rcvdbyte,0)) AS bandwidth
+           sum(bandwidth) AS bandwidth
     FROM ###(
         SELECT srcip,
                coalesce(nullifna(`user`), nullifna(`unauthuser`)) AS f_user,
