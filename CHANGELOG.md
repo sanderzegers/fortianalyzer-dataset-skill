@@ -2,6 +2,16 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.3.1 — 2026-10-14
+
+### Changed
+- Common Mistake #11 corrected: ClickHouse regex functions (`extract`, `regexpExtract`, `replaceRegexpOne`, `replaceRegexpAll`, `match`) work in FAZ datasets alongside the snake_case helpers. Only `regexExtract` doesn't exist.
+- FortiSandbox patterns count `uniqExact(jobid)` / `uniqExact(sha256)` instead of rows: in a cluster several members log the same job, so `count(*)` overcounted (3× on one 6-unit cluster).
+
+### Added
+- Common Mistakes #13–15: `WITH TOTALS` fails with `unimplemented 7`; grouping by a `LIKE`/`match()` result on a `LowCardinality` column fails; `$log-<type>` resolves within the selected device type, with aliases (FortiMail's `$log-malware` is its `virus` table), so one dataset can't join two device types.
+- Tested-features note in the grammar section; FortiSandbox `event` per-job columns documented as empty on a cluster.
+
 ## 0.3.0 — 2026-10-14
 
 ### Added

@@ -2,7 +2,7 @@
 
 FortiSandbox log types: `malware` (one row per scan job), `netalert` (network alerts from sniffer mode), `event` (system). Columns verified on FAZ 7.6 with FortiSandbox logs (October 2026). `netalert` had no rows, so its values are unverified.
 
-Use the macros `$log-malware`, `$log-netalert` and `$log-event` with the FortiSandbox device type. FAZ resolves them. Some query tools only know the FortiGate log-type list and reject `malware`/`netalert` by name; in FAZ itself they work.
+Use the macros `$log-malware`, `$log-netalert` and `$log-event` with the FortiSandbox device type. FAZ resolves them. Some query tools only know the FortiGate log-type list and reject `malware`/`netalert` by name; in FAZ itself they work. With another device type selected (FortiMail, for example), `$log-malware` resolves to that device's own table, so FortiSandbox data can't be joined into another device's query.
 
 ## Differences from other device types
 
@@ -26,7 +26,7 @@ FortiSandbox uses FortiOS-style names, unlike FortiMail, FortiWeb and FortiADC:
 | `mname` | String | AV/sandbox malware name (`W32/...!tr`, `Malware_Generic.P0`), `N/A` when none |
 | `fname` / `url` | String | File name (also set for `WEBLink` jobs) / URL: the submitted URL, or the download source of a file. Mostly `http(s)://...` |
 | `md5` / `sha256` | String | Hashes (32 / 64 hex characters), filled on every job including URL jobs. `sha1` was always empty |
-| `jobid` | Int64 | Scan job ID (unique per row) |
+| `jobid` | Int64 | Scan job ID. **Not always unique per row**: in a FortiSandbox cluster several members log the same job (seen: 3 rows per job, from 3 different `devid`s within a second, on one 6-unit cluster). Check with `SELECT rows_per_job, count(*) AS jobs FROM (SELECT jobid, count(*) AS rows_per_job FROM $log-malware WHERE $filter GROUP BY jobid) t GROUP BY rows_per_job`, and count jobs with `uniqExact(jobid)` and files with `uniqExact(sha256)`. A new scan of the same file is a new `jobid` |
 | `clientdev` / `clientvd` | String | Serial / VDOM of the device that submitted the file. Empty on `On-Demand` |
 | `devhost` | String | Host name of the FortiSandbox itself (not the submitter) |
 | `srcip` / `dstip`, `srcport` / `dstport`, `proto` | IPv6 / Int32 / String | Connection the file came from |
@@ -53,35 +53,35 @@ Columns: `virusid` (Int32), `attackid` (UInt32), `attackname`, `botnetname`, `sr
 | `action` | Mixed case: `update`, `monitor`, `SNMP`, `Scan`, `Rescan`, `controller`, `cluster`, `FDN`, `Login`, `Logout`, `Uploading`, `upload`, `White/Black`, `log`, `oftpd_file`, `netshare`, `Job`, `VM`, `connector`, `Kernel`, `Firmware` |
 | `status` | `success`, `failure` |
 | `user`, `ui`, `msg`, `reason`, `error` | Admin and system details |
-| Also | `jobid`, `md5`, `sha1`, `sha256`, `fname`, `url`, `risk`, `mname`, `mcate`, `vmname`, `vmos`, `clientdev`, `devhost`, `email`, `emlsndr`, `emlrcvr`, `subject`, `quarantine`, `sharename`, `harole`, `serial`, `version`, ... (filled per action) |
+| Also | Per-job columns, but in one 6-unit cluster `sha256`, `risk` and `mname` were empty on all ~189,000 event rows of 30 days (`jobid` set on 10, `fname` on 157): scan results go to `$log-malware`. Here `jobid` is a String, not Int64. Columns: `jobid`, `md5`, `sha1`, `sha256`, `fname`, `url`, `risk`, `mname`, `mcate`, `vmname`, `vmos`, `clientdev`, `devhost`, `email`, `emlsndr`, `emlrcvr`, `subject`, `quarantine`, `sharename`, `harole`, `serial`, `version`, ... (filled per action) |
 
 ## Key Patterns
 
 ```sql
 -- Verdicts by submission source
-SELECT stype, risk, count(*) AS jobs
+SELECT stype, risk, uniqExact(jobid) AS jobs, uniqExact(sha256) AS files
 FROM $log-malware
 WHERE $filter
 GROUP BY stype, risk
 ORDER BY jobs DESC
 
 -- Detections by malware category and file type
-SELECT risk, mcate, ftype, count(*) AS jobs
+SELECT risk, mcate, ftype, uniqExact(jobid) AS jobs, uniqExact(sha256) AS files
 FROM $log-malware
 WHERE $filter AND risk NOT IN ('Clean', '')
 GROUP BY risk, mcate, ftype
 ORDER BY jobs DESC
 
 -- Which devices submit the most (and how many detections)
-SELECT clientdev, clientvd, count(*) AS jobs,
-       countIf(risk IN ('High Risk', 'Malicious')) AS high_or_malicious
+SELECT clientdev, clientvd, uniqExact(jobid) AS jobs,
+       uniqExactIf(jobid, risk IN ('High Risk', 'Malicious')) AS high_or_malicious
 FROM $log-malware
 WHERE $filter AND stype != 'On-Demand'
 GROUP BY clientdev, clientvd
 ORDER BY jobs DESC
 
 -- Average scan duration per file type (seconds)
-SELECT ftype, count(*) AS jobs, avg(scanend - scanstart) AS avg_scan_s
+SELECT ftype, uniqExact(jobid) AS jobs, avg(scanend - scanstart) AS avg_scan_s
 FROM $log-malware
 WHERE $filter AND scanend >= scanstart AND scanstart > 0
 GROUP BY ftype
