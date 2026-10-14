@@ -2,6 +2,17 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.4.0 — 2026-10-14
+
+### Added
+- Investigation mode: `investigating.md` covers answering questions directly from FAZ logs through a SQL tool. It covers finding where an event is logged, exploring with counts, `msg` templates and hashed identities, data minimisation, correlating across tables and device types, and verifying time-based matches.
+- `fortimail-logmodel.md`: where each kind of FortiMail event is logged (quarantine release, open and download, history-log release, admin log access, config changes), `session_id` links across all four tables and to FortiSandbox by SHA-256, delivery status from the SMTP event lines, and patterns for release auditing, newsletter-flood detection (with threshold calibration) and delivery status.
+- `fortimail.md`: row grain per table, `msg` families, long `msg` values split over several rows, `LowCardinality` cast, classifier caveats.
+- FortiSandbox: archive contents scanned as separate jobs, static vs VM verdicts, verdicts that change between scans, and the link to FortiMail.
+
+### Notes
+- The log model was mapped on one production deployment. Counts and thresholds from it are marked as such, with queries to check them on another FAZ.
+
 ## 0.3.1 — 2026-10-14
 
 ### Changed
