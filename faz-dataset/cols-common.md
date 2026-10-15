@@ -26,8 +26,8 @@ FAZ joins these onto every `$log-*` row, so **no `devtable_ext` join is needed**
 | Column | Type | Description |
 |---|---|---|
 | **`dvid`** | Int32 | Device ID (join to `devtable_ext.dvid` for device name) |
-| **`itime`** | DateTime | Ingestion timestamp — `$filter` filters on this |
-| **`dtime`** | DateTime | Device timestamp (when event occurred) — use `from_dtime(dtime)` for display |
+| **`itime`** | DateTime | Time the FAZ received the row (seconds after the event) — `$filter` filters on this. `toString`/`toDate`/`toHour` of it give UTC unless you pass `timezone()` |
+| **`dtime`** | DateTime | Device timestamp (when the event occurred) on the device's own clock and time zone — use `from_dtime(dtime)` for display; don't compare it across devices |
 | **`euid`** | Int32 | End-user ID — join to `$ADOM_ENDUSER.euid`; values <1024 are system |
 | **`epid`** | Int32 | Endpoint ID — join to `$ADOM_ENDPOINT.epid`; values <1024 are system |
 | `dsteuid` | Int32 | Destination end-user ID |

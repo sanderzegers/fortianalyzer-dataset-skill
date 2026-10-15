@@ -121,6 +121,7 @@ Ask before writing: should the daily average count all days in the report period
 
 - Always use `$log-{type}` as the table in FROM — never hardcode `sp1_FGT_tlog` etc.
 - Always include `$filter` in WHERE — it provides mandatory time/device scope
+- Mind the clocks: periods and `$flex_timescale` use the FAZ time zone, `toDate(itime)` / `toHour(itime)` are UTC unless you pass `timezone()`, and `dtime` is each device's own clock. "Last N days" periods exclude today. When you report a result, say which window it covers (faz-sql-reference.md "Time zones" and "Report periods")
 - Write `${...}` macro logic inline unless the macro is confirmed working (see the macro status table in faz-sql-reference.md). Many, e.g. `${USER}` and `${THREAT_*}`, don't expand in custom datasets
 - Use `devname` directly for device names. FAZ joins it onto every log row (all device types), so no `devtable_ext` join is needed
 - If FAZ reports "Missing columns", the column doesn't exist in that FAZ log table (unless the error starts with `MERGE:`, see Common Mistakes #12). That's never caused by the FortiGate's FortiOS version, because FAZ defines the same columns for all devices. Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns
