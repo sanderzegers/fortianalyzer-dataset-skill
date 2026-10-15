@@ -81,6 +81,7 @@ To correlate two devices, run one query per device and carry the keys across:
 | FortiMail `virus` | FortiSandbox `malware` | SHA-256: `extract(msg, 'checksum: ([0-9a-fA-F]{64})')` ↔ `lower(sha256)` | FortiMail logs only the rating; FortiSandbox adds `mcate`, `ftype`, `vmos`. Files inside an archive get their **own** jobs and hashes, so the archive's hash shows the container's verdict only |
 | FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
+| FortiWeb attack | FortiWeb traffic | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 s | 98.7–100 %; `msg_id` does **not** link them; see fortiweb-logmodel.md |
 | FortiGate security logs | FortiGate traffic | `devid` + `vd` + `sessionid` | 81–96 % match within the same hour; see fortigate-logmodel.md "Linking records" |
 
 ## Verify before you claim

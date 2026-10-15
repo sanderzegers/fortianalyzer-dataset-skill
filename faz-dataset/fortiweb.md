@@ -2,13 +2,15 @@
 
 FortiWeb log types: `attack` (WAF detections), `traffic` (one row per HTTP transaction), `event` (system and admin). Columns verified on two FAZ 7.6 instances with FortiWeb logs (October 2026); names and types were identical on both. FortiWeb's `$log-attack` and `$log-traffic` are separate tables from FortiGate's: none of the FortiGate column files apply.
 
+Which `log_id` stands for which event, how attack rows link to traffic rows, and tested patterns are in [fortiweb-logmodel.md](fortiweb-logmodel.md). The FortiWeb Log Message Reference doesn't match the `log_id`s that FortiWeb 7.6+ sends (configuration changes are all `9000001`), so take event IDs from real logs, not from the reference.
+
 ## Differences from FortiGate tables
 
 | FortiGate name | FortiWeb name | Notes |
 |---|---|---|
 | `devid` | **`device_id`** | `devid` → "Missing columns". `dev_id` (String) is FortiWeb's own serial field. `devname` works as usual |
 | `level` | **`pri`** | Text: `alert` (all attack rows), `notice` (traffic), `critical` ... `information` (event) |
-| `logid` | **`log_id`** | UInt64 |
+| `logid` | **`log_id`** | UInt64: leading zeros of the device's 8-digit ID are dropped (`09000001` → `9000001`). `msg_id` is a running number per record, not per request |
 | `srcip` / `dstip` | **`src`** / **`dst`** | `Nullable(IPv6)`, use `ipstr()` |
 | `srcport` / `dstport` | **`src_port`** / **`dst_port`** | UInt16 |
 | `policyname` | **`policy`** | Server policy name |
