@@ -40,7 +40,7 @@ Not seen in the logs examined: releases by end users from the personal quarantin
 | `history` | `event` (`subtype='smtp'`) | `session_id` | Delivery status. All 956 accepted inbound sessions in a 6-hour sample of one deployment had matching lines |
 | `emailfilter` release line | `history` of the **quarantined** message | `extract(msg, 'original session ID\\(([^)]+)\\)')` ↔ `session_id` | Reason, domain and quarantine time of a released message |
 | `emailfilter` release line | `history` of the **re-delivered** copy | `extract(msg, 'session ID\\(([^)]+)\\), original')` ↔ `session_id` | The re-scanned copy gets a new session, classifier `Not Spam` in almost every case |
-| `virus` | FortiSandbox `malware` | SHA-256 from `msg` (`checksum: ...`) ↔ `sha256` | A second query with the FortiSandbox device type (see investigating.md) |
+| `virus` | FortiSandbox `malware` | SHA-256 from `msg` (`checksum: ...`) ↔ `sha256` | A second query with the FortiSandbox device type and the **same period** (see investigating.md). 99.7 % of submitted files matched, on both cluster units. FortiMail's file names (`<queue ID>…#<original name>`) differ from FortiSandbox's `fname`, so the hash is the only key |
 | `history` | `history` | `message_id` | The same message in several sessions (forwarding, re-sends). Empty on rejected sessions |
 
 ## Delivery status

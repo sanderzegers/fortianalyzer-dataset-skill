@@ -94,6 +94,18 @@ ORDER BY hodex
 
 ---
 
+### Report periods end before the current day or hour
+
+FAZ's "last N" periods cover complete days or hours only, tested on FAZ 7.6 at 11:06:
+
+| Period | Window |
+|---|---|
+| Today | 00:00 → now |
+| Last N hours (`last-n-hours 2`) | 09:00 – 10:59: the current hour is excluded |
+| Last N days (`last-n-days 1`), Last 7 / 30 days | Complete days up to yesterday 23:59: **today is excluded** |
+
+A report for "the last 7 days" therefore never shows today's events. When comparing two queries, give both the **same** period: comparing today's rows with a "last 30 days" window finds almost nothing, because that window ended at midnight.
+
 ## ${MACRO} Expansions
 
 > **Custom datasets:** not every `${...}` macro expands in GUI datasets. An unexpanded macro fails with a syntax error at `$`. Tested on two FAZ 7.6 instances with FortiOS 7.2, 7.4 and 7.6 logs. FAZ expands the macros, so the result doesn't depend on the FortiOS version:
@@ -505,7 +517,7 @@ ORDER BY hits DESC
 14. **Grouping by a boolean from a `LowCardinality` column** — `GROUP BY match(classifier, 'x')` or a `LIKE` result fails with `LowCardinality(UInt8) is not supported`. Cast the column first: `match(CAST(ifNull(col, '') AS String), 'x')`, or group by an `if(..., 'yes', 'no')` built on the cast value
 15. **Macros resolve within the dataset's device type** — `$log-<type>` always maps to a table of the selected device type, and some names are aliases (with FortiMail selected, `$log-malware` is FortiMail's `virus` table). A query that runs doesn't prove it read the table you meant. With `$log-` macros, one dataset can't join logs of two device types
 16. **An alias that matches a real column** — ``SELECT `user` AS admin ... GROUP BY admin`` fails on FortiGate event logs with ``Column `user` is not under aggregate function``, because `admin` is also a column and `GROUP BY` takes the column. Pick aliases that aren't column names (`admin_user`), or group by the expression
-17. **Filtering on a numeric `logid`** — wherever `logid` is a number instead of FortiGate's 10-digit string, FAZ handles a `logid` condition in `WHERE`/`HAVING` as if it were a string, so the filter breaks: `WHERE logid IN (20101, 20102)` **silently returns 0 rows**, and `WHERE logid = 20102` or `logid > 0` fails with "no supertype for types String, UInt16". The same condition inside `SELECT` (`countIf(logid IN (...))`, a `multiIf` you group by) works. Affected: FortiAuthenticator `event` (tested on two FAZes: `WHERE logid IN` 0 rows vs `countIf` 80,181) and FortiClient `fct-event` (same error; no data to compare counts). Not affected: string `logid` (FortiGate, FortiSandbox, FortiManager `appevent`) and FortiWeb's numeric `log_id`. Filter on another column (`logdesc`, `subtype`) and keep `logid` inside `SELECT` expressions. When a filter returns 0 rows unexpectedly, compare it with the same condition inside `countIf` over the unfiltered rows
+17. **Filtering on a numeric `logid`** — wherever `logid` is a number instead of FortiGate's 10-digit string, FAZ handles a `logid` condition in `WHERE`/`HAVING` as if it were a string, so the filter breaks: `WHERE logid IN (20101, 20102)` **silently returns 0 rows**, and `WHERE logid = 20102` or `logid > 0` fails with "no supertype for types String, UInt16". The same condition inside `SELECT` (`countIf(logid IN (...))`, a `multiIf` you group by) works. Affected: FortiAuthenticator `event` (`WHERE logid IN` 0 rows vs `countIf` 80,181) and FortiClient `fct-event` (0 rows vs 193,281), both tested with real data. Not affected: string `logid` (FortiGate, FortiSandbox, FortiManager `appevent`) and FortiWeb's numeric `log_id`. Filter on another column (`logdesc`, `subtype`) and keep `logid` inside `SELECT` expressions. When a filter returns 0 rows unexpectedly, compare it with the same condition inside `countIf` over the unfiltered rows
 
 ---
 
