@@ -2,6 +2,17 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.12.0 — 2026-10-15
+
+### Added
+- `faz-sql-reference.md` "Time zones": which clock each value uses, tested on two FAZ 7.6 instances. Periods, `$flex_timescale()`, `$hour_of_day` and `from_itime()` use the FAZ time zone. `toString/toDate/toHour(itime)` are UTC unless given `timezone()`. `dtime` is each device's own clock (devices from UTC−4 to UTC+11 on one estate). FortiGate logs reach the FAZ within seconds (99th percentile 3–39 s), so devices are compared on `itime` with about 60 s of slack. Includes a query showing each device's UTC offset.
+- "Report periods" now covers every period type: weeks start on Sunday, `last-n-weeks` is whole past weeks, and a custom end is inclusive only up to `hh:mm:00`. Also how to report the window a result covers (fortianalyzer-sql-mcp now returns it as `window` and accepts `start='-24h'`).
+- Common Mistake #18: per-day counts with `toDate(itime)` split days at UTC midnight; matching devices on `dtime` is off by their time zone difference.
+
+### Fixed
+- Cross-device links that compare times now say which clock to use: FortiWeb ↔ FortiGate on `dtime` only when both devices share a time zone, otherwise on `itime`; FortiMail ↔ FortiSandbox and FortiAuthenticator ↔ FortiGate on `itime`.
+- `cols-common.md`: `itime` and `dtime` descriptions now name their time zones.
+
 ## 0.11.0 — 2026-10-15
 
 ### Added

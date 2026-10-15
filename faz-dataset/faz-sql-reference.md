@@ -94,17 +94,45 @@ ORDER BY hodex
 
 ---
 
-### Report periods end before the current day or hour
+### Time zones: which clock each value uses
 
-FAZ's "last N" periods cover complete days or hours only, tested on FAZ 7.6 at 11:06:
+Three clocks appear in a query. Tested on two FAZ 7.6 instances running in Europe/Amsterdam:
+
+| Value | Clock |
+|---|---|
+| `$filter`, report periods, `$start_time` / `$end_time` | FAZ time zone (`timezone()` returns it) |
+| `$flex_timescale()`, `$hour_of_day`, `from_itime()` | FAZ time zone |
+| `toString(itime)`, `toDate(itime)`, `toHour(itime)` | **UTC**. Pass the zone to get FAZ time: `toDate(itime, timezone())`, `toHour(itime, timezone())`, `toString(itime, timezone())` |
+| `dtime`, `from_dtime(dtime)` | **The device's own clock**, stored without a zone. On one estate the devices ran from UTC−4 to UTC+11 |
+
+- **Filter, bucket and compare across devices on `itime`.** It is the time the FAZ received the row, and FortiGate logs arrive within seconds: median 0–1 s, 99th percentile 3 s on one FAZ and 39 s on another (largest 131 s, 47 FortiGates). Allow about 60 s of slack when matching on `itime`.
+- **Use `dtime` only within one device**: to order a device's own events, measure durations, or show the local time at that device. Comparing `dtime` of two devices is only right when they run in the same time zone.
+- **Days and hours in FAZ time**: `toDate(itime)` cuts days at UTC midnight (02:00 in Central European summer time). Use `toDate(itime, timezone())`, `$flex_timestamp` or `$hour_of_day`.
+
+Each device's offset from UTC (the column is `devid` on FortiGate, `device_id` on FortiWeb). This assumes the device clock is synchronised; a wrong clock shows up as an odd offset:
+
+```sql
+SELECT devname, round((toInt64(dtime) - toInt64(itime)) / 900) / 4 AS utc_offset_h, count(*) AS cnt
+FROM $log-event
+WHERE $filter
+GROUP BY devname, utc_offset_h
+ORDER BY utc_offset_h
+```
+
+### Report periods
+
+FAZ's report periods use the FAZ time zone. "Last N" periods cover complete days, hours or weeks only. Tested on FAZ 7.6 on a Thursday at 17:03:
 
 | Period | Window |
 |---|---|
-| Today | 00:00 → now |
-| Last N hours (`last-n-hours 2`) | 09:00 – 10:59: the current hour is excluded |
-| Last N days (`last-n-days 1`), Last 7 / 30 days | Complete days up to yesterday 23:59: **today is excluded** |
+| Today, This week, This month, ... | From the start of the day / week / month up to now. Weeks start on Sunday |
+| Yesterday | Yesterday 00:00:00 – 23:59:59 |
+| Last N days (`last-n-days`), Last 7 / 14 / 30 days | Complete days up to yesterday 23:59:59: **today is excluded** |
+| Last N hours (`last-n-hours 2`) | 15:00:00 – 16:59:59: **the current hour is excluded** |
+| Last N weeks (`last-n-weeks 1`), Last week | Complete Sunday–Saturday weeks before the current one |
+| Custom | Start to end, to the minute. The end is included only up to `hh:mm:00` |
 
-A report for "the last 7 days" therefore never shows today's events. When comparing two queries, give both the **same** period: comparing today's rows with a "last 30 days" window finds almost nothing, because that window ended at midnight.
+A report for "the last 7 days" therefore never shows today's events. When comparing two queries, give both the **same** period: comparing today's rows with a "last 30 days" window finds almost nothing, because that window ended at midnight. For "the last 24 hours" up to now, use a custom period. When reporting a result, say which window and time zone it covers. Query tools may return this (fortianalyzer-sql-mcp returns `window`); otherwise select `toString(toDateTime($start_time))`, `toString(toDateTime($end_time))` and `timezone()`.
 
 ## ${MACRO} Expansions
 
@@ -518,6 +546,7 @@ ORDER BY hits DESC
 15. **Macros resolve within the dataset's device type** — `$log-<type>` always maps to a table of the selected device type, and some names are aliases (with FortiMail selected, `$log-malware` is FortiMail's `virus` table). A query that runs doesn't prove it read the table you meant. With `$log-` macros, one dataset can't join logs of two device types
 16. **An alias that matches a real column** — ``SELECT `user` AS admin ... GROUP BY admin`` fails on FortiGate event logs with ``Column `user` is not under aggregate function``, because `admin` is also a column and `GROUP BY` takes the column. Pick aliases that aren't column names (`admin_user`), or group by the expression
 17. **Filtering on a numeric `logid`** — wherever `logid` is a number instead of FortiGate's 10-digit string, FAZ handles a `logid` condition in `WHERE`/`HAVING` as if it were a string, so the filter breaks: `WHERE logid IN (20101, 20102)` **silently returns 0 rows**, and `WHERE logid = 20102` or `logid > 0` fails with "no supertype for types String, UInt16". The same condition inside `SELECT` (`countIf(logid IN (...))`, a `multiIf` you group by) works. Affected: FortiAuthenticator `event` (`WHERE logid IN` 0 rows vs `countIf` 80,181) and FortiClient `fct-event` (0 rows vs 193,281), both tested with real data. Not affected: string `logid` (FortiGate, FortiSandbox, FortiManager `appevent`) and FortiWeb's numeric `log_id`. Filter on another column (`logdesc`, `subtype`) and keep `logid` inside `SELECT` expressions. When a filter returns 0 rows unexpectedly, compare it with the same condition inside `countIf` over the unfiltered rows
+18. **Days and hours in UTC, or on device clocks** — `toDate(itime)` and `toHour(itime)` are UTC, so a per-day count splits days at UTC midnight instead of FAZ midnight; use `toDate(itime, timezone())` or `$flex_timestamp`. `dtime` is each device's own clock: matching two devices on `dtime` is off by their time zone difference. Compare across devices on `itime` (see "Time zones")
 
 ---
 
@@ -543,7 +572,7 @@ This is the authoritative list for closed-set fields. The "Real Values Discovere
 
 - **IP columns** (`srcip`, `dstip`): `Nullable(IPv6)` — IPv4 stored as `::ffff:192.168.1.1`. Always `ipstr()`.
 - **`sentbyte` vs `sentdelta`**: use `coalesce(sentdelta, sentbyte, 0)` — delta for long-lived, byte for closed sessions. `sentbyte` is cumulative on interim logs. In testing, `sum(sentbyte)` alone came out ~1,600× too high.
-- **`itime` vs `dtime`**: `$filter` filters on `itime`; use `from_dtime(dtime)` for device-local time display.
+- **`itime` vs `dtime`**: `$filter` filters on `itime`. `toDate(itime)` / `toHour(itime)` are UTC unless you pass `timezone()`; `dtime` is each device's own clock, so don't compare it across devices (see "Time zones" above).
 - **`logid`**: `LowCardinality(String)` — use `logid_to_int(logid)` for numeric compare.
 - **`N/A` sentinels**: `user`, `unauthuser`, `app` columns use `"N/A"` instead of NULL — always `nullifna()`.
 - **`epid`/`euid` < 1024**: system-reserved, meaningless for joins — guard with `CASE WHEN epid < 1024 THEN NULL`.

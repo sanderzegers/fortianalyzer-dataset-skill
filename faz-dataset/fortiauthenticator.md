@@ -48,7 +48,7 @@ Log types the device can send but that never occurred on either FAZ: RADIUS acco
 
 ## Correlating with FortiGate VPN logins
 
-When a FortiGate authenticates VPN users against FortiAuthenticator (RADIUS), there is no shared key: match FortiGate tunnel-up / login rows to FortiAuthenticator rows by **user name and time** (FortiAuthenticator event within about 2 minutes before the tunnel-up). Normalise names first, since the two sides write them differently: `lower(replaceRegexpAll(user, '^.*\\\\|@.*$', ''))` turns `DOMAIN\user` and `user@domain` into `user`. **Untested:** in both estates examined, FortiGate VPN didn't authenticate through FortiAuthenticator (1 of 577 SSL VPN logins and 0 of 810 IPsec tunnels had a matching event), so match rates are unknown. Run the comparison in two queries, one per device type (investigating.md).
+When a FortiGate authenticates VPN users against FortiAuthenticator (RADIUS), there is no shared key: match FortiGate tunnel-up / login rows to FortiAuthenticator rows by **user name and time** (FortiAuthenticator event within about 2 minutes before the tunnel-up, compared on `itime`: `dtime` is each device's own clock). Normalise names first, since the two sides write them differently: `lower(replaceRegexpAll(user, '^.*\\\\|@.*$', ''))` turns `DOMAIN\user` and `user@domain` into `user`. **Untested:** in both estates examined, FortiGate VPN didn't authenticate through FortiAuthenticator (1 of 577 SSL VPN logins and 0 of 810 IPsec tunnels had a matching event), so match rates are unknown. Run the comparison in two queries, one per device type (investigating.md).
 
 ## Key Patterns
 
