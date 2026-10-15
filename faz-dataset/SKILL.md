@@ -134,7 +134,7 @@ Ask before writing: should the daily average count all days in the report period
 - Use `ipstr()` to format IP addresses for display
 - Use `nullifna()` on `user`, `unauthuser`, `app` columns (they use "N/A" sentinel)
 - Use `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` for user identity
-- `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event where logid is UInt64). The logid tables in this skill are a selection; for a logid not listed, use the FortiOS Log Message Reference for the device's version, or list the subtype from the FAZ (fortigate-logmodel.md). Never treat a logid as non-existent because it isn't in the logs
+- `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event where logid is UInt64). [fortigate-logids.tsv](fortigate-logids.tsv) lists every FortiGate logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1 (logid, message ID, name, meaning, type, subtype, severity, versions). **Search it with grep, never read it whole** (about 1,550 lines): `grep -i 'failover' fortigate-logids.tsv`, `grep '^0100032021' fortigate-logids.tsv`. It says which events exist and what they mean; real logs show which fields are filled. Never treat a logid as non-existent because it isn't in the logs
 - `epid`/`euid` < 1024 are system IDs — null them out before endpoint/user joins
 - Omit LIMIT by default — the chart's Top-N setting controls row count; add LIMIT only if the user asks or the dataset feeds a table with no Top-N
 

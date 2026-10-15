@@ -27,7 +27,7 @@ Some logids belong to other tables: `0201009233` "File submitted to Sandbox" is 
   ORDER BY n DESC
   ```
   Searching `logdesc` by keyword can miss: the HA failover event reads "Virtual cluster member state moved", without the word "failover".
-- **Which logid stands for an event that hasn't happened yet?** Look it up in the [FortiOS Log Message Reference](https://docs.fortinet.com/product/fortigate) for the FortiGate's version, under "Log ID numbers". It covered 325 of the 328 logids seen in real logs (7.6.4). It lists the fields an event *can* carry; real logs show which are filled (`0100032021` lists `user`, but it is always empty).
+- **Which logid stands for an event that hasn't happened yet?** Grep [fortigate-logids.tsv](fortigate-logids.tsv): every logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1, built from Fortinet's Log Message Reference (`scripts/build-fortigate-logids.py`). All 328 logids seen in real logs on both FAZes are in it with the same 10-digit value. For another FortiOS version, rebuild the file or use the [FortiOS Log Message Reference](https://docs.fortinet.com/product/fortigate) online. The reference lists the fields an event *can* carry; real logs show which are filled (`0100032021` lists `user`, but it is always empty).
 - Never conclude that a logid doesn't exist because it isn't in your logs.
 
 Always filter on the full `logid`. `logdesc` text can change between FortiOS versions (`0100022222` is "Threat feed loaded" on one FAZ and "External resource loaded" on the other), and some `logdesc` values occur under two logids (see VPN).
@@ -93,7 +93,7 @@ Wi-Fi 802.1X results are under `wireless`: `0104043630` RADIUS authentication su
 | `0108037897` / `0108037898` | HA device interface ready / failed | |
 | `0108037903` | Synchronization status with primary | Periodic |
 | `0108035011` / `0108035012` | HA secondary synchronization failed / Secondary sync failed | *Not seen*; from the reference |
-| `0108035013` | HA failover failed | *Not seen*; from the reference |
+| `0108035013` / `0108035016` | HA failover failed / HA failover success | *Not seen*; from the reference. The failovers on both FAZes were logged as `0108037892` |
 | `0108035001`–`0108035004` | HA secondary synchronized (Virus, Extended, FLDB) database | After signature updates |
 
 ### SD-WAN, interfaces, routing
