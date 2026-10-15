@@ -2,7 +2,7 @@
 
 **Important differences from FortiGate logs:** endpoint-agent logs, not network device logs.
 - No `srcip`/`dstip` — uses `deviceip`/`remip` instead
-- `logid` is **UInt64** (not String) — do NOT use `logid_to_int()`
+- `logid` is **UInt64** (not String) — do NOT use `logid_to_int()`. Don't filter on it in `WHERE`/`HAVING` either: FAZ handles a `logid` filter as a string, so `WHERE logid = 12345` fails with "no supertype for types String, UInt16" (Common Mistake #17). Count by `logid` inside `SELECT` (`countIf`) instead
 - No `sessionid` / `policyid`
 
 All common columns apply where relevant (see cols-common.md).

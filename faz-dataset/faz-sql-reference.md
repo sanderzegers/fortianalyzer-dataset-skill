@@ -505,6 +505,7 @@ ORDER BY hits DESC
 14. **Grouping by a boolean from a `LowCardinality` column** — `GROUP BY match(classifier, 'x')` or a `LIKE` result fails with `LowCardinality(UInt8) is not supported`. Cast the column first: `match(CAST(ifNull(col, '') AS String), 'x')`, or group by an `if(..., 'yes', 'no')` built on the cast value
 15. **Macros resolve within the dataset's device type** — `$log-<type>` always maps to a table of the selected device type, and some names are aliases (with FortiMail selected, `$log-malware` is FortiMail's `virus` table). A query that runs doesn't prove it read the table you meant. With `$log-` macros, one dataset can't join logs of two device types
 16. **An alias that matches a real column** — ``SELECT `user` AS admin ... GROUP BY admin`` fails on FortiGate event logs with ``Column `user` is not under aggregate function``, because `admin` is also a column and `GROUP BY` takes the column. Pick aliases that aren't column names (`admin_user`), or group by the expression
+17. **Filtering on a numeric `logid`** — wherever `logid` is a number instead of FortiGate's 10-digit string, FAZ handles a `logid` condition in `WHERE`/`HAVING` as if it were a string, so the filter breaks: `WHERE logid IN (20101, 20102)` **silently returns 0 rows**, and `WHERE logid = 20102` or `logid > 0` fails with "no supertype for types String, UInt16". The same condition inside `SELECT` (`countIf(logid IN (...))`, a `multiIf` you group by) works. Affected: FortiAuthenticator `event` (tested on two FAZes: `WHERE logid IN` 0 rows vs `countIf` 80,181) and FortiClient `fct-event` (same error; no data to compare counts). Not affected: string `logid` (FortiGate, FortiSandbox, FortiManager `appevent`) and FortiWeb's numeric `log_id`. Filter on another column (`logdesc`, `subtype`) and keep `logid` inside `SELECT` expressions. When a filter returns 0 rows unexpectedly, compare it with the same condition inside `countIf` over the unfiltered rows
 
 ---
 
@@ -534,7 +535,7 @@ This is the authoritative list for closed-set fields. The "Real Values Discovere
 - **`logid`**: `LowCardinality(String)` — use `logid_to_int(logid)` for numeric compare.
 - **`N/A` sentinels**: `user`, `unauthuser`, `app` columns use `"N/A"` instead of NULL — always `nullifna()`.
 - **`epid`/`euid` < 1024**: system-reserved, meaningless for joins — guard with `CASE WHEN epid < 1024 THEN NULL`.
-- **`fct-event` logid**: `UInt64` not String — do NOT use `logid_to_int()`.
+- **`fct-event` logid**: `UInt64` not String — do NOT use `logid_to_int()`, and don't filter on it in `WHERE` (Common Mistake #17).
 
 ---
 

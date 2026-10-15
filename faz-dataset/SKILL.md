@@ -61,7 +61,7 @@ FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and For
 | FortiADC (20) | `traffic`, `event`, `attack` | [fortiadc.md](fortiadc.md) |
 | FortiSandbox (10) | `malware`, `netalert`, `event` | [fortisandbox.md](fortisandbox.md) |
 | FortiManager (1), FortiAnalyzer (7) | `event`, `appevent` | [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |
-| FortiAuthenticator (12) | `event` | [fortiauthenticator.md](fortiauthenticator.md) |
+| FortiAuthenticator (12) | `event` | [fortiauthenticator.md](fortiauthenticator.md); all 238 log types of 6.6.9: [fortiauthenticator-logids.tsv](fortiauthenticator-logids.tsv) (grep it). Never filter on `logid` (Common Mistake #17) |
 
 The same `$log-<type>` macro means a different table per device type: FortiWeb's `$log-attack` is not FortiGate's, and with FortiMail selected `$log-malware` is FortiMail's own `virus` table. One query or dataset reads one device type; to correlate two devices, query each and carry the keys across (investigating.md). The device type comes from the report or dataset settings in FAZ, not from the SQL, so ask which device the dataset is for when the request doesn't say. FortiMail, FortiWeb and FortiADC name the device column `device_id` (not `devid`) and the severity `pri` (not `level`); FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator use `devid` and `level`.
 
@@ -134,7 +134,7 @@ Ask before writing: should the daily average count all days in the report period
 - Use `ipstr()` to format IP addresses for display
 - Use `nullifna()` on `user`, `unauthuser`, `app` columns (they use "N/A" sentinel)
 - Use `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` for user identity
-- `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event where logid is UInt64). [fortigate-logids.tsv](fortigate-logids.tsv) lists every FortiGate logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1 (logid, message ID, name, meaning, type, subtype, severity, versions). **Search it with grep, never read it whole** (about 1,550 lines): `grep -i 'failover' fortigate-logids.tsv`, `grep '^0100032021' fortigate-logids.tsv`. It says which events exist and what they mean; real logs show which fields are filled. Never treat a logid as non-existent because it isn't in the logs
+- `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event and FortiAuthenticator, where `logid` is UInt64; there, never filter on `logid` in `WHERE`/`HAVING`, see Common Mistake #17). [fortigate-logids.tsv](fortigate-logids.tsv) lists every FortiGate logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1 (logid, message ID, name, meaning, type, subtype, severity, versions). **Search it with grep, never read it whole** (about 1,550 lines): `grep -i 'failover' fortigate-logids.tsv`, `grep '^0100032021' fortigate-logids.tsv`. It says which events exist and what they mean; real logs show which fields are filled. Never treat a logid as non-existent because it isn't in the logs
 - `epid`/`euid` < 1024 are system IDs — null them out before endpoint/user joins
 - Omit LIMIT by default — the chart's Top-N setting controls row count; add LIMIT only if the user asks or the dataset feeds a table with no Top-N
 

@@ -1,0 +1,239 @@
+logid	name	logdesc	sub_category	faz_subtype	description	seen_in_logs
+10001	Entry Addition	GUI_ENTRY_ADDITION	Admin Configuration	Admin	Logs entry addition event performed through the GUI	yes
+10002	Entry Change	GUI_ENTRY_CHANGE	Admin Configuration	Admin	Logs entry change event performed through the GUI	yes
+10003	Entry Deletion	GUI_ENTRY_DELETION	Admin Configuration	Admin	Logs entry deletion event performed through the GUI	yes
+10050	Email Set	EMAIL_SET	Admin Configuration	Admin	Logs Email set event on existing user	yes
+10051	Email Change	EMAIL_CHANGE	Admin Configuration	Admin	Logs Email change event on existing user	yes
+10052	Alternate Email Set		Admin Configuration	Admin	Logs alternate Email set event on existing user	no
+10053	Alternate Email Change		Admin Configuration	Admin	Logs alternate Email change event on existing user	no
+10054	Mobile Set	MOBILE_SET	Admin Configuration	Admin	Logs mobile number set event on existing user	yes
+10055	Mobile Change		Admin Configuration	Admin	Logs mobile number change event on existing user	no
+10056	Email Delete		Admin Configuration	Admin	Logs Email delete event on existing user	no
+10057	Alternate Email Delete		Admin Configuration	Admin	Logs alternate Email delete event on existing user	no
+10058	Mobile Delete		Admin Configuration	Admin	Logs mobile number delete event on existing user	no
+10101	FortiToken Seed Activation		Admin Configuration	Admin	Logs FortiToken seed retrieval from FortiGuard server	no
+10102	FortiToken Import		Admin Configuration	Admin	Logs importing FortiTokens from a file	no
+10103	FortiToken Status Change		Admin Configuration	Admin	Logs FortiToken status change event (e.g. enabled/disabled)	no
+10104	FortiToken Mobile Activation		Admin Configuration	Admin	Logs FortiToken Mobile activation process	no
+10105	FortiToken Cloud Activation		Admin Configuration	Admin	Logs FortiToken Cloud activation process	no
+10106	FortiToken Export		Admin Configuration	Admin	Logs exporting FortiTokens to a file	no
+10107	FortiToken Synchronization		Admin Configuration	Admin	Logs FortiToken synchronization events	no
+10108	FortiToken Request		Admin Configuration	Admin	Logs FortiToken request events	no
+10109	FortiToken Revoke		Admin Configuration	Admin	Logs FortiToken revoke events	no
+10110	FortiToken Transfer		Admin Configuration	Admin	Logs FortiToken transfer events	no
+10111	FortiToken Cloud Synchronization		Admin Configuration	Admin	Logs FortiToken Cloud synchronization events	no
+10112	FortiToken Cloud Request		Admin Configuration	Admin	Logs FortiToken Cloud request events	no
+10113	FortiToken Cloud Revoke		Admin Configuration	Admin	Logs FortiToken Cloud revoke events	no
+10114	FortiToken Cloud Migration		Admin Configuration	Admin	Logs FortiToken Cloud migration events	no
+10121	Certificate Import		Admin Configuration	Admin	Logs certificate import event	no
+10122	Certificate Private Key Download	CERT_KEY	Admin Configuration	Admin	Logs download activity for a certificate's private key	yes
+10123	Certificate Revocation List Import		Admin Configuration	Admin	Logs Certificate Revocation List (CRL) import event	no
+10124	PKCS12 Certificate Export	CERT_PKCS12_EXPORT	Admin Configuration	Admin	Logs PKCS12 (certificate and private key) export event	yes
+10125	Certificate Signing	CERT_SIGN	Admin Configuration	Admin	Logs certificate signing event	yes
+10126	Certificate Revocation		Admin Configuration	Admin	Logs certificate revocation event	no
+10127	SCEP Certificate Enrollment		Admin Configuration	Admin	Logs events related to creating or modifying a certificate enrollment for SCEP	no
+10128	Publish Certificate Revocation List	PUBLISH_CRL	Admin Configuration	Admin	Logs events when Certificate Revocation List (CRL) is being published	yes
+10129	Certificate Expiration		Admin Configuration	Admin	Logs events when a certificate is about to expire or has expired	no
+10130	ACME Certificate Management		Admin Configuration	Admin	Logs events related to ACME certificate management	no
+10131	CMP Certificate Enrollment		Admin Configuration	Admin	Logs events related to CMP certificate management	no
+10132	Certificate Deletion		Admin Configuration	Admin	Logs events when a certificate is deleted	no
+10139	Fido Key Registration	FIDO_KEY_REG	Admin Configuration	Admin	Logs FIDO Key registration events	yes
+10141	Fido Key Revocation		Admin Configuration	Admin	Logs Fido Key revocation events	no
+10142	Fido Key Reset Request		Admin Configuration	Admin	Logs Fido Key reset requests	no
+10154	Print Guest User Credentials		Admin Configuration	Admin	Logs printing of user	no
+10155	View Guest User Password		Admin Configuration	Admin	Logs viewing of obfuscated password	no
+10156	CSV Export Guest User Credentials		Admin Configuration	Admin	Logs CSV exporting of guest user	no
+10157	Reset Guest User Password		Admin Configuration	Admin	Logs resetting of guest user password	no
+10158	View Guest User Info		Admin Configuration	Admin	Logs viewing guest user edit view	no
+10201	LDAP Root DN Modification		Admin Configuration	Admin	Logs user activity that modifies LDAP tree root Distinguished Name performed through the admin site	no
+10202	LDAP Browsing		Admin Configuration	Admin	Browsing an LDAP tree	no
+10203	LDAP User Import	LDAP_USER_IMPORT	Admin Configuration	Admin	Importing remote LDAP users	yes
+10204	LDAP Group Import		Admin Configuration	Admin	Importing group from LDAP server	no
+10205	SSO Group Mapping		Admin Configuration	Admin	Mapping SSO groups with FortiGate objects such as Services or UTM Profile Groups	no
+10206	SSO Services Refresh		Admin Configuration	Admin	Refreshing information related to single sign on	no
+10207	SSO User Logoff		Admin Configuration	Admin	Logging off SSO users	no
+10208	SSO User Update		Admin Configuration	Admin	Updating SSO users	no
+10209	SAML User Import		Admin Configuration	Admin	Importing remote SAML users	no
+10250	HA Setting		Admin Configuration	Admin	Logs any changes in settings for High Availability mode	no
+10251	Password Policy		Admin Configuration	Admin	Logs events related to password policy settings	no
+10301	User Registration		Admin Configuration	Admin	Logs events related to user registration	no
+10302	Learned User Migration		Admin Configuration	Admin	Logs events related to learned RADIUS users migration	no
+10303	RADIUS User Migration		Admin Configuration	Admin	Logs events when migrating RADIUS users to LDAP users	no
+10500	Data Backup		Admin Configuration	Admin	Logs successful database backup event	no
+10501	Data Restore		Admin Configuration	Admin	Logs database restore event	no
+10502	Data Backup Failure		Admin Configuration	Admin	Logs any failures in database backup	no
+10503	FortiGate Objects Import		Admin Configuration	Admin	Logs FortiGate objects (such as services, UTM profile groups, etc.) import events	no
+10504	Local User Import/Export		Admin Configuration	Admin	Logs local user import and export events	no
+10505	Authentication Client Import		Admin Configuration	Admin	Logs authentication client import events	no
+10506	Language File Import		Admin Configuration	Admin	Logs language file import events	no
+10507	Mac Devices Import		Admin Configuration	Admin	Logs MAC device import events	no
+10508	Guest User Export		Admin Configuration	Admin	Logs guest user export events	no
+10509	MAC Devices Export		Admin Configuration	Admin	Logs MAC device export events	no
+10610	License Import		Admin Configuration	Admin	License import event	no
+10611	License Expiration		Admin Configuration	Admin	License is about to expire or is already expired	no
+10612	License Status		Admin Configuration	Admin	Logs whether the license is enabled/disabled	no
+10613	LDAP User Import/Export		Admin Configuration	Admin	Logs LDAP user import and export events	no
+10614	RADIUS User Import/Export		Admin Configuration	Admin	Logs RADIUS user import and export events	no
+10615	SAML User Import/Export		Admin Configuration	Admin	Logs SAML user import and export events	no
+10616	FAC Group Import/Export		Admin Configuration	Admin	Logs FAC group import and export events	no
+20000	Authentication OK	AUTH_OK	Authentication	Authentication	Authentication successful (general)	yes
+20001	Authentication OK No FTK	AUTH_OK_NOFTK	Authentication	Authentication	Authentication successful without FortiToken	yes
+20002	Authentication OK With FTK	AUTH_OK_FTK	Authentication	Authentication	Authentication successful with FortiToken	yes
+20003	Authentication OK From New Browser	AUTH_OK_FROM_NEW_BROWSER	Authentication	Authentication	Authentication successful from new browser	yes
+20004	Authentication OK From New Location	AUTH_OK_FROM_NEW_LOCATION	Authentication	Authentication	Authentication successful from new location	yes
+20005	Disable Temporary Email/SMS Token		Authentication	Authentication	Disable temporary Email/SMS token due to successful FortiToken authentication	no
+20100	Authentication Failed	AUTH_FAIL	Authentication	Authentication	Authentication failed (general)	yes
+20101	Authentication Failed No User	AUTH_FAIL_NOUSER	Authentication	Authentication	Authentication failed, invalid user	yes
+20102	Authentication Failed Bad Pass	AUTH_FAIL_BADPASS	Authentication	Authentication	Authentication failed, invalid password	yes
+20103	Authentication Failed Bad Token	AUTH_FAIL_BADTOKEN	Authentication	Authentication	Authentication failed, bad token code	yes
+20104	Authentication Failed Replay		Authentication	Authentication	Authentication failed, use/replay previous token code	no
+20105	Authentication Failed Bad Param		Authentication	Authentication	Authentication failed, user parameter missing or corrupted in database	no
+20106	Authentication Failed Update Token Error		Authentication	Authentication	Authentication failed, cannot update token attribute in database	no
+20107	Authentication Failed Token Out Of Sync Error		Authentication	Authentication	Authentication failed, token out of synchronization	no
+20108	Authentication Failed Need Followup		Authentication	Authentication	Authentication failed, but in PCI mode, still require second step auth	no
+20109	Authentication Failed No Password Specified		Authentication	Authentication	Authentication failed, because a password needs to be specified but no password was.	no
+20110	Authentication Failed All FIDO Token(s) Revoked		Authentication	Authentication	Authentication failed because all FIDO tokens are revoked.	no
+20111	FIDO Pre-Authentication OK		Authentication	Authentication	FIDO pre-authentication OK.	no
+20112	Authentication Failed revoked FIDO tokens and no fallback		Authentication	Authentication	Authentication failed because all FIDO tokens are revoked, and falling back to password + OTP is not possible.	no
+20113	Authentication Failed Push Notification Denied		Authentication	Authentication	Authentication failed, push notification denied by user.	no
+20114	Authentication Failed without Followup Login	AUTH_FAIL_NO_FOLLOWUP_LOGIN	Authentication	Authentication	Authentication failed, no successful follow up login.	yes
+20150	Password Expiration		Authentication	Authentication	Events related to user password expiration	no
+20151	Password Change Required	PWD_CHANGE_REQUIRED	Authentication	Authentication	Authentication failed, user password must change	yes
+20299	Authentication Pending Remote RADIUS Challenge		Authentication	Authentication	Authentication pending, remote RADIUS server expecting challenge response	no
+20300	Authentication Partially OK	AUTH_PARTIAL_OK	Authentication	Authentication	Authentication partially ok, expecting token	yes
+20301	Authentication Failed Token Timeout	AUTH_FAIL_TOKEN_TIMEOUT	Authentication	Authentication	Authentication failed, token timeout	yes
+20302	Authentication Failed State Mismatch		Authentication	Authentication	Authentication failed, state mismatch	no
+20303	Authentication Failed Invalid NAS		Authentication	Authentication	Authentication failed, invalid NAS IP	no
+20304	Authentication Failed No SQL		Authentication	Authentication	Authentication failed, no SQL connection	no
+20305	Authentication Failed No Clear Token		Authentication	Authentication	Authentication failed, no clear token	no
+20306	Authentication Failed Unknown Remote		Authentication	Authentication	Authentication failed, unknown remote server type	no
+20307	Authentication Failed Pap Only		Authentication	Authentication	Authentication failed, remote server supports PAP only	no
+20310	Authentication Failed Remote LDAP Search		Authentication	Authentication	Authentication failed, remote LDAP search failed	no
+20312	Authentication Failed Remote Connect	AUTH_FAIL_RLDAP_CONNECT	Authentication	Authentication	Authentication failed, remote LDAP connection failed	yes
+20320	Authentication Failed User Not Found	AUTH_FAIL_USER_NOT_FOUND	Authentication	Authentication	Authentication failed, user not found	yes
+20321	Authentication Failed User Disabled		Authentication	Authentication	Authentication failed, user disabled	no
+20322	Authentication Failed Not RADIUS User		Authentication	Authentication	Authentication failed, user is disabled RADIUS authentication	no
+20323	Authentication Failed User Locked	AUTH_FAIL_USER_LOCKED	Authentication	Authentication	Authentication failed, user locked	yes
+20324	Authentication Failed User Not Filtered	AUTH_FAIL_USER_NOT_FILTERED	Authentication	Authentication	Authentication failed, user is not filtered by groups	yes
+20325	Authentication Failed FTK Disabled		Authentication	Authentication	Authentication failed, user's FortiToken is disabled	no
+20326	Authentication Failed FTK Only		Authentication	Authentication	Authentication failed, user requires FortiToken only but not defined	no
+20327	Authentication Failed No Password		Authentication	Authentication	Authentication failed, user password is not defined	no
+20328	Authentication Failed No Partial Auth		Authentication	Authentication	Authentication failed, user has not been partially authenticated	no
+20329	Authentication Failed Not Authorized		Authentication	Authentication	Authentication failed, user is not authorized	no
+20330	Authentication Failed User Expired		Authentication	Authentication	Authentication failed, user account has expired	no
+20331	Authentication Failed Lock User	AUTH_FAIL_LOCK_USER	Authentication	Authentication	Authentication failed, lock user	yes
+20332	Authentication Failed User FTK Unassigned		Authentication	Authentication	Authentication failed, user FTK has not been assigned	no
+20333	Authentication Failed User FTM Pending		Authentication	Authentication	Authentication failed, user is still pending FTM activation	no
+20334	Authentication Failed User AD Auth Error	AUTH_FAIL_USER_AD_AUTH_ERROR	Authentication	Authentication	Authentication failed, user has Windows AD error	yes
+20335	Authentication Failed User No Cfgd TACACS Rule		Authentication	Authentication	Authentication failed, user has no configured TACACS rule	no
+20350	Authentication Failed NAS Not Allowed		Authentication	Authentication	Authentication failed, NAS is not allowed for authentication	no
+20351	Authentication Failed NAS Password Only		Authentication	Authentication	Authentication failed, NAS requires password-only but user is FortiToken-only	no
+20352	Authentication Failed NAS Need Password		Authentication	Authentication	Authentication failed, NAS requires password but user is FortiToken-only	no
+20353	Authentication Failed NAS FTK Only		Authentication	Authentication	Authentication failed, NAS requires FortiToken-only but user has no FortiToken	no
+20354	Authentication Failed NAS Need Token		Authentication	Authentication	Authentication failed, NAS requires token but user has no token	no
+20355	Authentication Failed NAS No User Realm		Authentication	Authentication	Authentication failed, NAS cannot find user realm	no
+20356	Authentication Failed NAS Sub-Profile		Authentication	Authentication	Authentication failed, NAS sub-profile requirements not met	no
+20357	Authentication Failed NAS FIDO Only		Authentication	Authentication	Authentication failed, NAS requires FIDO Token	no
+20360	Authentication Failed Remote RADIUS Reply Timeout		Authentication	Authentication	Authentication failed, remote RADIUS reply timeout	no
+20361	Authentication Failed Remote RADIUS Reply Unknown		Authentication	Authentication	Authentication failed, remote RADIUS reply unknown	no
+20362	Authentication Failed Remote RADIUS Wrong Secret		Authentication	Authentication	Authentication failed, remote RADIUS wrong secret	no
+20363	Authentication Failed Remote RADIUS Timeout		Authentication	Authentication	Authentication failed, remote RADIUS challenge timeout	no
+20364	Authentication Failed Remote RADIUS Reject		Authentication	Authentication	Authentication failed, remote RADIUS server reject	no
+20365	Authentication Failed IP Locked	AUTH_FAIL_IP_LOCKED	Authentication	Authentication	Authentication failed, IP locked	yes
+20366	Authentication Failed Lock IP	AUTH_FAIL_LOCK_IP	Authentication	Authentication	Authentication failed, lock IP	yes
+20370	Authentication Failed Limited Edition		Authentication	Authentication	Authentication failed as FAC is running in limited edition	no
+20371	Authentication Failed Queueing Timeout		Authentication	Authentication	Authentication failed as request has been queueing too long and discarded	no
+20400	MAC Authentication OK		Authentication	Authentication	MAC-based authentication successful	no
+20401	MAC Authentication Failed No MAC address		Authentication	Authentication	Authentication failed, MAC address not found	no
+20402	MAC Authentication Failed No NAS permission		Authentication	Authentication	Authentication failed, MAC-based authentication not allowed for this NAS	no
+20403	MAC Authentication Failed Not Filtered		Authentication	Authentication	Authentication failed, MAC address cannot be filtered by groups for this NAS	no
+20404	MAC Authentication Failed User Blocked		Authentication	Authentication	Authentication failed, MAC address was blocked by this NAS	no
+20420	802.1x Authentication OK	DOT1X_AUTH_OK	Authentication	Authentication	802.1x authentication successful	yes
+20421	802.1x Authentication Failed	DOT1X_AUTH_FAIL	Authentication	Authentication	802.1x Authentication failed	yes
+20422	802.1x Authentication Partial OK		Authentication	Authentication	802.1x Authentication partially ok, need token	no
+20430	EAP Authentication Start	EAP_AUTH_START	Authentication	Authentication	EAP authentication started	yes
+20431	EAP Authentication Result	EAP_AUTH_RESULT	Authentication	Authentication	EAP authentication finished	yes
+20500	SAML IdP Authentication OK		Authentication	Authentication	SAML IdP Authentication OK	no
+20501	SAML IdP Authentication Failed		Authentication	Authentication	SAML IdP Authentication Failed	no
+20502	SAML IdP SP_Request OK	SAML_IDP_SP_REQ_OK	Authentication	Authentication	SAML IdP service provider request OK	yes
+20503	SAML IdP SP_Request Failed	SAML_IDP_SP_REQ_FAILED	Authentication	Authentication	SAML IdP service provider request failed	yes
+20601	Guest Portal User Credentials Authentication		Authentication	Authentication	Guest portal user authentication activities	no
+20602	Guest Portal MAC Only Authentication		Authentication	Authentication	Guest portal MAC-only authentication activities	no
+20603	Guest Portal Authentication Failed		Authentication	Authentication	Guest portal authentication request failed	no
+20604	Guest Portal Authentication OK		Authentication	Authentication	Guest portal authentication request succeed	no
+20605	Guest Portal Authorization Failed		Authentication	Authentication	Guest portal authorization failed	no
+20610	Guest Portal SmartConnect OK		Authentication	Authentication	Guest portal SmartConnect configuration file generation OK	no
+20611	Guest Portal SmartConnect Failed		Authentication	Authentication	Guest portal SmartConnect configuration file generation failed	no
+20701	OAuth Portal Authentication OK		Authentication	Authentication	OAuth portal authentication request succeed	no
+20702	OAuth Portal Authentication Failed		Authentication	Authentication	OAuth portal authentication request failed	no
+20994	Admin GUI Login	AUTH_ADMIN_LOGIN_GUI	Authentication	Authentication	Logs admin GUI site login event	yes
+20995	Admin GUI Logout	AUTH_ADMIN_LOGOUT_GUI	Authentication	Authentication	Logs admin GUI site logout event	yes
+20996	Access Denied to Admin Site		Authentication	Authentication	Logs login attempt by a user that has no permission to access the admin site	no
+20997	Failed Admin Login Attempt		Authentication	Authentication	Logs unsuccessful login attempt event to the admin site or to the user portal	no
+20998	Admin CLI Login		Authentication	Authentication	Logs admin CLI site login event	no
+20999	Admin CLI Logout	AUTH_ADMIN_LOGOUT_CLI	Authentication	Authentication	Logs admin CLI site logout event	yes
+25000	RADIUS accounting START		Accounting		Logs RADIUS accounting start event	no
+25001	RADIUS accounting STOP		Accounting		Logs RADIUS accounting stop event	no
+25002	RADIUS Accounting Usage		Accounting		Logs RADIUS accounting usage message	no
+30000	LDAP Server Manual Restart		System	System	Logs LDAP server manual restart event	no
+30001	FSSO Restart		System	System	Logs FSSO restart event	no
+30002	Web Server Restart		System	System	Logs web server restart event	no
+30003	TACACS+ Server Restart		System	System	Logs TACACS+ service restart event	no
+30100	RADIUS Server Manual Restart		System	System	Logs RADIUS server manual restart event	no
+30101	RADIUS Server Running Mode		System	System	Logs RADIUS server running mode change	no
+30150	RADIUS Accounting Server Manual Restart		System	System	Logs RADIUS Accounting server manual restart event	no
+30200	Network Interface Configuration		System	System	Logs system's network interface configuration event	no
+30201	DNS Configuration		System	System	Logs system's DNS configuration event	no
+30202	Default Gateway Configuration		System	System	Logs system's default gateway configuration event	no
+30203	Host Name Configuration		System	System	Logs system's host name configuration event	no
+30300	Log Backup		System	System	Logs backup operation on log records	no
+30301	Log Auto-Deletion	LOG_AUTO_DELETION	System	System	Logs log records auto-deletion process	yes
+30302	User Account Maintenance	USER_MAINTENANCE	System	System	Logs events from a scheduled user account maintenance process	yes
+30303	LDAP User Sync	LDAP_USER_SYNC	System	System	Logs events from a scheduled syncing of remote LDAP users	yes
+30304	Scheduled Configuration Backup		System	System	Logs events from scheduled configuration backup	no
+30305	Configuration Backup	CONF_BACKUP	System	System	Logs events from user triggered remote configuration backup	yes
+30306	SAML User Sync		System	System	Logs events from a scheduled syncing of remote SAML users	no
+30307	Debug Report Backup		System	System	Logs events from user triggered remote FortiAuthenticator debug report backup	no
+30350	Windows AD Domain Join		System	System	Joining the Windows AD Domain	no
+30400	Database Table Limit Initialization Failure		System	System	Logs failures in loading database table limits	no
+30500	Remote Server Status	REMOTE_SERVER_STATUS	System	System	Logs changes to remote server network availability	yes
+30900	Firmware Upgrade		System	System	Logs firmware upgrade event	no
+30901	System Reboot		System	System	Logs system-wide reboot event	no
+30902	System Shutdown		System	System	Logs system-wide shutdown event	no
+30903	Factory Reset		System	System	Logs reset of configuration to factory defaults	no
+30904	Shell Debugging		System	System	Logs access to debugging shell	no
+30905	Time Change		System	System	Logs time change	no
+30906	FortiGuard Messaging Service Registration Update		System	System	Logs registration update activity for FortiGuard Messaging Service	no
+30907	FortiGuard Messaging Service SMS		System	System	Logs send SMS activity for FortiGuard Messaging Service	no
+30908	SMTP Send Mail Service	SMTP_SEND_MAIL	System	System	Logs send email activity for SMTP Send Mail Service	yes
+30909	FTM Provisioning Service	FTM_SRV	System	System	Logs client activity for FTM Provisioning Service	yes
+30910	NTP Server is unreachable		System	System	Logs failure to contact configured NTP server	no
+30911	SMS Service		System	System	Logs send SMS activity via an SMS gateway	no
+30913	Local User Secure Password Storage		System	System	Logs local user secure password storage related information	no
+30914	Expand Partition		System	System	Logs expanding of partition in data drive	no
+31001	SNMP Trap Sent	SNMP_TRAP	System	System	Logs outbound SNMP trap notifications	yes
+40000	HA Role Change		High Availability		HA role change event	no
+40001	HA Cluster Member Change		High Availability		HA cluster member leave/join event	no
+40002	HA Cluster Peering Failure		High Availability		HA cluster peering failure event	no
+40003	LB Connection Event		High Availability		LB connection event	no
+40004	LB Connection Failure		High Availability		LB connection failure event	no
+40005	Clock Update From Primary		High Availability		Clock update from Primary	no
+40006	HA State Change		High Availability		HA state change event	no
+40007	Synchronized Sets Update From Primary		High Availability		Synchronized sets' value update from Primary	no
+50000	User Portal Login		User Portal	User	Logs login activity for the user portal	no
+50001	User Portal Logout		User Portal	User	Logs logout activity for the user portal	no
+50002	User Portal Password Change		User Portal	User	Logs user portal password change event	no
+50003	User Portal Password Reset		User Portal	User	Logs user portal password reset event	no
+50004	Device Certificate Self-Enrollment		User Portal	User	Logs user device certificate self-enrollment events	no
+50005	Kerberos Portal Login		User Portal	User	Logs login activity for the Kerberos portal	no
+50006	SAML Portal Login		User Portal	User	Logs login activity for the SAML portal	no
+50007	SAML IdP Portal Login	SAML_IDP_PORTAL_LOGIN	User Portal	User	Logs login activity for the SAML IdP portal	yes
+50008	SAML IdP Portal Logout	SAML_IDP_PORTAL_LOGOUT	User Portal	User	Logs logout activity for the SAML IdP portal	yes
+50500	Email API secret key		Web Service	Web	Logs API secret key delivery via email	no
+50501	Web Service Access	API_ACCESS	Web Service	Web	Logs any request or access to the web service	yes
+50502	SCEP Request		Web Service	Web	Logs any request to the SCEP server	no
+50503	AWS API secret key		Web Service	Web	Logs API secret key delivery via AWS userdata	no
+50504	AWS SCIM Server API		Web Service	Web	Logs AWS SCIM server api error response	no
+50505	SCIM User Sync		Web Service	Web	Logs events related to SCIM remote user synchronization	no
+60000	Power Supply Status Change		Hardware Monitor		Logs power supply status change	no
+60001	Disk Capacity Warning		Hardware Monitor		Logs potential disk capacity issues	no
