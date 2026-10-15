@@ -1,0 +1,1550 @@
+logid	msgid	name	meaning	type	subtype	severity	versions
+0000000002	2	LOG_ID_TRAFFIC_ALLOW	Allowed traffic	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000003	3	LOG_ID_TRAFFIC_DENY	Traffic violation	Traffic	forward	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0000000004	4	LOG_ID_TRAFFIC_OTHER_START	Traffic other session start	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000005	5	LOG_ID_TRAFFIC_OTHER_ICMP_ALLOW	Traffic allowed ICMP	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000006	6	LOG_ID_TRAFFIC_OTHER_ICMP_DENY	Traffic denied ICMP	Traffic	forward	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0000000007	7	LOG_ID_TRAFFIC_OTHER_INVALID	Traffic other invalid	Traffic	forward	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0000000008	8	LOG_ID_TRAFFIC_WANOPT	WAN optimization traffic	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000009	9	LOG_ID_TRAFFIC_WEBCACHE	Web cache traffic	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000010	10	LOG_ID_TRAFFIC_EXPLICIT_PROXY	Explicit proxy traffic	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000011	11	LOG_ID_TRAFFIC_FAIL_CONN	Failed connection attempts	Traffic	forward	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0002000012	12	LOG_ID_TRAFFIC_MULTICAST	Multicast traffic	Traffic	multicast	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000013	13	LOG_ID_TRAFFIC_END_FORWARD	Forward traffic	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0001000014	14	LOG_ID_TRAFFIC_END_LOCAL	Local traffic	Traffic	local	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000015	15	LOG_ID_TRAFFIC_START_FORWARD	Forward traffic session start	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0001000016	16	LOG_ID_TRAFFIC_START_LOCAL	Local traffic session start	Traffic	local	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0004000017	17	LOG_ID_TRAFFIC_SNIFFER	Sniffer traffic	Traffic	sniffer	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0002000019	19	LOG_ID_TRAFFIC_BROADCAST	Broadcast traffic	Traffic	multicast	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000020	20	LOG_ID_TRAFFIC_STAT	Forward traffic statistics	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0004000021	21	LOG_ID_TRAFFIC_SNIFFER_STAT	Sniffer traffic statistics	Traffic	sniffer	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000022	22	LOG_ID_TRAFFIC_UTM_CORRELATION	Forward traffic for UTM correlation	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0005000024	24	LOG_ID_TRAFFIC_ZTNA	ZTNA traffic	Traffic	ztna	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0000000025	25	LOG_ID_TRAFFIC_SFLOW	Sflow sample	Traffic	forward	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0006000026	26	LOG_ID_TRAFFIC_HTTP_TRANSACTION	HTTP transaction	Traffic	http-transaction	Notice	7.6.7,8.0.1
+0211008192	8192	MESGID_INFECT_WARNING	Infected file detected by the FortiGate unit and blocked	Virus	infected	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0211008193	8193	MESGID_INFECT_NOTIF	Infected file detected by the FortiGate unit and it passed	Virus	infected	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0211008194	8194	MESGID_INFECT_MIME_WARNING	MIME header detected to have a virus and blocked	Virus	infected	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0211008195	8195	MESGID_INFECT_MIME_NOTIF	MIME header infected and passed	Virus	infected	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0203008200	8200	MESGID_MIME_FILETYPE_EXE_WARNING	File is an executable (warning)	Virus	filetype-executable	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0203008201	8201	MESGID_MIME_FILETYPE_EXE_NOTIF	File is an executable (notice)	Virus	filetype-executable	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0204008202	8202	MESGID_AVQUERY_WARNING	File reported infected by Outbreak Prevention (warning)	Virus	outbreak-prevention	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0204008203	8203	MESGID_AVQUERY_NOTIF	File reported infected by Outbreak Prevention (notice)	Virus	outbreak-prevention	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0204008204	8204	MESGID_MIME_AVQUERY_WARNING	MIME data reported infected by Outbreak Prevention (warning)	Virus	outbreak-prevention	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0204008205	8205	MESGID_MIME_AVQUERY_NOTIF	MIME data reported infected by Outbreak Prevention (notice)	Virus	outbreak-prevention	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0202008206	8206	MESGID_AV_EXEMPT_NOTIF	File reported matched AV exempt list (notice)	Virus	exempt-hash	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0202008207	8207	MESGID_MIME_AV_EXEMPT_NOTIF	MIME data reported matched AV exempt list (notice)	Virus	exempt-hash	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0207008212	8212	MESGID_MALWARE_LIST_WARNING	File reported infected by external malware list (warning)	Virus	malware-list	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0207008213	8213	MESGID_MALWARE_LIST_NOTIF	File reported infected by external malware list (notice)	Virus	malware-list	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0207008214	8214	MESGID_MIME_MALWARE_LIST_WARNING	MIME data reported infected by external malware list (warning)	Virus	malware-list	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0207008215	8215	MESGID_MIME_MALWARE_LIST_NOTIF	MIME data reported infected by external malware list (notice)	Virus	malware-list	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0208008216	8216	MESGID_FILE_HASH_EMS_WARNING	File reported infected by EMS threat feed (warning)	Virus	ems-threat-feed	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0208008217	8217	MESGID_FILE_HASH_EMS_NOTIF	File reported infected by EMS threat feed (notice)	Virus	ems-threat-feed	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0208008218	8218	MESGID_MIME_FILE_HASH_EMS_WARNING	MIME data reported infected by EMS threat feed (warning)	Virus	ems-threat-feed	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0208008219	8219	MESGID_MIME_FILE_HASH_EMS_NOTIF	MIME data reported infected by EMS threat feed (notice)	Virus	ems-threat-feed	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0209008220	8220	MESGID_ICB_FAI_WARNING	File reported infected by FortiNDR (warning)	Virus	fortindr	Warning	7.2.13
+0209008220	8220	MESGID_ICB_WARNING	File reported infected by Inline Block (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008221	8221	MESGID_ICB_FAI_NOTIF	File reported infected by FortiNDR (notice)	Virus	fortindr	Notice	7.2.13
+0209008221	8221	MESGID_ICB_NOTIF	File reported infected by Inline Block (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008222	8222	MESGID_MIME_ICB_FAI_WARNING	MIME data reported infected by FortiNDR (warning)	Virus	fortindr	Warning	7.2.13
+0209008222	8222	MESGID_MIME_ICB_WARNING	MIME data reported infected by Inline Block (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008223	8223	MESGID_MIME_ICB_FAI_NOTIF	MIME data reported infected by FortiNDR (notice)	Virus	fortindr	Notice	7.2.13
+0209008223	8223	MESGID_MIME_ICB_NOTIF	MIME data reported infected by Inline Block (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008224	8224	MESGID_ICB_FAI_TIMEOUT_WARNING	FortiNDR scan timeout (warning)	Virus	fortindr	Warning	7.2.13
+0209008224	8224	MESGID_ICB_TIMEOUT_WARNING	Inline Block scan timeout (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008225	8225	MESGID_ICB_FAI_TIMEOUT_NOTIF	FortiNDR scan timeout (notice)	Virus	fortindr	Notice	7.2.13
+0209008225	8225	MESGID_ICB_TIMEOUT_NOTIF	Inline Block scan timeout (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008226	8226	MESGID_MIME_ICB_FAI_TIMEOUT_WARNING	MIME data reported FortiNDR scan timeout (warning)	Virus	fortindr	Warning	7.2.13
+0209008226	8226	MESGID_MIME_ICB_TIMEOUT_WARNING	MIME data reported Inline Block scan timeout (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008227	8227	MESGID_MIME_ICB_FAI_TIMEOUT_NOTIF	MIME data reported FortiNDR scan timeout (notice)	Virus	fortindr	Notice	7.2.13
+0209008227	8227	MESGID_MIME_ICB_TIMEOUT_NOTIF	MIME data reported Inline Block scan timeout (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008228	8228	MESGID_ICB_ERROR_WARNING	Inline Block scan error (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008228	8228	MESGID_ICB_FAI_ERROR_WARNING	FortiNDR scan error (warning)	Virus	fortindr	Warning	7.2.13
+0209008229	8229	MESGID_ICB_ERROR_NOTIF	Inline Block scan error (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008229	8229	MESGID_ICB_FAI_ERROR_NOTIF	FortiNDR scan error (notice)	Virus	fortindr	Notice	7.2.13
+0209008230	8230	MESGID_MIME_ICB_ERROR_WARNING	MIME data reported Inline Block scan error (warning)	Virus	inline-block	Warning	7.4.12,7.6.7,8.0.1
+0209008230	8230	MESGID_MIME_ICB_FAI_ERROR_WARNING	MIME data reported FortiNDR scan error (warning)	Virus	fortindr	Warning	7.2.13
+0209008231	8231	MESGID_MIME_ICB_ERROR_NOTIF	MIME data reported Inline Block scan error (notice)	Virus	inline-block	Notice	7.4.12,7.6.7,8.0.1
+0209008231	8231	MESGID_MIME_ICB_FAI_ERROR_NOTIF	MIME data reported FortiNDR scan error (notice)	Virus	fortindr	Notice	7.2.13
+0210008232	8232	MESGID_ICB_FSA_WARNING	File reported infected by FortiSandbox (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008233	8233	MESGID_ICB_FSA_NOTIF	File reported infected by FortiSandbox (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008234	8234	MESGID_MIME_ICB_FSA_WARNING	MIME data reported infected by FortiSandbox (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008235	8235	MESGID_MIME_ICB_FSA_NOTIF	MIME data reported infected by FortiSandbox (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008236	8236	MESGID_ICB_FSA_TIMEOUT_WARNING	FortiSandbox scan timeout (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008237	8237	MESGID_ICB_FSA_TIMEOUT_NOTIF	FortiSandbox scan timeout (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008238	8238	MESGID_MIME_ICB_FSA_TIMEOUT_WARNING	MIME data reported FortiSandbox scan timeout (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008239	8239	MESGID_MIME_ICB_FSA_TIMEOUT_NOTIF	MIME data reported FortiSandbox scan timeout (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008240	8240	MESGID_ICB_FSA_ERROR_WARNING	FortiSandbox scan error (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008241	8241	MESGID_ICB_FSA_ERROR_NOTIF	FortiSandbox scan error (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008242	8242	MESGID_MIME_ICB_FSA_ERROR_WARNING	MIME data reported FortiSandbox scan error (warning)	Virus	fortisandbox	Warning	7.2.13
+0210008243	8243	MESGID_MIME_ICB_FSA_ERROR_NOTIF	MIME data reported FortiSandbox scan error (notice)	Virus	fortisandbox	Notice	7.2.13
+0210008244	8244	MESGID_MALWARE_STREAM_WARNING	File reported infected by 0-day malware stream (warning)	Virus	0-day-malware-stream	Warning	7.6.7,8.0.1
+0210008245	8245	MESGID_MALWARE_STREAM_NOTIF	File reported infected by 0-day malware stream (notice)	Virus	0-day-malware-stream	Notice	7.6.7,8.0.1
+0210008246	8246	MESGID_MIME_MALWARE_STREAM_WARNING	MIME data reported infected by 0-day malware stream (warning)	Virus	0-day-malware-stream	Warning	7.6.7,8.0.1
+0210008247	8247	MESGID_MIME_MALWARE_STREAM_NOTIF	MIME data reported infected by 0-day malware stream (notice)	Virus	0-day-malware-stream	Notice	7.6.7,8.0.1
+0212008448	8448	MESGID_BLOCK_WARNING	FortiGate unit blocked a file because it contains a virus	Virus	filename	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0261008450	8450	MESGID_BLOCK_MIME_WARNING	FortiGate unit blocked a file because it contains a virus (MIME)	Virus	mimefragmented	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0261008451	8451	MESGID_BLOCK_MIME_NOTIF	FortiGate unit blocked a file because it contains a virus (MIME)	Virus	mimefragmented	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0206008452	8452	MESGID_BLOCK_COMMAND	FortiGate unit blocked a virus command	Virus	command-blocked	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0213008704	8704	MESGID_OVERSIZE_WARNING	Defined file size limit was exceeded	Virus	oversize	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0213008705	8705	MESGID_OVERSIZE_NOTIF	File size limit was exceeded	Virus	oversize	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0213008708	8708	MESGID_OVERSIZE_STREAM_UNCOMP_WARNING	Stream-based uncompression reached size limit.	Virus	oversize	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0213008709	8709	MESGID_OVERSIZE_STREAM_UNCOMP_NOTIF	Stream-based uncompression reached size limit.	Virus	oversize	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0263008720	8720	MESGID_SWITCH_PROTO_WARNING	Switching protocols request (warning)	Virus	switchproto	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0263008721	8721	MESGID_SWITCH_PROTO_NOTIF	Switching protocols request (notice)	Virus	switchproto	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008960	8960	MESGID_SCAN_UNCOMPSIZELIMIT_WARNING	File reached the uncompressed nested limit	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008961	8961	MESGID_SCAN_UNCOMPSIZELIMIT_NOTIF	File reached the uncompressed size limit	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008962	8962	MESGID_SCAN_ARCHIVE_ENCRYPTED_WARNING	Archived file is corrupted	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008963	8963	MESGID_SCAN_ARCHIVE_ENCRYPTED_NOTIF	Archived file is encrypted	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008964	8964	MESGID_SCAN_ARCHIVE_CORRUPTED_WARNING	Corrupted archive (warning)	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008965	8965	MESGID_SCAN_ARCHIVE_CORRUPTED_NOTIF	Corrupted archive (notice)	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008966	8966	MESGID_SCAN_ARCHIVE_MULTIPART_WARNING	File is a multipart archive or contains multiple files within the archive	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008967	8967	MESGID_SCAN_ARCHIVE_MULTIPART_NOTIF	File is a multipart archive or contains multiple files within the archive	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008968	8968	MESGID_SCAN_ARCHIVE_NESTED_WARNING	File is a nested archived file	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008969	8969	MESGID_SCAN_ARCHIVE_NESTED_NOTIF	File is an archived type unhandled	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008970	8970	MESGID_SCAN_ARCHIVE_OVERSIZE_WARNING	Archived file is oversized	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008971	8971	MESGID_SCAN_ARCHIVE_OVERSIZE_NOTIF	Archived file is oversized	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008972	8972	MESGID_SCAN_ARCHIVE_UNHANDLED_WARNING	Unhandled archive (warning)	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008973	8973	MESGID_SCAN_ARCHIVE_UNHANDLED_NOTIF	Unhandled archive (notice)	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008974	8974	MESGID_SCAN_AV_ENGINE_LOAD_FAILED_ERROR	AV Engine load failed	Virus	scanerror	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0262008975	8975	MESGID_SCAN_ARCHIVE_PARTIALLYCORRUPTED_WARNING	Partially corrupted archive (warning)	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008976	8976	MESGID_SCAN_ARCHIVE_PARTIALLYCORRUPTED_NOTIF	Partially corrupted archive (notice)	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008979	8979	MESGID_SCAN_ARCHIVE_TIMEOUT_WARNING	Archive scan timeout (warning)	Virus	scanerror	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0262008980	8980	MESGID_SCAN_ARCHIVE_TIMEOUT_NOTIF	Archive scan timeout (notice)	Virus	scanerror	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0262008981	8981	MESGID_SCAN_AV_CDR_INTERNAL_ERROR	AV CDR engine internal error	Virus	scanerror	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0262008982	8982	MESGID_SCAN_AV_MAX_MEMORY_REACHED_ERROR	Exceeded max AV memory	Virus	scanerror	Error	7.4.12,7.6.7,8.0.1
+0214008983	8983	MESGID_MIME_AVQUERY_ERROR_WARNING	Mime data OutbreakPreventionservice error (warning)	Virus	outbreak-prevention-error	Warning	8.0.1
+0214008984	8984	MESGID_MIME_AVQUERY_TIMEOUT_WARNING	Mime data OutbreakPreventionservice timeout (warning)	Virus	outbreak-prevention-error	Warning	8.0.1
+0214008985	8985	MESGID_AVQUERY_ERROR_WARNING	OutbreakPreventionservice error (warning)	Virus	outbreak-prevention-error	Warning	8.0.1
+0214008986	8986	MESGID_AVQUERY_TIMEOUT_WARNING	OutbreakPreventionservice timeout (warning)	Virus	outbreak-prevention-error	Warning	8.0.1
+0214008987	8987	MESGID_MIME_AVQUERY_ERROR_NOTIF	Mime data OutbreakPreventionservice error (notice)	Virus	outbreak-prevention-error	Notice	8.0.1
+0214008988	8988	MESGID_MIME_AVQUERY_TIMEOUT_NOTIF	Mime data OutbreakPreventionservice timeout (notice)	Virus	outbreak-prevention-error	Notice	8.0.1
+0214008989	8989	MESGID_AVQUERY_ERROR_NOTIF	OutbreakPreventionservice error (notice)	Virus	outbreak-prevention-error	Notice	8.0.1
+0214008990	8990	MESGID_AVQUERY_TIMEOUT_NOTIF	OutbreakPreventionservice timeout (notice)	Virus	outbreak-prevention-error	Notice	8.0.1
+0201009233	9233	MESGID_ANALYTICS_SUBMITTED	File submitted to Sandbox	Virus	analytics	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0211009234	9234	MESGID_ANALYTICS_INFECT_WARNING	File reported infected by FortiSandbox (warning)	Virus	infected	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0211009235	9235	MESGID_ANALYTICS_INFECT_NOTIF	File reported infected by FortiSandbox (notice)	Virus	infected	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0211009236	9236	MESGID_ANALYTICS_INFECT_MIME_WARNING	File reported infected by FortiSandbox (warning)	Virus	infected	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0211009237	9237	MESGID_ANALYTICS_INFECT_MIME_NOTIF	File reported infected by FortiSandbox (notice)	Virus	infected	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0201009238	9238	MESGID_ANALYTICS_FSA_RESULT	File verdict returned from FortiSandbox	Virus	analytics	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0205009239	9239	MESGID_CONTENT_DISARM_NOTIF	Active content detected by Content Disarm engine	Virus	content-disarm	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0205009240	9240	MESGID_CONTENT_DISARM_WARNING	File was disarmed by Content Disarm engine	Virus	content-disarm	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0249009241	9241	LOG_ID_UNKNOWN_CE_BLOCK	Unknown content-encoding detected and blocked	Virus	unknown-ce	Warning	7.4.12,7.6.7,8.0.1
+0249009242	9242	LOG_ID_UNKNOWN_CE_BYPASS	Scan is bypassed due to unknown content-encoding	Virus	unknown-ce	Notice	7.4.12,7.6.7,8.0.1
+2500010000	10000	LOG_ID_CASB_ACCESS_BLOCKED	Web content banned activity found	casb	casb	Warning	7.4.12,7.6.7,8.0.1
+2500010001	10001	LOG_ID_CASB_ACCESS_BYPASS	Web content activity found	casb	casb	Information	7.4.12,7.6.7,8.0.1
+2500010002	10002	LOG_ID_CASB_ACCESS_MONITOR	Web content activity found	casb	casb	Information	7.4.12,7.6.7,8.0.1
+2700011000	11000	LOG_ID_LLM_ACCESS_BLOCKED	LLM Proxy	LLM	llm	Warning	8.0.1
+2700011001	11001	LOG_ID_LLM_ACCESS_BYPASS	LLM Proxy	LLM	llm	Information	8.0.1
+2700011002	11002	LOG_ID_LLM_ACCESS_MONITOR	LLM Proxy	LLM	llm	Information	8.0.1
+0314012288	12288	LOG_ID_WEB_CONTENT_BANWORD	Web content banned word found	Webfilter	content	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0314012290	12290	LOG_ID_WEB_CONTENT_EXEMPTWORD	Web content exempt word found	Webfilter	content	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0314012292	12292	LOG_ID_WEB_CONTENT_KEYWORD	Message contained a key word in the profile list	Webfilter	content	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0314012293	12293	LOG_ID_WEB_CONTENT_SEARCH	Search phrase detected	Webfilter	content	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0314012294	12294	LOG_ID_WEB_CONTENT_IMAGE_RATING	The image content matched a category in webfilter profile	Webfilter	content	Warning	8.0.1
+0314012295	12295	LOG_ID_WEB_CONTENT_IMAGE_RATING_ERR	An error occured while attemptingto categorize the image	Webfilter	content	Error	8.0.1
+0314012296	12296	LOG_ID_WEB_CONTENT_IMAGE_RATING_TIMEOUT	FortiGuardimage classificationservice did not respond on time	Webfilter	content	Warning	8.0.1
+0314012297	12297	LOG_ID_WEB_CONTENT_IMAGE_RATING_RATE_LIMITED	FortiGuardimage classificationquota reached	Webfilter	content	Notice	8.0.1
+0315012544	12544	LOG_ID_URL_FILTER_BLOCK	URL address was blocked because it was found in the URL filter list	Webfilter	urlfilter	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0315012545	12545	LOG_ID_URL_FILTER_EXEMPT	URL address was exempted because it was found in the URL filter list	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012546	12546	LOG_ID_URL_FILTER_ALLOW	URL address was allowed because it was found in the URL filter list	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012547	12547	LOG_ID_URL_FILTER_INVALID_HOSTNAME_HTTP_BLK	The request contained an invalid domain name	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012548	12548	LOG_ID_URL_FILTER_INVALID_HOSTNAME_HTTPS_BLK	HTTP certificate request contained an invalid domain name	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012549	12549	LOG_ID_URL_FILTER_INVALID_HOSTNAME_HTTP_PASS	HTTP request contained an invalid name so the session has been filtered by IP only	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012550	12550	LOG_ID_URL_FILTER_INVALID_HOSTNAME_HTTPS_PASS	HTTPS request contained an invalid name so the session has been filtered by IP only	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012551	12551	LOG_ID_URL_FILTER_INVALID_HOSTNAME_SNI_BLK	Insufficient resources	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012552	12552	LOG_ID_URL_FILTER_INVALID_HOSTNAME_SNI_PASS	Getting the host name failed	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012553	12553	LOG_ID_URL_FILTER_INVALID_CERT	Server certificate validation failed	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012554	12554	LOG_ID_URL_FILTER_INVALID_SESSION	SSL session blocked because its identification number was unknown	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012555	12555	LOG_ID_URL_FILTER_SRV_CERT_ERR_BLK	SSL session blocked	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012556	12556	LOG_ID_URL_FILTER_SRV_CERT_ERR_PASS	SSL session ignored	Webfilter	urlfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0315012557	12557	LOG_ID_URL_FILTER_FAMS_NOT_ACTIVE	The FortiGuard Analysis and Management Service is not active. You must enable this service	Webfilter	urlfilter	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0315012558	12558	LOG_ID_URL_FILTER_RATING_ERR	Rating error occurred	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012559	12559	LOG_ID_URL_FILTER_PASS	URL passed because it was in the URL filter list	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0315012560	12560	LOG_ID_URL_WISP_BLOCK	URL blocked by Websense service	Webfilter	urlfilter	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0315012561	12561	LOG_ID_URL_WISP_REDIR	URL blocked with redirect message by Websense service	Webfilter	urlfilter	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0315012562	12562	LOG_ID_URL_WISP_ALLOW	URL allowed by Websense service	Webfilter	urlfilter	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0345012688	12688	LOG_ID_WEB_SSL_EXEMPT	URL address was exempted because it was found in the ssl-exempt	Webfilter	ssl-exempt	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0318012800	12800	LOG_ID_WEB_FTGD_ERR	Rating error occurred (error)	Webfilter	ftgd_err	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0318012801	12801	LOG_ID_WEB_FTGD_WARNING	Rating error occurred (warning)	Webfilter	ftgd_err	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0340012802	12802	LOG_ID_WEB_FTGD_QUOTA	Daily FortiGuard quota status	Webfilter	ftgd_quota	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0316013056	13056	LOG_ID_WEB_FTGD_CAT_BLK	URL belongs to an blocked category within the firewall policy	Webfilter	ftgd_blk	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0316013057	13057	LOG_ID_WEB_FTGD_CAT_WARN	URL belongs to a category with warnings enabled	Webfilter	ftgd_blk	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0316013058	13058	LOG_ID_WEB_FTGD_RISK_BLK	URL belongs to an blocked risk-level within the firewall policy	Webfilter	ftgd_blk	Warning	7.6.7,8.0.1
+0317013312	13312	LOG_ID_WEB_FTGD_CAT_ALLOW	URL belongs to an allowed category within the firewall policy	Webfilter	ftgd_allow	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0317013313	13313	LOG_ID_WEB_FTGD_RISK_ALLOW	URL belongs to an allowed risk-level within the firewall policy	Webfilter	ftgd_allow	Notice	7.6.7,8.0.1
+0338013315	13315	LOG_ID_WEB_FTGD_QUOTA_COUNTING	FortiGuard web filter category quota counting log message	Webfilter	ftgd_quota_counting	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0339013316	13316	LOG_ID_WEB_FTGD_QUOTA_EXPIRED	FortiGuard web filter category quota expired log message	Webfilter	ftgd_quota_expired	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0319013317	13317	LOG_ID_WEB_URL	URL has been visited	Webfilter	urlmonitor	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0320013318	13318	LOG_ID_WEB_DOMAIN_FRONTING	Domain fronting detected	Webfilter	domain-fronting	Notice	7.6.7,8.0.1
+0335013568	13568	LOG_ID_WEB_SCRIPTFILTER_ACTIVEX	ActiveX script removed	Webfilter	activexfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0336013573	13573	LOG_ID_WEB_SCRIPTFILTER_COOKIE	Cookie removed	Webfilter	cookiefilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0337013584	13584	LOG_ID_WEB_SCRIPTFILTER_APPLET	Java applet removed	Webfilter	appletfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0341013600	13600	LOG_ID_WEB_SCRIPTFILTER_OTHER	Script entity removed	Webfilter	scriptfilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0336013601	13601	LOG_ID_WEB_WF_COOKIE	Cookie removed entirely	Webfilter	cookiefilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0336013602	13602	LOG_ID_WEB_WF_REFERER	Referrer removed from request	Webfilter	cookiefilter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0343013603	13603	LOG_ID_WEB_WF_COMMAND_BLOCK	Command blocked	Webfilter	webfilter_command_block	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0314013616	13616	LOG_ID_CONTENT_TYPE_BLOCK	Blocked by HTTP header content type	Webfilter	content	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0314013617	13617	LOG_ID_CONTENT_TYPE_EXEMPT	Exempted by HTTP header content type	Webfilter	content	Information	7.4.12,7.6.7,8.0.1
+0344013632	13632	LOGID_HTTP_HDR_CHG_REQ	Depends on info in msg field	Webfilter	http_header_change	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0344013633	13633	LOGID_HTTP_HDR_CHG_RESP	Depends on info in msg field	Webfilter	http_header_change	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0346013648	13648	LOG_ID_WEB_WF_ANTIPHISH_MATCH_URL_ALLOW	Antiphishing matched a URL filter rule without blocking the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0346013649	13649	LOG_ID_WEB_WF_ANTIPHISH_MATCH_FTGD_ALLOW	Antiphishing matched a Fortiguard category rule without blocking the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0346013650	13650	LOG_ID_WEB_WF_ANTIPHISH_MATCH_DEFAULT_ALLOW	Antiphishing reached default action without blocking the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0346013651	13651	LOG_ID_WEB_WF_ANTIPHISH_MATCH_URL_BLOCK	Antiphishing matched a URL filter rule and blocked the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0346013652	13652	LOG_ID_WEB_WF_ANTIPHISH_MATCH_FTGD_BLOCK	Antiphishing matched a Fortiguard category rule and blocked the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0346013653	13653	LOG_ID_WEB_WF_ANTIPHISH_MATCH_DEFAULT_BLOCK	Antiphishing reached default action and blocked the request.	Webfilter	antiphishing	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0347013664	13664	LOG_ID_VIDEOFILTER_CATEGORY_BLOCK	Video category is blocked.	Webfilter	videofilter-category	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0347013665	13665	LOG_ID_VIDEOFILTER_CATEGORY_MONITOR	Video category is monitored	Webfilter	videofilter-category	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0347013666	13666	LOG_ID_VIDEOFILTER_CATEGORY_ALLOW	Video category is allowed	Webfilter	videofilter-category	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0348013680	13680	LOG_ID_VIDEOFILTER_CHANNEL_BLOCK	Video channel is blocked.	Webfilter	videofilter-channel	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0348013681	13681	LOG_ID_VIDEOFILTER_CHANNEL_MONITOR	Video channel is monitored	Webfilter	videofilter-channel	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0348013682	13682	LOG_ID_VIDEOFILTER_CHANNEL_ALLOW	Video channel is allowed	Webfilter	videofilter-channel	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0349013696	13696	LOG_ID_UNKNOWN_CE_BLOCK	Unknown content-encoding detected and blocked.	Webfilter	unknown-ce	Warning	7.2.13
+0349013697	13697	LOG_ID_UNKNOWN_CE_BYPASS	Scan is bypassed due to unknown content-encoding.	Webfilter	unknown-ce	Notice	7.2.13
+0350013712	13712	LOG_ID_VIDEOFILTER_TITLE_BLOCK	Video title is blocked.	Webfilter	videofilter-title	Warning	7.4.12,7.6.7,8.0.1
+0350013713	13713	LOG_ID_VIDEOFILTER_TITLE_MONITOR	Video title is monitored	Webfilter	videofilter-title	Notice	7.4.12,7.6.7,8.0.1
+0350013714	13714	LOG_ID_VIDEOFILTER_TITLE_ALLOW	Video title is allowed	Webfilter	videofilter-title	Notice	7.4.12,7.6.7,8.0.1
+0351013728	13728	LOG_ID_VIDEOFILTER_DESCRIPTION_BLOCK	Video description is blocked.	Webfilter	videofilter-description	Warning	7.4.12,7.6.7,8.0.1
+0351013729	13729	LOG_ID_VIDEOFILTER_DESCRIPTION_MONITOR	Video description is monitored	Webfilter	videofilter-description	Notice	7.4.12,7.6.7,8.0.1
+0351013730	13730	LOG_ID_VIDEOFILTER_DESCRIPTION_ALLOW	Video description is allowed	Webfilter	videofilter-description	Notice	7.4.12,7.6.7,8.0.1
+0419016384	16384	LOGID_ATTCK_SIGNATURE_TCP_UDP	Attack detected by UDP/TCP signature	IPS	signature	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0419016385	16385	LOGID_ATTCK_SIGNATURE_ICMP	Attack detected by ICMP signature	IPS	signature	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0419016386	16386	LOGID_ATTCK_SIGNATURE_OTHERS	Attack detected by other signature	IPS	signature	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0421016399	16399	LOGID_ATTACK_MALICIOUS_URL	Attack detected by a malicious URL	IPS	malicious-url	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0422016400	16400	LOGID_ATTACK_BOTNET_WARNING	Botnet C&amp;C Communication (warning)	IPS	botnet	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0422016401	16401	LOGID_ATTACK_BOTNET_NOTIF	Botnet C&amp;C Communication (notice)	IPS	botnet	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0419016402	16402	LOGID_ATTACK_SIGNATURE_L2	Ethernet protocols detection	IPS	signature	Warning	7.6.7,8.0.1
+0720018432	18432	LOGID_ATTCK_ANOMALY_TCP_UDP	Attack detected by UDP/TCP anomaly	Anomaly	anomaly	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0720018433	18433	LOGID_ATTCK_ANOMALY_ICMP	Attack detected by ICMP anomaly	Anomaly	anomaly	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0720018434	18434	LOGID_ATTCK_ANOMALY_OTHERS	Attack detected by other anomaly	Anomaly	anomaly	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100020002	20002	LOG_ID_DOMAIN_UNRESOLVABLE	Domain name of alert email sender unresolvable	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020003	20003	LOG_ID_MAIL_SENT_FAIL	Alert email send status failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020004	20004	LOG_ID_POLICY_TOO_BIG	Policy too big for installation	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020005	20005	LOG_ID_PPP_LINK_UP	Modem PPP link up	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020006	20006	LOG_ID_PPP_LINK_DOWN	Modem PPP link down	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020007	20007	LOG_ID_SOCKET_EXHAUSTED	Socket is exhausted	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020008	20008	LOG_ID_POLICY6_TOO_BIG	IPv6 policy too big for installation	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020010	20010	LOG_ID_KERNEL_ERROR	Kernel error	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020016	20016	LOG_ID_MODEM_EXCEED_REDIAL_COUNT	Modem exceeded redial limit	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020017	20017	LOG_ID_MODEM_FAIL_TO_OPEN	Modem failed to open	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020020	20020	LOG_ID_MODEM_USB_DETECTED	USB modem detected	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020021	20021	LOG_ID_MAIL_RESENT	Alert email resent	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020022	20022	LOG_ID_MODEM_USB_REMOVED	USB modem removed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020023	20023	LOG_ID_MODEM_USBLTE_DETECTED	USB LTE modem detected	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020024	20024	LOG_ID_MODEM_USBLTE_REMOVED	USB LTE modem removed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020025	20025	LOG_ID_REPORTD_REPORT_SUCCESS	Report generated successfully	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020026	20026	LOG_ID_REPORTD_REPORT_FAILURE	Report generation failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100020028	20028	LOG_ID_REPORT_RECREATE_DB	Report database recreated	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020031	20031	LOG_ID_RAD_OUT_OF_MEM	RADVD out of memory	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020032	20032	LOG_ID_RAD_NOT_FOUND	RADVD interface not found	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020033	20033	LOG_ID_RAD_MOBILE_IPV6	RADVD mobile IPv6 extensions used	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020034	20034	LOG_ID_RAD_IPV6_OUT_OF_RANGE	RADVD mobile IPv6 MinRtrAdvInterval out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020035	20035	LOG_ID_RAD_MIN_OUT_OF_RANGE	RADVD MinRtrAdvInterval out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020036	20036	LOG_ID_RAD_MAX_OUT_OF_RANGE	RADVD mobile IPv6 MaxRtrAdvInterval out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020037	20037	LOG_ID_RAD_MAX_ADV_OUT_OF_RANGE	RADVD MaxRtrAdvInterval out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020039	20039	LOG_ID_RAD_MTU_TOO_SMALL	RADVD AdvLinkMTU too small	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020040	20040	LOG_ID_RAD_TIME_TOO_SMALL	RADVD AdvReachableTime too small	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020041	20041	LOG_ID_RAD_HOP_OUT_OF_RANGE	RADVD AdvCurHopLimit too big	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020042	20042	LOG_ID_RAD_DFT_HOP_OUT_OF_RANGE	RADVD AdvCurHopLimit out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020043	20043	LOG_ID_RAD_AGENT_OUT_OF_RANGE	RADVD HomeAgentLifetime out of range	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020044	20044	LOG_ID_RAD_AGENT_FLAG_NOT_SET	RADVD AdvHomeAgentFlag not set	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020045	20045	LOG_ID_RAD_PREFIX_TOO_LONG	RADVD invalid prefix length	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020046	20046	LOG_ID_RAD_PREF_TIME_TOO_SMALL	RADVD AdvValidLifetime less than AdvPreferredLifetime	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020061	20061	LOG_ID_RAD_INV_ICMPV6_TYPE	RADVD received unwanted ICMPv6 packet	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020062	20062	LOG_ID_RAD_INV_ICMPV6_RA_LEN	RADVD received ICMPv6 RA packet with invalid length	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020063	20063	LOG_ID_RAD_ICMPV6_NO_SRC_ADDR	RADVD received ICMPv6 RA packet with non-link local source address	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020064	20064	LOG_ID_RAD_INV_ICMPV6_RS_LEN	RADVD received ICMPv6 RS packet with invalid length	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020065	20065	LOG_ID_RAD_INV_ICMPV6_CODE	RADVD received ICMPv6 RS/RA packet with invalid code	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020066	20066	LOG_ID_RAD_INV_ICMPV6_HOP	RADVD received ICMPv6 RS/RA packet with invalid hop limit	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020067	20067	LOG_ID_RAD_MISMATCH_HOP	RADVD local AdvCurHopLimit disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020068	20068	LOG_ID_RAD_MISMATCH_MGR_FLAG	RADVD local AdvManagedFlag disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020069	20069	LOG_ID_RAD_MISMATCH_OTH_FLAG	RADVD local AdvOtherConfigFlag disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020070	20070	LOG_ID_RAD_MISMATCH_TIME	RADVD local AdvReachableTime disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020071	20071	LOG_ID_RAD_MISMATCH_TIMER	RADVD local AdvRetransTimer disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020072	20072	LOG_ID_RAD_EXTRA_DATA	RADVD extra data in RA packet found	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020073	20073	LOG_ID_RAD_NO_OPT_DATA	RADVD RA packet option length zero	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020074	20074	LOG_ID_RAD_INV_OPT_LEN	RADVD RA packet option length greater than total length	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020075	20075	LOG_ID_RAD_MISMATCH_MTU	RADVD local AdvLinkMTU disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020077	20077	LOG_ID_RAD_MISMATCH_PREF_TIME	Interface AdvPreferredLifetime on our interface does not agree with a remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020078	20078	LOG_ID_RAD_INV_OPT	RADVD found invalid option in RA packet from remote site	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020080	20080	LOG_ID_RAD_FAIL_TO_RCV	RADVD receive message failed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020081	20081	LOG_ID_RAD_INV_HOP	RADVD received invalid IPv6 hop limit	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020082	20082	LOG_ID_RAD_INV_PKTINFO	RADVD received invalid IPv6 packet info	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020083	20083	LOG_ID_RAD_FAIL_TO_CHECK	RADVD all-routers membership check failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020084	20084	LOG_ID_RAD_FAIL_TO_SEND	RADVD send message failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020085	20085	LOG_ID_SESSION_CLASH	Session clashed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020090	20090	LOG_ID_INTF_LINK_STA_CHG	Interface link status changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020099	20099	LOG_ID_INTF_STA_CHG	Interface status changed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020100	20100	LOG_ID_WEB_CAT_UPDATED	FortiGuard web filter category list updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020101	20101	LOG_ID_WEB_LIC_EXPIRE	FortiGuard web filter license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020102	20102	LOG_ID_SPAM_LIC_EXPIRE	FortiGuard antispam license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020103	20103	LOG_ID_AV_LIC_EXPIRE	FortiGuard antivirus license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020104	20104	LOG_ID_IPS_LIC_EXPIRE	FortiGuard IPS license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020107	20107	LOG_ID_LOG_UPLOAD_ERR	Log upload error	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020108	20108	LOG_ID_LOG_UPLOAD_DONE	Log upload completed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020109	20109	LOG_ID_WEB_LIC_EXPIRED	FortiGuard web filter license expired	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020113	20113	LOG_ID_IPSA_DOWNLOAD_FAIL	IPSA database download failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100020114	20114	LOG_ID_IPSA_SELFTEST_FAIL	IPSA disabled: self test failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100020115	20115	LOG_ID_IPSA_STATUSUPD_FAIL	IPSA driver update failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100020116	20116	LOG_ID_SPAM_LIC_EXPIRED	FortiGuard antispam license expired	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020117	20117	LOG_ID_AV_LIC_EXPIRED	FortiGuard antivirus license expired	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020118	20118	LOG_ID_WEBF_STATUS_REACH	FortiGuard webfilter reachable	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020119	20119	LOG_ID_WEBF_STATUS_UNREACH	FortiGuard webfilter unreachable	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020120	20120	LOG_ID_FMGC_LIC_EXPIRE	FortiManager Cloud license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020121	20121	LOG_ID_FAZC_LIC_EXPIRE	FortiAnalyzer Cloud license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020122	20122	LOG_ID_SWNO_LIC_EXPIRE	SD-WAN Overlay Controller license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020123	20123	LOG_ID_SWNM_LIC_EXPIRE	SD-WAN Monitoring license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020124	20124	LOG_ID_VMLS_LIC_EXPIRE	VM-S license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020125	20125	LOG_ID_SFAS_LIC_EXPIRE	Security Rating license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020126	20126	LOG_ID_IPMC_LIC_EXPIRE	IPAM Controller license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020127	20127	LOG_ID_IOTH_LIC_EXPIRE	IoT device identification license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020128	20128	LOG_ID_FSAC_LIC_EXPIRE	FortiSandbox Cloud license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020129	20129	LOG_ID_AFAC_LIC_EXPIRE	FortiAnalyzer Cloud premium license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020130	20130	LOG_ID_EMSC_ACC_LIC_EXPIRE	FortiClient EMS Cloud license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020131	20131	LOG_ID_FMGC_ACC_LIC_EXPIRE	FortiManager Cloud Account Level license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020132	20132	LOG_ID_FSAP_ACC_LIC_EXPIRE	FortiSandbox Cloud Account Level license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020133	20133	LOG_ID_FIREWALL_POLICY_EXPIRE	Firewall policy expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020134	20134	LOG_ID_FIREWALL_POLICY_EXPIRED	Firewall policy expired	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020135	20135	LOG_ID_FAIS_LIC_EXPIRE	FortiGuard AI-Based Sandbox Service license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020136	20136	LOG_ID_DLP_LIC_EXPIRE	FortiGuard Data loss prevention (DLP) server license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020137	20137	LOG_ID_FGSA_LIC_EXPIRE	Attack Surface Security Rating Service license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020138	20138	LOG_ID_SWOS_LIC_EXPIRE	FortiGuard SD-WAN Overlay as a Service license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020139	20139	LOG_ID_FGCS_ACC_LIC_EXPIRE	FortiGSLB Cloud Account Level license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020140	20140	LOG_ID_FSPA_LIC_EXPIRE	FortiSASE Secure Private Access license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020141	20141	LOG_ID_FSFG_LIC_EXPIRE	FortiSASE LAN Extension license expiring	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100020142	20142	LOG_ID_SSFL_LIC_EXPIRE	Sovereign SASE FortiGate license expiring	Event	system	Warning	7.6.7,8.0.1
+0100020150	20150	LOG_ID_DEV_VUNL_FTGD_LOOKUP	Device vulnerability lookup on FortiGuard	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100020151	20151	LOG_ID_DEV_STATUS_MONITOR	Device status monitor online duration reached	Event	system	Notice	8.0.1
+0100020200	20200	LOG_ID_FIPS_SELF_TEST	FIPS CC self-test initiated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020201	20201	LOG_ID_FIPS_SELF_ALL_TEST	FIPS ALL CC self-tests initiated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100020202	20202	LOG_ID_DISK_FORMAT_ERROR	Disk partitioning or formatting Error	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020203	20203	LOG_ID_DAEMON_SHUTDOWN	Daemon shutdown	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020204	20204	LOG_ID_DAEMON_START	Daemon started	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020205	20205	LOG_ID_DISK_FORMAT_REQ	Format disk requested	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020206	20206	LOG_ID_DISK_SCAN_REQ	Scan disk requested	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020207	20207	LOG_ID_RAD_MISMATCH_VALID_TIME	RADVD local AdvValidLifetime disagrees with remote site	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020208	20208	LOG_ID_ZOMBIE_DAEMON_CLEANUP	Zombie daemon cleanup	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020209	20209	LOG_ID_DISK_UNAVAIL	Disk unavailable	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100020210	20210	LOG_ID_DISK_TRIM_START	SSD TRIM started	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020211	20211	LOG_ID_DISK_TRIM_END	SSD TRIM finished	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020212	20212	LOG_ID_DISK_SCAN_NEEDED	Disk scan is needed	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100020213	20213	LOG_ID_DISK_LOG_CORRUPTED	Log file on disk is corrupted	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020214	20214	LOG_ID_LOCAL_OUT_IOC	Locally generated traffic goes to IoC location	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100020220	20220	LOGID_EVENT_SHAPER_OUTBOUND_MAXED_OUT	Outbound bandwidth rate exceeded	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100020221	20221	LOGID_EVENT_SHAPER_INBOUND_MAXED_OUT	Inbound bandwidth rate exceeded	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0119020230	20230	LOG_ID_SYS_SECURITY_WRITE_VIOLATION	Write Permission Violation	Event	ftnt-sec-mod	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0119020231	20231	LOG_ID_SYS_SECURITY_HARDLINK_VIOLATION	Hard Link Creation Violation	Event	ftnt-sec-mod	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0119020232	20232	LOG_ID_SYS_SECURITY_LOAD_MODULE_VIOLATION	Load Kernel/Kernel Module/Firmware Violation	Event	ftnt-sec-mod	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0119020233	20233	LOG_ID_SYS_SECURITY_FILE_HASH_MISSING	Integrity check of Running/loading Executable File failed without Integrity measure	Event	ftnt-sec-mod	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0119020234	20234	LOG_ID_SYS_SECURITY_FILE_HASH_MISMATCH	Integrity check of Running/loading Executable File failed with mismatched measure	Event	ftnt-sec-mod	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100020235	20235	LOG_ID_SYS_SECURITY_MOUNT_VIOLATION	Filesystem Mount Violation	Event	system	Alert	7.2.13,7.4.12
+0100020262	20262	LOG_ID_SYS_SECURITY_WEB_SVC_EVAL_VIOLATION	Web service code execution violation	Event	system	Alert	7.4.12
+0103020300	20300	LOG_ID_BGP_NB_STAT_CHG	BGP neighbor status changed	Event	router	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0103020301	20301	LOG_ID_VZ_LOG_INFO	Routing log information	Event	router	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0103020302	20302	LOG_ID_OSPF_NB_STAT_CHG	OSPF neighbor status changed	Event	router	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0103020303	20303	LOG_ID_OSPF6_NB_STAT_CHG	OSPF6 neighbor status changed	Event	router	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0103020304	20304	LOG_ID_VZ_LOG_WARNING	Routing log warning	Event	router	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0103020305	20305	LOG_ID_VZ_LOG_CRITICAL	Routing log critical event	Event	router	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0103020306	20306	LOG_ID_VZ_LOG_ERROR	Routing log error	Event	router	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0103020401	20401	LOG_ID_ROUTER_CLEAR	Router cleared	Event	router	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0103020402	20402	LOG_ID_EVPN	EVPN warning	Event	router	Warning	8.0.1
+0513020480	20480	LOGID_ANTISPAM_EMAIL_NOTIF	SPAM notification	EmailFilter	spam	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0512020481	20481	LOGID_EMAIL_GENERAL_NOTIF	Email message	EmailFilter	email	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0514020482	20482	LOGID_ANTISPAM_EMAIL_BWORD_NOTIF	Banned word notification	EmailFilter	bannedword	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0553020509	20509	LOGID_ANTISPAM_FTGD_ERR	FortiGuard error message	EmailFilter	ftgd_err	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0520020510	20510	LOGID_ANTISPAM_EMAIL_WEBMAIL_NOTIF	Webmail message	EmailFilter	webmail	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022000	22000	LOG_ID_INV_PKT_LEN	Packet length mismatch	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022001	22001	LOG_ID_UNSUPPORTED_PROT_VER	Protocol version unsupported	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022002	22002	LOG_ID_INV_REQ_TYPE	Request type not supported	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022003	22003	LOG_ID_FAIL_SET_SIG_HANDLER	Signal handler setup failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022004	22004	LOG_ID_FAIL_CREATE_SOCKET	Socket creation failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022005	22005	LOG_ID_FAIL_CREATE_SOCKET_RETRY	Socket creation retry failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022006	22006	LOG_ID_FAIL_REG_CMDB_EVENT	Registration for CMDB events failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022009	22009	LOG_ID_FAIL_FIND_AV_PROFILE	AntiVirus profile not found	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022010	22010	LOG_ID_SENDTO_FAIL	URL filter packet send failure	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022011	22011	LOG_ID_ENTER_MEM_CONSERVE_MODE	Memory conserve mode entered	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022012	22012	LOG_ID_LEAVE_MEM_CONSERVE_MODE	Memory conserve mode exited	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022013	22013	LOG_ID_IPPOOLPBA_BLOCK_EXHAUSTED	IP pool PBA block exhausted	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100022014	22014	LOG_ID_IPPOOLPBA_NATIP_EXHAUSTED	IP pool PBA NAT IP exhausted	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100022015	22015	LOG_ID_IPPOOLPBA_CREATE	IP pool PBA created	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022016	22016	LOG_ID_IPPOOLPBA_DEALLOCATE	Deallocate IP pool PBA	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022017	22017	LOG_ID_EXCEED_GLOB_RES_LIMIT	Global resource limit exceeded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022018	22018	LOG_ID_EXCEED_VD_RES_LIMIT	VDOM resource limit exceeded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022019	22019	LOG_ID_LOGRATE_OVER_LIMIT	Log rate limit exceeded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022020	22020	LOG_ID_FAIL_CREATE_HA_SOCKET	HA socket creation failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022021	22021	LOG_ID_FAIL_CREATE_HA_SOCKET_RETRY	UDP socket creation to relay URL request failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022022	22022	LOG_ID_ENTER_EXTREME_LOW_MEM_MODE	Extreme low memory mode entered	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022023	22023	LOG_ID_LEAVE_EXTREME_LOW_MEM_MODE	Extreme low memory mode exited	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022024	22024	LOG_ID_IPPOOLPBA_INTERIM	IP pool PBA interim log	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022031	22031	LOG_ID_SUCCESS_CSF_LOG_SYNC_CONFIG_CHANGED	Settings modified by Security Fabric service	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022032	22032	LOG_ID_CSF_LOOP_FOUND	Looped configuration in Security Fabric service	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022035	22035	LOG_ID_CSF_UPSTREAM_SN_CHANGED	Serial number of upstream is changed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022036	22036	LOG_ID_CSF_FGT_CONNECTED	Connection with Security Fabric member established and authorized.	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022037	22037	LOG_ID_CSF_FGT_DISCONNECTED	Connection with authorized Security Fabric member terminated.	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022038	22038	LOG_ID_CSF_GLOBAL_SYNC_FAILED	Synchronization of global object failed.	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022039	22039	LOG_ID_CSF_GLOBAL_SYNC_REPORT	Synchronization of global object report.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022040	22040	LOG_ID_CSF_DEVICE_JOIN	Device joined the Security Fabric.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022041	22041	LOG_ID_CSF_DEVICE_LEAVE	Device left the Security Fabric.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022042	22042	LOG_ID_CSF_DEVICE_UPDATE	Device in the Security Fabric was updated.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022043	22043	LOG_ID_CSF_NEW_AUTH_REQ	An authorization request was added.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022044	22044	LOG_ID_CSF_UPDATE_AUTH_REQ	An authorization request was updated.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022045	22045	LOG_ID_CSF_REMOVE_AUTH_REQ	An authorization request was removed.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022046	22046	LOG_ID_CSF_ROLE_CHANGE	Device's authorization privilege changed.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022047	22047	LOG_ID_CSF_FILE_MEM_USAGE	CSF daemon files memory usage warning.	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022048	22048	LOG_ID_CSF_ADVPN_SYNC	Fabric ADVPN configuration synchronized from root.	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022049	22049	LOG_ID_CSF_DAEMON_CLOSE	Daemon csfd has closed.	Event	system	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0100022050	22050	LOG_ID_IPAMD_ADDRESS_ALLOCATED	Address allocated by FortiIPAM and applied to an interface	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022051	22051	LOG_ID_IPAMD_ADDRESS_SET_FAILED	Address received from FortiIPAM could not be applied to the interface	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022052	22052	LOG_ID_IPAMD_ADDRESS_INVALIDATED	FortiIPAM indicated that the address was no longer allocated to the interface	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022053	22053	LOG_ID_IPAMD_VALIDATION_COMPLETE	Startup validation of IPAM addresses was completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022060	22060	LOG_ID_IPAMSD_ADD_ENTRY	Add new entry to IPAM	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022061	22061	LOG_ID_IPAMSD_DELETE_ENTRY	Delete entry from IPAM	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022062	22062	LOG_ID_IPAMSD_FLAG_CONFLICT	Flag IPAM entry as conflict	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022063	22063	LOG_ID_IPAMSD_UNFLAG_CONFLICT	Unflag IPAM entry as conflict	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022070	22070	LOG_ID_FORTIGSLB_COMMUNICATION_ERROR	Error communicating with the FortiGSLB cloud server	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100022071	22071	LOG_ID_FORTIGSLB_CLOUD_CONFIG_UPDATED	Config successfully sent to the FortiGSLB cloud server	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022080	22080	LOG_ID_PROVISION_LATEST_SUCCEEDED	Provisioning of latest firmware was completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022081	22081	LOG_ID_PROVISION_LATEST_FAILED	Provisioning of latest firmware failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022085	22085	LOG_ID_DEVICE_UPGRADE_SUCCEEDED	A device upgrade was completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022086	22086	LOG_ID_DEVICE_UPGRADE_FAILED	A device upgrade failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022090	22090	LOG_ID_FEDERATED_UPGRADE_CANCELLED	A federated upgrade was cancelled due to the CSF tree not being ready	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022091	22091	LOG_ID_FEDERATED_UPGRADE_SUCCEEDED	A federated upgrade was completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022092	22092	LOG_ID_FEDERATED_UPGRADE_FAILED	A federated upgrade failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022093	22093	LOG_ID_FEDERATED_UPGRADE_STEP_COMPLETE	A step in a multi-step federated upgrade was completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022094	22094	LOG_ID_FEDERATED_UPGRADE_ROOT_COMPLETED	A federated upgrade was completed by the root FortiGate	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022095	22095	LOG_ID_FEDERATED_UPGRADE_ROOT_NOT_COMPLETED	A federated upgrade could not be completed by the root FortiGate	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022096	22096	LOG_ID_AUTO_UPG_INSTALLATION_SUCCEEDED	An automatic firmware upgrade was completed	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100022097	22097	LOG_ID_AUTO_UPG_INSTALLATION_FAILED	An automatic firmware upgrade failed	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100022100	22100	LOG_ID_QUAR_DROP_TRAN_JOB	Files dropped by quarantine daemon	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022101	22101	LOG_ID_QUAR_DROP_TLL_JOB	Files dropped due to poor network connection	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022102	22102	LOG_ID_LOG_DISK_FAILURE	Log disk failure imminent	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022103	22103	LOG_ID_QUAR_LIMIT_REACHED	Sandbox limit reached	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022105	22105	LOG_ID_POWER_FAILURE	Power supply failed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022106	22106	LOG_ID_POWER_OPTIONAL_NOT_DETECTED	Optional power supply not detected	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022107	22107	LOG_ID_VOLT_ANOM	Voltage anomaly	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022108	22108	LOG_ID_FAN_ANOM	Fan anomaly	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022109	22109	LOG_ID_TEMP_TOO_HIGH	Temperature too high	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022110	22110	LOG_ID_SPARE_BLOCK_LOW	Spare blocks availability low	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022111	22111	LOG_ID_PSU_ACTION_FPC_DOWN	FPC down due to PSU action	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022112	22112	LOG_ID_PSU_ACTION_FPC_UP	FPC up due to PSU action	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022113	22113	LOG_ID_FNBAM_FAILURE	Authentication error	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022114	22114	LOG_ID_POWER_FAILURE_WARNING	Power supply failed warning	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022115	22115	LOG_ID_POWER_RESTORE_NOTIF	Power supply restored notification	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022116	22116	LOG_ID_POWER_REDUNDANCY_DEGRADE	Power Supply Redundancy Degrade	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022117	22117	LOG_ID_POWER_REDUNDANCY_FAILURE	Power Supply Redundancy Lost	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022118	22118	LOG_ID_HW_MONITOR_EMERGENCY	IPMC monitor emergency	Event	system	Emergency	7.4.12,7.6.7,8.0.1
+0100022119	22119	LOG_ID_HW_MONITOR_WARNING	IPMC monitor warning	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100022120	22120	LOG_ID_HW_MONITOR_NOTIF	IPMC monitor notification	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022150	22150	LOG_ID_VOLT_NOM	Voltage normal	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022151	22151	LOG_ID_FAN_NOM	Fan normal	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022152	22152	LOG_ID_TEMP_TOO_LOW	Temperature too low	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022153	22153	LOG_ID_TEMP_NORM	Temperature normal	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022200	22200	LOG_ID_AUTO_UPT_CERT	Certificate will be auto-updated	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022201	22201	LOG_ID_AUTO_GEN_CERT	Certificate will be auto-regenerated	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022203	22203	LOG_ID_AUTO_GEN_CERT_FAIL	Certificate failed to auto-generate	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022204	22204	LOG_ID_AUTO_GEN_CERT_PENDING	Certificate pending to auto-generate	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022205	22205	LOG_ID_AUTO_GEN_CERT_SUCC	Certificate succeed to auto-generate	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022206	22206	LOG_ID_CRL_EXPIRED	CRL is expired	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022207	22207	LOG_ID_CERT_EXPIRE_WARNING	Certificate will expire soon	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022220	22220	LOG_ID_EXT_RESOURCE	External resource updated	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022221	22221	LOG_ID_EXT_RESOURCE_FAIL	External resource update failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022222	22222	LOG_ID_EXT_RESOURCE_LOAD	External resource loaded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022223	22223	LOG_ID_EXT_RESOURCE_DEBUG	External resource debug	Event	system	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0100022224	22224	LOG_ID_EXT_RESOURCE_OVERFLOW	External resource overflow	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100022700	22700	LOG_ID_IPS_FAIL_OPEN	IPS session scan paused	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022701	22701	LOG_ID_IPS_FAIL_OPEN_END	IPS session scan resumed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022750	22750	LOG_ID_METERED_BILLING_ACCEPTED	Metered billing usage event accepted	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022751	22751	LOG_ID_METERED_BILLING_FAIL	Metered billing usage event bad reuest	Event	system	Critical	7.4.12,7.6.7,8.0.1
+0100022752	22752	LOG_ID_METERED_BILLING_VALID	Metered billing status is valid	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022753	22753	LOG_ID_METERED_BILLING_INVALID	Metered billing status is invalid	Event	system	Critical	7.4.12,7.6.7,8.0.1
+0100022800	22800	LOG_ID_SCAN_SERV_FAIL	Scan services session failed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022802	22802	LOG_ID_ENTER_FD_CONSERVE_MODE	File descriptor conserve mode entered	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022803	22803	LOG_ID_LEAVE_FD_CONSERVE_MODE	File descriptor conserve mode exited	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022804	22804	LOG_ID_LIC_STATUS_CHG	License status changed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022805	22805	LOG_ID_FAIL_TO_VALIDATE_LIC	License validation failure	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022806	22806	LOG_ID_DUP_LIC	Duplicate license detected	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022807	22807	LOG_ID_VDOM_LIC	VDOM license status changed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022808	22808	LOG_ID_LIC_EXPIRE	VM license expired	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022809	22809	LOG_ID_LIC_WILL_EXPIRE	VM license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022810	22810	LOG_ID_SCANUNIT_ERROR_BLOCK	Scan error - traffic blocked	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022811	22811	LOG_ID_SCANUNIT_ERROR_PASS	Scan error - traffic passed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022812	22812	LOG_ID_SCANUNIT_AVENG_RELOAD	Scanunit is reloading AV engine	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022813	22813	LOG_ID_SCANUNIT_AVDB_RELOAD	Scanunit reloaded AV Database	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022814	22814	LOG_ID_SCANUNIT_AVDB_RELOAD_ERROR	Scanunit AV Database reload error	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022815	22815	LOG_ID_SCANUNIT_AVDB_LOAD	Scanunit loaded AV Database	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022816	22816	LOG_ID_SCANUNIT_AVDB_LOAD_ERROR	Scanunit AV Database load error	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100022817	22817	LOG_ID_SCANUNIT_DLP_SIGNATURE_REMOVE	Scanunit DLP signature update error	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100022818	22818	LOG_ID_SCANUNIT_DLP_BUILDER_TIMEOUT	Scanunit DLP builder timeout	Event	system	Warning	7.6.7,8.0.1
+0100022819	22819	LOG_ID_SCANUNIT_DLP_BUILDER_PATTERN_SKIP	Scanunit DLP dictionary pattern skipped	Event	system	Warning	7.6.7,8.0.1
+0115022850	22850	LOG_ID_USER_QUARANTINE_MAC_ADD	User quarantine MAC added	Event	switch-controller	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0115022851	22851	LOG_ID_USER_QUARANTINE_MAC_DELETE	User quarantine MAC deleted	Event	switch-controller	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0115022852	22852	LOG_ID_USER_QUARANTINE_MAC_BOUNCE_PORT_HIT	User quarantine MAC bounce port hit	Event	switch-controller	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0115022853	22853	LOG_ID_USER_QUARANTINE_MAC_BOUNCE_PORT_MISS	User quarantine MAC bounce port miss	Event	switch-controller	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115022861	22861	LOG_ID_FLPOLD_NAC_ADD	NAC device addition	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022862	22862	LOG_ID_FLPOLD_NAC_DELETE	NAC device deletion	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022863	22863	LOG_ID_FLPOLD_NAC_MODIFY	NAC device modify	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022864	22864	LOG_ID_FLPOLD_DPP_ADD	DPP device addition	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022865	22865	LOG_ID_FLPOLD_DPP_DELETE	DPP device deletion	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022866	22866	LOG_ID_FLPOLD_DPP_MODIFY	DPP device modify	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022867	22867	LOG_ID_FLPOLD_DPP_INTF_TAGS_ADD	DPP interface tags add	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022868	22868	LOG_ID_FLPOLD_DPP_INTF_TAGS_DELETE	DPP interface tags delete	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022869	22869	LOG_ID_FLPOLD_NAC_DYNAMIC_ADDRESS_ADD	NAC device dynamic address addition	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022870	22870	LOG_ID_FLPOLD_NAC_DYNAMIC_ADDRESS_DELETE	NAC device dynamic address deletion	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022871	22871	LOG_ID_FLPOLD_NAC_MAC_CACHE_SYNC	NAC MAC cache sync	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022872	22872	LOG_ID_FLPOLD_NAC_MAX_ERROR	NAC device Max Limit Error	Event	switch-controller	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115022873	22873	LOG_ID_FLPOLD_DPP_MAX_ERROR	DPP device Max Limit Error	Event	switch-controller	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115022874	22874	LOG_ID_FLTUND_NEW_CONN	Switch-controller FortilinkLite new connection	Event	switch-controller	Notice	7.4.12,7.6.7,8.0.1
+0115022875	22875	LOG_ID_FLTUND_CONN_DOWN	Switch-controller FortilinkLite connection down	Event	switch-controller	Critical	7.4.12,7.6.7,8.0.1
+0115022876	22876	LOG_ID_FLTUND_RCV_BOOTSTRAP	Switch-controller FortilinkLite received bootstrap	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115022877	22877	LOG_ID_FLTUND_CONN_ONLINE	Switch-controller FortilinkLite tunnel online	Event	switch-controller	Notice	7.4.12,7.6.7,8.0.1
+0115022878	22878	LOG_ID_FLTUND_CONN_OFFLINE	Switch-controller FortilinkLite tunnel offline	Event	switch-controller	Critical	7.4.12,7.6.7,8.0.1
+0115022890	22890	LOG_ID_FORTILINKD	Switch-Controller Daemon Log (Notification)	Event	switch-controller	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0115022891	22891	LOG_ID_FLCFGD_SYNC_ERROR	Switch-Controller Switch Sync Error	Event	switch-controller	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0115022892	22892	LOG_ID_FLCFGD_SYNC_COMPLETE	Switch-Controller Switch Sync Complete	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022893	22893	LOG_ID_FLCFGD_SYNC_STATE	Switch-Controller Switch Sync State	Event	switch-controller	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0115022894	22894	LOG_ID_FLCFGD_UPGRADE_ERROR	Switch-Controller Switch Upgrade Error	Event	switch-controller	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0115022895	22895	LOG_ID_FLCFGD_UPGRADE_STATUS	Switch-Controller Switch Upgrade Status	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022896	22896	LOG_ID_FORTILINKD_CRITICAL	Switch-Controller Daemon Log (Critical)	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115022897	22897	LOG_ID_FORTILINKD_SPLIT_PORT_INFO	Switch-controller split-port related configuration change detected	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115022900	22900	LOG_ID_CAPUTP_SESSION	CAPUTP session status	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100022901	22901	LOG_ID_FAZ_CON	FortiAnalyzer connection up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022902	22902	LOG_ID_FAZ_DISCON	FortiAnalyzer connection down	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022903	22903	LOG_ID_FAZ_CON_ERR	FortiAnalyzer connection failed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115022904	22904	LOG_ID_CAPUTP_SESSION_NOTIF	CAPUTP session status notification	Event	switch-controller	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022905	22905	LOG_ID_LOGDEV_STATUS_CHANGE	Log device status has changed	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022906	22906	LOG_ID_SECURITY_LEVEL_CHANGE	Hardware security level is changed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022907	22907	LOG_ID_INPUT_DETECTION	Digital-IO input state change	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022908	22908	LOG_ID_OUTPUT_DETECTION	Digital-IO output state change	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100022912	22912	LOG_ID_FDS_SRV_ERRCON	FortiGate Cloud server connection failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022913	22913	LOG_ID_FDS_SRV_DISCON	FortiGate Cloud server disconnected	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022915	22915	LOG_ID_FDS_SRV_CON	FortiGate Cloud server connected	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022916	22916	LOG_ID_FDS_STATUS	FortiGuard Message Service status	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022917	22917	LOG_ID_FDS_SMS_QUOTA	SMS quota reached	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022918	22918	LOG_ID_FDS_CTRL_STATUS	FortiGuard Message Service controller status	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022919	22919	LOG_ID_SVR_LOG_STATUS_CHANGED	Server logging status changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022920	22920	LOG_ID_SVR_STATUS_CHANGED	Server service status has changed	Event	system	Notice	7.6.7,8.0.1
+0100022921	22921	LOG_ID_EVENT_ROUTE_INFO_CHANGED	Routing information changed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100022922	22922	LOG_ID_EVENT_LINK_MONITOR_STATUS	Link monitor status	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022923	22923	LOG_ID_EVENT_VWL_LQTY_STATUS	SD-WAN status	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022924	22924	LOG_ID_EVENT_VWL_VOLUME_STATUS	SD-WAN volume status	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022925	22925	LOG_ID_EVENT_VWL_SLA_INFO	SD-WAN SLA information	Event	sdwan	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0113022926	22926	LOG_ID_EVENT_VWL_NEIGHBOR_STATUS	SD-WAN Neighbor status	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022927	22927	LOG_ID_EVENT_VWL_NEIGHBOR_STANDALONE	SD-WAN Neighbor standalone	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022928	22928	LOG_ID_EVENT_VWL_NEIGHBOR_PRIMARY	SD-WAN Neighbor primary	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022929	22929	LOG_ID_EVENT_VWL_NEIGHBOR_SECONDARY	SD-WAN Neighbor secondary	Event	sdwan	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0113022930	22930	LOG_ID_EVENT_VWL_LQTY_STATUS_WARNING	SD-WAN status warning	Event	sdwan	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0113022931	22931	LOG_ID_EVENT_VWL_SLA_INFO_WARNING	SD-WAN SLA information warning	Event	sdwan	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022932	22932	LOG_ID_EVENT_LINK_MONITOR_STATUS_WARNING	Link monitor status warning	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0113022933	22933	LOG_ID_EVENT_VWL_SLA_INFO_NOTIF	SD-WAN SLA notification	Event	sdwan	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0113022934	22934	LOG_ID_EVENT_VWL_LQTY_STATUS_INFO	SD-WAN status information	Event	sdwan	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0113022935	22935	LOG_ID_EVENT_VWL_LQTY_STATUS_DEBUG	SD-WAN status debug	Event	sdwan	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0113022936	22936	LOG_ID_EVENT_VWL_INET_SVC_PQTY_STATUS_INFO	Virtual WAN Link internet service passive quality information	Event	sdwan	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0113022937	22937	LOG_ID_EVENT_VWL_APP_PERF_METRICS	SD-WAN application performance metrics via FortiMonitor	Event	sdwan	Information	7.4.12,7.6.7,8.0.1
+0113022938	22938	LOG_ID_EVENT_VWL_WAN_SPEEDTEST_RESULT	SD-WAN Bandwidth monitoring result	Event	sdwan	Information	7.4.12,7.6.7,8.0.1
+0113022939	22939	LOG_ID_EVENT_VWL_FAIL_DETECT	SD-WAN fail detect	Event	sdwan	Notice	7.4.12,7.6.7,8.0.1
+0100022940	22940	LOG_ID_EVENT_LINK_MONITOR_FAIL_DETECT	Link monitor fail detect	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0113022941	22941	LOG_ID_EVENT_VWL_PASS_APP_PERF	SD-WAN application performance metrics via kernel	Event	sdwan	Information	7.6.7,8.0.1
+0100022942	22942	LOG_ID_EVENT_LINK_MONITOR_BUILD_ERR	Link monitor build failed	Event	system	Notice	7.6.7,8.0.1
+0100022943	22943	LOG_ID_EVENT_LINK_SYNC_GROUP	Link sync group	Event	system	Notice	8.0.1
+0100022949	22949	LOG_ID_FDS_JOIN	FortiGate Cloud auto-join attempted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022950	22950	LOG_ID_FDS_LOGIN_SUCC	FortiGate Cloud activation successful	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022951	22951	LOG_ID_FDS_LOGOUT	FortiGate Cloud logout	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022952	22952	LOG_ID_FDS_LOGIN_FAIL	FortiGate Cloud activation failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022953	22953	LOG_ID_FDS_IMLT_ADDR	Image list server address	Event	system	Information	8.0.1
+0100022954	22954	LOG_ID_INET_SVC_OBSOLETE	Internet Service obsolete	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022955	22955	LOG_ID_INET_SVC_NAME_FAILURE	Internet Service name update failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100022956	22956	LOG_ID_INET_SVC_NAME_UPDATE	Internet Service name update	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100022957	22957	LOG_ID_SANDBOX_CLOUD_ERRCON	FortiSandbox Cloud server connection failed	Event	system	Notice	7.6.7,8.0.1
+0100022970	22970	LOG_ID_EVENT_MAC_FLAPPING	MAC flapping	Event	system	Information	7.6.7,8.0.1
+0113022979	22979	LOG_ID_EVENT_LINK_MONITOR_BGP_SUPPRESS	SD-WAN Notify BGP suppress	Event	sdwan	Notice	8.0.1
+0101023101	23101	LOG_ID_IPSEC_TUNNEL_UP	IPsec VPN tunnel up	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101023102	23102	LOG_ID_IPSEC_TUNNEL_DOWN	IPsec VPN tunnel down	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101023103	23103	LOG_ID_IPSEC_TUNNEL_STAT	IPsec VPN tunnel statistics	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0954024576	24576	LOG_ID_DLP_WARN	Data loss detected by specified DLP sensor rule	DLP	dlp	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0954024577	24577	LOG_ID_DLP_NOTIF	Data loss detected by specified DLP sensor rule	DLP	dlp	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0955024578	24578	LOG_ID_DLP_DOC_SOURCE	DLP fingerprint document source notice	DLP	dlp-docsource	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0955024579	24579	LOG_ID_DLP_DOC_SOURCE_ERROR	DLP fingerprint document source error	DLP	dlp-docsource	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0956024580	24580	LOG_ID_DLP_FORTIDATA_ERROR_NOTIF	DLP error (notice)	DLP	dlp-error	Notice	7.6.7,8.0.1
+0956024581	24581	LOG_ID_DLP_FORTIDATA_ERROR_WARNING	DLP error (warning)	DLP	dlp-error	Warning	7.6.7,8.0.1
+0100026001	26001	LOG_ID_DHCP_ACK	DHCP Ack log	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026002	26002	LOG_ID_DHCP_RELEASE	DHCP Release log	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026003	26003	LOG_ID_DHCP_STAT	DHCP statistics	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026004	26004	LOG_ID_DHCP_CLIENT_LEASE	DHCP client lease granted	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026005	26005	LOG_ID_DHCP_LEASE_USAGE_HIGH	DHCP lease usage high	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100026006	26006	LOG_ID_DHCP_LEASE_USAGE_FULL	DHCP lease usage full	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100026007	26007	LOG_ID_DHCP_BLOCKED_MAC	DHCP client blocked log	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026008	26008	LOG_ID_DHCP_DDNS_ADD	DHCP DDNS add query	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026009	26009	LOG_ID_DHCP_DDNS_DELETE	DHCP DDNS delete query	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026010	26010	LOG_ID_DHCP_DDNS_COMPLETED	DHCP DDNS query completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026011	26011	LOG_ID_DHCPV6_REPLY	DHCPv6 Ack log	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100026012	26012	LOG_ID_DHCPV6_RELEASE	DHCPv6 Release log	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0103027001	27001	LOG_ID_VRRP_STATE_CHG	VRRP state changed	Event	router	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028672	28672	LOGID_APP_CTRL_IM_BASIC	Application control IM-basic	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028673	28673	LOGID_APP_CTRL_IM_BASIC_WITH_STATUS	Application control IM	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028674	28674	LOGID_APP_CTRL_IM_BASIC_WITH_COUNT	Application control IM (chat message count)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028675	28675	LOGID_APP_CTRL_IM_FILE	Application control IM (file)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028676	28676	LOGID_APP_CTRL_IM_CHAT	Application control IM (chat)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028677	28677	LOGID_APP_CTRL_IM_CHAT_BLOCK	Application control IM (chat blocked)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028678	28678	LOGID_APP_CTRL_IM_BLOCK	Application control IM (blocked)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028704	28704	LOGID_APP_CTRL_IPS_PASS	Application control (IPS) (pass)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028705	28705	LOGID_APP_CTRL_IPS_BLOCK	Application control (IPS) (block)	APP-CTRL	signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1059028706	28706	LOGID_APP_CTRL_IPS_RESET	Application control (IPS) (reset)	APP-CTRL	signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1059028720	28720	LOGID_APP_CTRL_SSH_PASS	Application control IM (SSH) (pass)	APP-CTRL	signature	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1059028721	28721	LOGID_APP_CTRL_SSH_BLOCK	Application control IM (SSH) (block)	APP-CTRL	signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1060028736	28736	LOGID_APP_CTRL_PORT_ENF	Application control port enforcement	APP-CTRL	port-violation	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1061028737	28737	LOGID_APP_CTRL_PROTO_ENF	Application control protocol enforcement	APP-CTRL	protocol-violation	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1059028738	28738	LOGID_APP_CTRL_DETECT_L2	Ethernet protocols detection	APP-CTRL	signature	Warning	7.6.7,8.0.1
+0121028850	28850	LOG_ID_FLTUND_NEW_CONN_VOICE	Voice-controllerFortilinknew connection	Event	voice-controller	Notice	8.0.1
+0121028851	28851	LOG_ID_FLTUND_CONN_DOWN_VOICE	Voice-controllerFortilinkconnection down	Event	voice-controller	Critical	8.0.1
+0121028852	28852	LOG_ID_FLTUND_RCV_BOOTSTRAP_VOICE	Voice-controllerFortilinkreceived bootstrap	Event	voice-controller	Information	8.0.1
+0121028853	28853	LOG_ID_FLTUND_CONN_ONLINE_VOICE	Voice-controllerFortilinktunnel online	Event	voice-controller	Notice	8.0.1
+0121028854	28854	LOG_ID_FLTUND_CONN_OFFLINE_VOICE	Voice-controllerFortilinktunnel offline	Event	voice-controller	Critical	8.0.1
+0121028870	28870	LOG_ID_FLCFGD_SYNC_ERROR_VOICE	Voice-ControllerVoice Sync Error	Event	voice-controller	Error	8.0.1
+0121028871	28871	LOG_ID_FLCFGD_SYNC_COMPLETE_VOICE	Voice-ControllerVoice Sync Complete	Event	voice-controller	Information	8.0.1
+0121028872	28872	LOG_ID_FLCFGD_SYNC_STATE_VOICE	Voice-ControllerVoice Sync State	Event	voice-controller	Debug	8.0.1
+0100029001	29001	LOG_ID_PPPD_MSG	PPP status	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100029002	29002	LOG_ID_PPPD_AUTH_SUC	PPP authentication successful	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100029003	29003	LOG_ID_PPPD_AUTH_FAIL	PPP authentication failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100029004	29004	LOG_ID_PPPD_MSG_ERROR	PPP status error message	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100029005	29005	LOG_ID_PPPD_MSG_DEBUG	PPP status debug message	Event	system	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0100029010	29010	LOG_ID_PPPOE_STATUS_REPORT_NOTIF	PPPoE status report	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100029011	29011	LOG_ID_PPPD_FAIL_TO_EXEC	PPP execution failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100029013	29013	LOG_ID_PPPD_START	PPP daemon started	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100029014	29014	LOG_ID_PPPD_EXIT	PPP daemon exited	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100029015	29015	LOG_ID_PPP_RCV_BAD_PEER_IP	PPP received invalid peer IP	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100029016	29016	LOG_ID_PPP_RCV_BAD_LOCAL_IP	PPP received invalid local IP	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100029021	29021	LOG_ID_EVENT_AUTH_SNMP_QUERY_FAILED	SNMP query failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100029022	29022	LOG_ID_DDNS_UPDATE_FAIL	DDNS update failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+1200030248	30248	LOGID_WAF_SIGNATURE_BLOCK	Web application firewall blocked application by signature	WAF	waf-signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1200030249	30249	LOGID_WAF_SIGNATURE_PASS	Web application firewall passed application by signature	WAF	waf-signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1200030250	30250	LOGID_WAF_SIGNATURE_ERASE	Web application firewall erased application by signature	WAF	waf-signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1201030251	30251	LOGID_WAF_CUSTOM_SIGNATURE_BLOCK	Web application firewall blocked application by custom signature	WAF	waf-custom-signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1201030252	30252	LOGID_WAF_CUSTOM_SIGNATURE_PASS	Web application firewall allowed application by custom signature	WAF	waf-custom-signature	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1202030253	30253	LOGID_WAF_METHOD_BLOCK	Web application firewall blocked application by HTTP method	WAF	waf-http-method	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1204030255	30255	LOGID_WAF_ADDRESS_LIST_BLOCK	Web application firewall blocked application by address list	WAF	waf-address-list	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1203030257	30257	LOGID_WAF_CONSTRAINTS_BLOCK	Web application firewall blocked application by HTTP constraints	WAF	waf-http-constraint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1203030258	30258	LOGID_WAF_CONSTRAINTS_PASS	Web application firewall allowed application by HTTP constraints	WAF	waf-http-constraint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1205030259	30259	LOGID_WAF_URL_ACCESS_PERMIT	Web application firewall allowed application by URL access permit	WAF	waf-url-access	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1205030260	30260	LOGID_WAF_URL_ACCESS_BYPASS	Web application firewall allowed application by URL access bypass	WAF	waf-url-access	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1205030261	30261	LOGID_WAF_URL_ACCESS_BLOCK	Web application firewall blocked application by URL access	WAF	waf-url-access	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032001	32001	LOG_ID_ADMIN_LOGIN_SUCC	Admin login successful	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032002	32002	LOG_ID_ADMIN_LOGIN_FAIL	Admin login failed	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032003	32003	LOG_ID_ADMIN_LOGOUT	Admin logout successful	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032005	32005	LOG_ID_ADMIN_OVERIDE_VDOM	Admin overrode VDOM	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032006	32006	LOG_ID_ADMIN_ENTER_VDOM	Super admin entered VDOM	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032007	32007	LOG_ID_ADMIN_LEFT_VDOM	Super admin left VDOM	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032008	32008	LOG_ID_VIEW_DISK_LOG_FAIL	Disk log access failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032009	32009	LOG_ID_SYSTEM_START	FortiGate started	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032010	32010	LOG_ID_DISK_LOG_FULL	Disk full	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032011	32011	LOG_ID_LOG_ROLL	Disk log rolled	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032014	32014	LOG_ID_CS_LIC_EXPIRE	Support license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032015	32015	LOG_ID_DISK_LOG_USAGE	Log disk full	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032017	32017	LOG_ID_FDS_DAILY_QUOTA_FULL	FortiGate Cloud daily quota full	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032018	32018	LOG_ID_FIPS_ENTER_ERR_MOD	FIPS CC entered error mode	Event	system	Emergency	7.2.13,7.4.12
+0100032019	32019	LOG_ID_CC_ENTER_ERR_MOD	CC entered error mode	Event	system	Emergency	7.2.13
+0100032020	32020	LOG_ID_SSH_CORRPUT_MAC	Message Authentication Code corrupted	Event	system	Warning	7.2.13,7.4.12,7.6.7
+0100032021	32021	LOG_ID_ADMIN_LOGIN_DISABLE	Admin login disabled	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032022	32022	LOG_ID_VDOM_ENABLED	VDOM enabled	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032023	32023	LOG_ID_MEM_LOG_FIRST_FULL	Memory log full over first warning level	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032024	32024	LOG_ID_ADMIN_PASSWD_EXPIRE	Admin password expired	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032025	32025	LOG_ID_SSH_REKEY	SSH server re-key	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032026	32026	LOG_ID_SSH_BAD_PACKET_LENGTH	SSH server received bad length packet	Event	system	Warning	7.2.13,7.4.12,7.6.7
+0100032027	32027	LOG_ID_VIEW_DISK_LOG_SUCC	Disk logs viewed successfully	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032028	32028	LOG_ID_LOG_DEL_DIR	Disk log directory deleted	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032029	32029	LOG_ID_LOG_DEL_FILE	Disk log file deleted	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032030	32030	LOG_ID_SEND_FDS_STAT	FDS statistics sent	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032031	32031	LOG_ID_VIEW_MEM_LOG_FAIL	Memory log access failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032032	32032	LOG_ID_DISK_DLP_ARCH_FULL	DLP archive full	Event	system	Emergency	7.2.13,7.4.12,7.6.7,8.0.1
+0100032033	32033	LOG_ID_DISK_QUAR_FULL	Quarantine full	Event	system	Emergency	7.2.13,7.4.12,7.6.7,8.0.1
+0100032034	32034	LOG_ID_DISK_REPORT_FULL	Report db data full	Event	system	Emergency	7.2.13,7.4.12,7.6.7,8.0.1
+0100032035	32035	LOG_ID_VDOM_DISABLED	VDOM disabled	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032036	32036	LOG_ID_DISK_IPS_ARCH_FULL	IPS archive full	Event	system	Emergency	7.2.13,7.4.12,7.6.7,8.0.1
+0100032037	32037	LOG_ID_DISK_LOG_FIRST_FULL	Disk log full over first warning	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032038	32038	LOG_ID_LOG_ROLL_FORTICRON	Log rotation requested by FortiCron	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032039	32039	LOG_ID_VIEW_MEM_LOG_SUCC	Memory logs viewed successfully	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032040	32040	LOG_ID_REPORT_DELETED	Report deleted	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032041	32041	LOG_ID_REPORT_DELETED_GUI	Report deleted from GUI	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032042	32042	LOG_ID_MEM_LOG_SECOND_FULL	Memory log full over second warning level	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032043	32043	LOG_ID_MEM_LOG_FINAL_FULL	Memory log full over final warning level	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032044	32044	LOG_ID_LOG_DELETE	Log deleted by user	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032045	32045	LOG_ID_MGR_LIC_EXPIRE	FortiGuard management service license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032048	32048	LOG_ID_SCHEDULE_EXPIRE	One time schedule expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032049	32049	LOG_ID_FC_EXPIRE	FortiGate Cloud license expiring	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032050	32050	LOG_ID_POL_PKT_CAPTURE_FULL	Policy packet capture full	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032051	32051	LOG_ID_LOG_UPLOAD	Disk logs upload started	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032052	32052	LOG_ID_UPLOAD_RUN_SCRIPT	Upload and run a script	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032055	32055	LOG_ID_CC_KAT_SUCCESS	KAT tests succeeded	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100032057	32057	LOG_ID_VIEW_FAZ_LOG_FAIL	FortiAnalyzer log access failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032058	32058	LOG_ID_VIEW_FAZ_LOG_SUCC	FortiAnalyzer logs viewed successfully	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032095	32095	LOG_ID_GUI_CHG_SUB_MODULE	Admin performed an action from GUI	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032096	32096	LOG_ID_GUI_DOWNLOAD_LOG	Log file downloaded from GUI	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032097	32097	LOG_ID_DELETE_CAPTURE_PKT	Policy packet capture file deleted	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032099	32099	LOG_ID_CHG_CONFIG_INFO	Configuration changed information	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032100	32100	LOG_ID_FORTI_TOKEN_SYNC	FortiToken synchronized	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032102	32102	LOG_ID_CHG_CONFIG	Configuration changed	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032103	32103	LOG_ID_NEW_FIRMWARE	New firmware available on FortiGuard	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032104	32104	LOG_ID_CHG_CONFIG_GUI	Configuration changed via GUI	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032105	32105	LOG_ID_NTP_SVR_STAUS_CHG_REACHABLE	NTP server status changes to reachable	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032106	32106	LOG_ID_NTP_SVR_STAUS_CHG_RESOLVABLE	NTP server status changes to resolvable	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032107	32107	LOG_ID_NTP_SVR_STAUS_CHG_UNRESOLVABLE	NTP server status changes to unresolvable	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032108	32108	LOG_ID_NTP_SVR_STAUS_CHG_UNREACHABLE	NTP server status changes to unreachable	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032109	32109	LOG_ID_UPD_SIGN_AV_DB	Updating virus database	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032110	32110	LOG_ID_UPD_SIGN_IPS_DB	IPS database updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032111	32111	LOG_ID_UPD_SIGN_AVIPS_DB	AV, IPS, GeoIP, SRC-VIS, FortiFlow, URL Allow list, Certificate databases updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032113	32113	LOG_ID_UPD_SIGN_SRCVIS_DB	SRC-VIS object updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032114	32114	LOG_ID_UPD_SIGN_GEOIP_DB	GeoIP object updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032116	32116	LOG_ID_UPD_SIGN_AVPKG_FAILURE	AV package update by SCP failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032117	32117	LOG_ID_UPD_SIGN_AVPKG_SUCCESS	AV package update by SCP successful	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032118	32118	LOG_ID_UPD_ADMIN_AV_DB	AV updated by admin	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032119	32119	LOG_ID_UPD_SCANUNIT_AV_DB	AV database update requested by scanunit	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100032129	32129	LOG_ID_ADD_GUEST	Guest user added	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032130	32130	LOG_ID_CHG_USER	User changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032131	32131	LOG_ID_DEL_GUEST	Guest user deleted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032132	32132	LOG_ID_ADD_USER	Local user added	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032138	32138	LOG_ID_REBOOT	Device rebooted	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032139	32139	LOG_ID_WAKE_ON_LAN	Wake on LAN device	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032140	32140	LOG_ID_TIME_USER_SETTING_CHG	Global time setting changed by user	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032141	32141	LOG_ID_TIME_NTP_SETTING_CHG	Global time setting changed by NTP	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032142	32142	LOG_ID_BACKUP_CONF	System configuration backed up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032143	32143	LOG_ID_BACKUP_CONF_BY_SCP	System configuration backed up by SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032144	32144	LOG_ID_BACKUP_CONF_ERROR	System configuration backed up error	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100032145	32145	LOG_ID_BACKUP_CONF_ALERT	System configuration backed up alert	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032146	32146	LOG_ID_TIME_PTP_SETTING_CHG	Global time setting changed by PTP	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032148	32148	LOG_ID_GET_CRL	CRL update requested	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032149	32149	LOG_ID_COMMAND_FAIL	Command failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032151	32151	LOG_ID_ADD_IP6_LOCAL_POL	IPv6 firewall local in policy added	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032152	32152	LOG_ID_CHG_IP6_LOCAL_POL	IPv6 firewall local in policy setting changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032153	32153	LOG_ID_DEL_IP6_LOCAL_POL	IPv6 firewall local in policy deleted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032155	32155	LOG_ID_ACT_FTOKEN_REQ	FortiToken activation requested	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032156	32156	LOG_ID_ACT_FTOKEN_SUCC	FortiToken activation successful	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032157	32157	LOG_ID_SYNC_FTOKEN_SUCC	FortiToken re-synchronized	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032158	32158	LOG_ID_SYNC_FTOKEN_FAIL	FortiToken re-synchronization failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032159	32159	LOG_ID_ACT_FTOKEN_FAIL	FortiToken activation failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032160	32160	LOG_ID_FTM_PUSH_SUCC	FortiToken mobile push message succeeded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032161	32161	LOG_ID_FTM_PUSH_FAIL	FortiToken mobile push message failed	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032168	32168	LOG_ID_REACH_VDOM_LIMIT	VDOM limit reached	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032169	32169	LOG_ID_ALARM_DLP_DB	DLP database space alarm	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032170	32170	LOG_ID_ALARM_MSG	Alarm created	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032171	32171	LOG_ID_ALARM_ACK	Alarm acknowledged	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100032172	32172	LOG_ID_ADD_IP4_LOCAL_POL	IPv4 firewall local in policy added	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032173	32173	LOG_ID_CHG_IP4_LOCAL_POL	IPv4 firewall local in policy's setting changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032174	32174	LOG_ID_DEL_IP4_LOCAL_POL	IPv4 firewall local in policy deleted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032180	32180	LOG_ID_GEOIP_DB_INIT_FAIL	IP Geography DB initialization failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032190	32190	LOG_ID_UPT_INVALID_IMG	Invalid image loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032191	32191	LOG_ID_UPT_INVALID_IMG_CC	Image with invalid CC signature loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032192	32192	LOG_ID_UPT_INVALID_IMG_RSA	Image with invalid RSA signature loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032193	32193	LOG_ID_UPT_IMG_RSA	Image with valid RSA signature loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032194	32194	LOG_ID_UPT_IMG_FAIL	System upgrade failed due to file operation failure	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032200	32200	LOG_ID_SHUTDOWN	Device shutdown	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032201	32201	LOG_ID_LOAD_IMG_SUCC	Image loaded successfully	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032202	32202	LOG_ID_RESTORE_IMG	Image restored	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032203	32203	LOG_ID_RESTORE_CONF	Configuration restored	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032204	32204	LOG_ID_RESTORE_FGD_SVR	FortiGuard service restored	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032205	32205	LOG_ID_RESTORE_VDOM_LIC	VM license restored	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032206	32206	LOG_ID_RESTORE_SCRIPT	Script restored from management station	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032207	32207	LOG_ID_RETRIEVE_CONF_LIST	Configuration list retrieval failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032208	32208	LOG_ID_IMP_PKCS12_CERT	PKCS12 certificate imported	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032209	32209	LOG_ID_RESTORE_USR_DEF_IPS	IPS custom signatures restored	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032210	32210	LOG_ID_BACKUP_IMG_SUCC	Firmware image backed up successfully	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032211	32211	LOG_ID_UPLOAD_REVISION	Revision uploaded to flash disk	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032212	32212	LOG_ID_DEL_REVISION	Revision deleted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032213	32213	LOG_ID_RESTORE_TEMPLATE	Template restored	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032214	32214	LOG_ID_RESTORE_FILE	File restore failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032215	32215	LOG_ID_UPT_IMG	Image updated	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032217	32217	LOG_ID_UPD_IPS	IPS package - Admin update successful	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032218	32218	LOG_ID_UPD_DLP	DLP fingerprint database update via SCP failed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032219	32219	LOG_ID_BACKUP_OUTPUT	Error output backup via SCP successful	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032220	32220	LOG_ID_BACKUP_COMMAND	Batch mode command output backup via SCP successful	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032221	32221	LOG_ID_UPD_VDOM_LIC	VM license installed via SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032222	32222	LOG_ID_GLB_SETTING_CHG	Global setting changed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032223	32223	LOG_ID_BACKUP_USER_DEF_IPS	IPS custom signatures backup success	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032224	32224	LOG_ID_BACKUP_DISK_LOG	Disk logs backed up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032225	32225	LOG_ID_DEL_ALL_REVISION	Revision database reset due to data corruption	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032226	32226	LOG_ID_LOAD_IMG_FAIL	Image failed to load	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032227	32227	LOG_ID_UPD_DLP_FAIL	DLP fingerprint database failed to update by SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032228	32228	LOG_ID_LOAD_IMG_FAIL_WRONG_IMG	Firmware image loaded incorrect	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032229	32229	LOG_ID_LOAD_IMG_FAIL_NO_RSA	Firmware image without valid RSA signature loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032230	32230	LOG_ID_LOAD_IMG_FAIL_INVALID_RSA	Firmware image with invalid RSA signature loaded	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032231	32231	LOG_ID_RESTORE_FGD_SVR_FAIL	FortiGuard service failed to restore	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032232	32232	LOG_ID_RESTORE_VDOM_LIC_FAIL	VM license failed to restore	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032233	32233	LOG_ID_BACKUP_IMG_FAIL	Firmware image backup failed	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032234	32234	LOG_ID_RESTORE_IMG_INVALID_CC	Image with invalid CC signature restored	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032235	32235	LOG_ID_RESTORE_IMG_FORTIGUARD	Image restored from FortiGuard Management	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032236	32236	LOG_ID_BACKUP_MEM_LOG	Memory logs backed up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032237	32237	LOG_ID_BACKUP_MEM_LOG_FAIL	Memory logs failed to back up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032238	32238	LOG_ID_BACKUP_DISK_LOG_FAIL	Disk logs failed to back up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032239	32239	LOG_ID_BACKUP_DISK_LOG_USB	Disk logs backed up to USB	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032240	32240	LOG_ID_SYS_USB_MODE	System operating in USB mode	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032241	32241	LOG_ID_BACKUP_DISK_LOG_USB_FAIL	Disk logs failed to back up to USB	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032242	32242	LOG_ID_UPD_VDOM_LIC_FAIL	VM license failed to install via SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032243	32243	LOG_ID_UPD_IPS_SCP	IPS package updated via SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032244	32244	LOG_ID_UPD_IPS_SCP_FAIL	IPS package failed to update via SCP	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032245	32245	LOG_ID_BACKUP_USER_DEF_IPS_FAIL	IPS custom signatures backup failed	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100032246	32246	LOG_ID_RESTORE_USR_DEF_IPS_CRITICAL	IPS custom signatures restored critical	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032247	32247	LOG_ID_SSH_NEGOTIATION_FAILURE	SSH protocol cannot be negotiated	Event	system	Error	7.2.13,7.4.12,7.6.7
+0100032252	32252	LOG_ID_FACTORY_RESET	Factory settings reset	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032253	32253	LOG_ID_FORMAT_RAID	RAID disk formatted	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032254	32254	LOG_ID_ENABLE_RAID	RAID enabled	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032255	32255	LOG_ID_DISABLE_RAID	RAID disabled	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032260	32260	LOG_ID_RESTORE_IMG_FORTIGUARD_NOTIF	Image restored from FortiGuard Management notification	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032261	32261	LOG_ID_RESTORE_SCRIPT_NOTIF	Script restored by user	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032262	32262	LOG_ID_RESTORE_IMG_CONFIRM	Image restore confirmed by user	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032263	32263	LOG_ID_AUTO_IMG_UPD_SCHEDULED	Automatic firmware upgrade schedule changed	Event	system	Notice	7.2.13
+0100032263	32263	LOG_ID_AUTO_UPG_INSTALLATION_SCHEDULED	Automatic firmware image installation is (re)scheduled	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100032264	32264	LOG_ID_BLE_FIRMWARE_CHECK	Bluetooth firmware check	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032265	32265	LOG_ID_BLE_FIRMWARE_UPDATE	Bluetooth firmware update	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032270	32270	LOG_ID_SSH_HOST_KEY_REGEN	SSH host keys regenerated.	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032300	32300	LOG_ID_UPLOAD_RPT_IMG	Report image file uploaded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032301	32301	LOG_ID_ADD_VDOM	VDOM added	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032302	32302	LOG_ID_DEL_VDOM	VDOM deleted	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032310	32310	LOG_ID_USB_DEVICE_DETECTED	USB device detected	Event	system	Notice	7.6.7,8.0.1
+0100032311	32311	LOG_ID_USB_DEVICE_MOUNTED	USB device mounted	Event	system	Notice	7.6.7,8.0.1
+0100032312	32312	LOG_ID_USB_DEVICE_EJECTED	USB device ejected	Event	system	Notice	7.6.7,8.0.1
+0100032320	32320	LOG_ID_AUTO_UPG_ON_OFF	Status of automatic firmware upgrade has changed	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100032321	32321	LOG_ID_AUTO_UPG_CHECKING_IMG	Automatic firmware upgrade was checking new images	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100032325	32325	LOG_ID_AUTO_UPG_INSTALLATION_CANCELLED	Automatic firmware upgrade image installation was cancelled	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100032326	32326	LOG_ID_AUTO_UPG_INSTALLATION_SCHEDULE_FAILURE	Automatic firmware upgrade failed to schedule image installation	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100032545	32545	LOG_ID_SYS_RESTART	Scheduled daily reboot started	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032546	32546	LOG_ID_APPLICATION_CRASH	Application crashed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032547	32547	LOG_ID_AUTOSCRIPT_START	Autoscript start	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032548	32548	LOG_ID_AUTOSCRIPT_STOP	Autoscript stop	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032549	32549	LOG_ID_AUTOSCRIPT_STOP_AUTO	Autoscript stop automatically	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032550	32550	LOG_ID_AUTOSCRIPT_DELETE_RSLT	Autoscript delete result	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032551	32551	LOG_ID_AUTOSCRIPT_BACKUP_RSLT	Autoscript backup result	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032552	32552	LOG_ID_AUTOSCRIPT_CHECK_STATUS	Autoscript check status	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032553	32553	LOG_ID_AUTOSCRIPT_STOP_REACH_LIMIT	Autoscript stop due to limit reached	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032554	32554	LOG_ID_UPD_ADMIN_DB	Database updated by admin	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032561	32561	LOG_ID_ADMIN_LOGOUT_DISCONNECT	Admin disconnected	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100032562	32562	LOG_ID_STORE_CONF_FAIL_SPACE	Store config failed - not enough flash space	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032564	32564	LOG_ID_RESTORE_CONF_FAIL	Configuration failed to restore	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100032565	32565	LOG_ID_RESTORE_CONF_BY_MGMT	Configuration restored from management station	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100032566	32566	LOG_ID_RESTORE_CONF_BY_SCP	Configuration restored by SCP	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032568	32568	LOG_ID_DEL_REVISION_DB	Revision Database deletion	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0115032569	32569	LOG_ID_FSW_SWITCH_LOG_EVENT	Switch-Controller	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032571	32571	LOG_ID_RESTORE_CONF_FAIL_WARNING	Configuration failed to restore warning	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115032601	32601	LOG_ID_FGT_SWITCH_LOG_DISCOVER	Switch-Controller discovered	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032602	32602	LOG_ID_FGT_SWITCH_LOG_AUTH	Switch-Controller authorized	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032603	32603	LOG_ID_FGT_SWITCH_LOG_DEAUTH	Switch-Controller deauthorized	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032604	32604	LOG_ID_FGT_SWITCH_LOG_DELETE	Switch-Controller deleted	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032605	32605	LOG_ID_FGT_SWITCH_LOG_TUNNEL_UP	Switch-Controller Tunnel Up	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032606	32606	LOG_ID_FGT_SWITCH_LOG_TUNNEL_DOWN	Switch-Controller Tunnel Down	Event	switch-controller	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115032607	32607	LOG_ID_FGT_SWITCH_PUSH_IMAGE	Image push to FortiSwitch	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032608	32608	LOG_ID_FGT_SWITCH_STAGE_IMAGE	Image stage to FortiSwitch	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032609	32609	LOG_ID_FGT_SWITCH_DISABLE_DISCOVERY	Disable FortiSwitch Discovery	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032610	32610	LOG_ID_FGT_SWITCH_LOG_WARNING	Switch-Controller warning	Event	switch-controller	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0115032611	32611	LOG_ID_FGT_SWITCH_EXPORT_POOL	Export port to pool	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032612	32612	LOG_ID_FGT_SWITCH_EXPORT_VDOM	Export port to vdom	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032613	32613	LOG_ID_FGT_SWITCH_REQUEST_PORT	Request port from pool	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032614	32614	LOG_ID_FGT_SWITCH_RETURN_PORT	Return port to pool	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032615	32615	LOG_ID_FGT_SWITCH_MAC_ADD	FortiSwitch MAC add	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032616	32616	LOG_ID_FGT_SWITCH_MAC_DEL	FortiSwitch MAC delete	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032617	32617	LOG_ID_FGT_SWITCH_MAC_MOVE	FortiSwitch MAC move	Event	switch-controller	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0115032618	32618	LOG_ID_FGT_SWITCH_EXPORT_POOL_UNDO	Revert export port to pool	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032619	32619	LOG_ID_FGT_SWITCH_EXPORT_VDOM_UNDO	Revert export port to vdom	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032620	32620	LOG_ID_FGT_SWITCH_GROUP_ADD_MEMBER	Add switch as member to switch group	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032621	32621	LOG_ID_FGT_SWITCH_GROUP_DEL_MEMBER	Delete switch as member from switch group	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032622	32622	LOG_ID_FGT_SWITCH_FORTILINK_CONNECTED	Switch connected via Fortilink	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032623	32623	LOG_ID_FGT_SWITCH_LOCATION_CHANGE	Fortilink Switch location change	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032624	32624	LOG_ID_FGT_SWITCH_NEW_PEER_DETECT	Fortilink Switch new peer detected	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032625	32625	LOG_ID_FGT_SWITCH_IMG_VERIFICATION	Fortilink Switch image verification	Event	switch-controller	Information	7.4.12,7.6.7,8.0.1
+0115032626	32626	LOG_ID_FGT_SWITCH_LOG_DISABLE	Switch-Controllerdisabled	Event	switch-controller	Information	8.0.1
+0115032693	32693	LOG_ID_FGT_SWITCH_GROUP_SWC	FortiSwitch switch controller	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032694	32694	LOG_ID_FGT_SWITCH_GROUP_POE	FortiSwitch PoE	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032695	32695	LOG_ID_FGT_SWITCH_GROUP_LINK	FortiSwitch link	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032696	32696	LOG_ID_FGT_SWITCH_GROUP_STP	FortiSwitch spanning Tree	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032697	32697	LOG_ID_FGT_SWITCH_GROUP_SWITCH	FortiSwitch switch	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032698	32698	LOG_ID_FGT_SWITCH_GROUP_ROUTER	FortiSwitch router	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0115032699	32699	LOG_ID_FGT_SWITCH_GROUP_SYSTEM	FortiSwitch system	Event	switch-controller	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100032701	32701	LOG_ID_FGT_INTF_IP_CONFLICT	Detected IP conflicts on FGT interfaces.	Event	system	Error	7.4.12,7.6.7,8.0.1
+0100034415	34415	LOG_ID_NP6_IPSEC_ENGINE_BUSY	NP6 IPsec engine is busy	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100034416	34416	LOG_ID_NP6_IPSEC_ENGINE_POSSIBLY_LOCKUP	NP6 IPsec engine is possibly locked up	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100034417	34417	LOG_ID_NP6_IPSEC_ENGINE_LOCKUP	NP6 IPsec engine is locked up	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100034418	34418	LOG_ID_NP6_HPE_PACKET_DROP	NP6 HPE is dropping packets	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100034419	34419	LOG_ID_NP6_HPE_PACKET_FLOOD	NP6 HPE under a packets flood	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100034420	34420	LOG_ID_NP6XLITE_HPE_PACKET_DROP	NP6XLITE HPE is dropping packets	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100034421	34421	LOG_ID_NP6XLITE_HPE_PACKET_FLOOD	NP6XLITE HPE under a packets flood	Event	system	Critical	7.4.12,7.6.7,8.0.1
+0100034428	34428	LOG_ID_NP7_HPE_PACKET_DROP	NPU HPE is dropping packets	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100034430	34430	LOG_ID_NP7_HPE_PACKET_FLOOD	NPU HPE under packet flood	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100034431	34431	LOG_ID_NPU_CFG_CHG_FAIL	NPU configuration change failed	Event	system	Error	7.6.7,8.0.1
+0108035001	35001	LOG_ID_HA_SYNC_VIRDB	HA secondary synchronized Virus database	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035002	35002	LOG_ID_HA_SYNC_ETDB	HA secondary synchronized Extended database	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035003	35003	LOG_ID_HA_SYNC_EXDB	HA secondary synchronized Extreme database	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035004	35004	LOG_ID_HA_SYNC_FLDB	HA secondary synchronized FLDB	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035005	35005	LOG_ID_HA_SYNC_IPS	HA secondary synchronized IDS package	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035007	35007	LOG_ID_HA_SYNC_AV	HA secondary synchronized AntiVirus package	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035009	35009	LOG_ID_HA_SYNC_CID	HA secondary synchronized CID package	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035011	35011	LOG_ID_HA_SYNC_FAIL	HA secondary synchronization failed	Event	ha	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0108035012	35012	LOG_ID_CONF_SYNC_FAIL	Secondary sync failed	Event	ha	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0108035013	35013	LOG_ID_HA_FAILOVER_FAIL	HA failover failed	Event	ha	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0108035014	35014	LOG_ID_HA_RESET_UPTIME	HA reset uptime	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108035015	35015	LOG_ID_HA_CLEAR_HISTORY	HA clear history	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108035016	35016	LOG_ID_HA_FAILOVER_SUCCESS	HA failover success	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108035017	35017	LOG_ID_HA_SYNC_OCRDB	HA secondarysynchronizedOCR database	Event	ha	Notice	8.0.1
+0108035018	35018	LOG_ID_HA_SYNC_CMD	HA secondaryreceived CLI commands	Event	ha	Information	8.0.1
+0100035051	35051	LOG_ID_PCP_MAPPING_CREATE	Create PCP mapping	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100035052	35052	LOG_ID_PCP_MAPPING_DELETE	Delete PCP mapping	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100035053	35053	LOG_ID_PCP_MAPPING_RENEW	Renew PCP mapping	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100035100	35100	LOG_ID_PACKET_SNIFFER_START	Packet sniffer started	Event	system	Notice	7.6.7,8.0.1
+0100035101	35101	LOG_ID_PACKET_SNIFFER_STOP	Packet sniffer stopped	Event	system	Notice	7.6.7,8.0.1
+0100036881	36881	LOG_ID_EVENT_SYSTEM_CFG_REVERT	Configuration reverted due to timeout	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100036882	36882	LOG_ID_EVENT_SYSTEM_CFG_MANUALLY_SAVED	Configuration manually saved	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100036883	36883	LOG_ID_EVENT_SYSTEM_CLEAR_ACTIVE_SESSION	Clear active sessions	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101037120	37120	MESGID_NEG_GENERIC_P1_NOTIF	Negotiate IPsec phase 1	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037121	37121	MESGID_NEG_GENERIC_P1_ERROR	Negotiate IPsec phase 1	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037122	37122	MESGID_NEG_GENERIC_P2_NOTIF	Negotiate IPsec phase 2	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037123	37123	MESGID_NEG_GENERIC_P2_ERROR	Negotiate IPsec phase 2	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037124	37124	MESGID_NEG_I_P1_ERROR	IPsec phase 1 error	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037125	37125	MESGID_NEG_I_P2_ERROR	IPsec phase 2 error	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037126	37126	MESGID_NEG_NO_STATE_ERROR	IPsec no state error	Event	vpn	Error	7.2.13,7.4.12,7.6.7
+0101037127	37127	MESGID_NEG_PROGRESS_P1_NOTIF	Progress IPsec phase 1	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037128	37128	MESGID_NEG_PROGRESS_P1_ERROR	Progress IPsec phase 1	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037129	37129	MESGID_NEG_PROGRESS_P2_NOTIF	Progress IPsec phase 2	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037130	37130	MESGID_NEG_PROGRESS_P2_ERROR	Progress IPsec phase 2	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037131	37131	MESGID_ESP_ERROR	IPsec ESP	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037132	37132	MESGID_ESP_CRITICAL	IPsec ESP	Event	vpn	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0101037133	37133	MESGID_INSTALL_SA	IPsec SA installed	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037134	37134	MESGID_DELETE_P1_SA	IPsec phase 1 SA deleted	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037135	37135	MESGID_DELETE_P2_SA	IPsec phase 2 SA deleted	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037136	37136	MESGID_DPD_FAILURE	IPsec DPD failed	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037137	37137	MESGID_CONN_FAILURE	IPsec connection failed	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101037138	37138	MESGID_CONN_UPDOWN	IPsec connection status changed	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037139	37139	MESGID_P2_UPDOWN	IPsec phase 2 status changed	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037141	37141	MESGID_CONN_STATS	IPsec tunnel statistics	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101037142	37142	MESGID_TRANSPORT_SWITCH	IPsec auto transport switched	Event	vpn	Notice	7.6.7,8.0.1
+0101037143	37143	MESGID_PH1_PEER_PROPOSAL	Phase 1 peer proposal details	Event	vpn	Information	7.6.7,8.0.1
+0101037144	37144	MESGID_PH2_PEER_PROPOSAL	Phase 2 peer proposal details	Event	vpn	Information	7.6.7,8.0.1
+0108037889	37889	MESGID_VC_DELETE	Virtual cluster deleted	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037890	37890	MESGID_VC_MOVE_VDOM	Virtual cluster VDOM moved	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037891	37891	MESGID_VC_ADD_VDOM	Virtual cluster VDOM added	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037892	37892	MESGID_VC_MOVE_MEMB_STATE	Virtual cluster member state moved	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037893	37893	MESGID_VC_DETECT_MEMB_DEAD	Virtual cluster member dead	Event	ha	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0108037894	37894	MESGID_VC_DETECT_MEMB_JOIN	Virtual cluster member joined	Event	ha	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0108037895	37895	MESGID_VC_ADD_HADEV	Virtual cluster added HA device interface	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037896	37896	MESGID_VC_DEL_HADEV	Virtual cluster deleted HA device interface	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037897	37897	MESGID_HADEV_READY	HA device interface ready	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037898	37898	MESGID_HADEV_FAIL	HA device interface failed	Event	ha	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0108037899	37899	MESGID_HADEV_PEERINFO	HA device interface peer information	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037900	37900	MESGID_HBDEV_DELETE	Heartbeat device interface deleted	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037901	37901	MESGID_HBDEV_DOWN	Heartbeat device interface down	Event	ha	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0108037902	37902	MESGID_HBDEV_UP	Heartbeat device interface up	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108037903	37903	MESGID_SYNC_STATUS	Synchronization status with primary	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108037904	37904	MESGID_HA_ACTIVITY	Device set as HA primary	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037907	37907	MESGID_VLAN_HB_UP	VLAN heartbeat started	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108037908	37908	MESGID_VLAN_HB_DOWN	VLAN heartbeat lost	Event	ha	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0108037909	37909	MESGID_VLAN_HB_DOWN_SUM	VLAN heartbeat lost summary	Event	ha	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0108037910	37910	MESGID_HB_PACKET_LOST	Heartbeat packet lost	Event	ha	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0108037911	37911	MESGID_HA_ACTIVITY_INFO	Device set as HA master information	Event	ha	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0108037912	37912	MESGID_FGSP_MEMBER_JOIN	FGSP member joined	Event	ha	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0108037913	37913	MESGID_FGSP_MEMBER_LEAVE	FGSP member left	Event	ha	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0108037914	37914	MESGID_HBDEV_BACKUP	Heartbeat device backup	Event	ha	Critical	7.6.7,8.0.1
+0108037915	37915	MESGID_SYNC_TIMEOUT	Synchronizationtimeout with primary	Event	ha	Warning	8.0.1
+0108037916	37916	MESGID_FGSP_DEVBASE_CHANGE	FGSP devbase change	Event	ha	Critical	8.0.1
+0102038010	38010	LOG_ID_FIPS_ENCRY_FAIL	FIPS CC encryption failed	Event	user	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0102038011	38011	LOG_ID_FIPS_DECRY_FAIL	FIPS CC decryption failed	Event	user	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0102038012	38012	LOG_ID_ENTROPY_TOKEN	Seeding from entropy source	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038031	38031	LOG_ID_FSSO_LOGON	FSSO logon successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038032	38032	LOG_ID_FSSO_LOGOFF	FSSO logout successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038033	38033	LOG_ID_FSSO_SVR_STATUS	FSSO Active Directory server authentication status	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038403	38403	LOGID_EVENT_NOTIF_INSUFFICIENT_RESOURCE	Insufficient system resource notification	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100038404	38404	LOGID_EVENT_NOTIF_HOSTNAME_ERROR	FortiGuard hostname unresolvable	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100038405	38405	LOGID_NOTIF_CODE_SENDTO_SMS_PHONE	Guest user account login information sent to phone	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038406	38406	LOGID_NOTIF_CODE_SENDTO_SMS_TO	Guest user account login information sent as SMS	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038407	38407	LOGID_NOTIF_CODE_SENDTO_EMAIL	Guest user account login information sent to email	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038408	38408	LOGID_EVENT_OFTP_SSL_CONNECTED	SSL connection established	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100038409	38409	LOGID_EVENT_OFTP_SSL_DISCONNECTED	SSL connection closed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100038410	38410	LOGID_EVENT_OFTP_SSL_FAILED	SSL connection failed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100038411	38411	LOGID_EVENT_TWO_F_AUTH_CODE_SENDTO	Two-factor authentication code sent	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038412	38412	LOGID_EVENT_TOKEN_CODE_SENDTO	Token activation code sent	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100038420	38420	LOGID_EVENT_HTTPS_CONNECTION_ERROR	HTTPS connection error	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100038422	38422	LOGID_EVENT_ICBD_UPDATE_SUCCESS	ICB service status update success	Event	system	Notice	7.6.7,8.0.1
+0100038423	38423	LOGID_EVENT_ICBD_UPDATE_FAILURE	ICB service status update failure	Event	system	Error	7.6.7,8.0.1
+0102038656	38656	LOGID_EVENT_RAD_RPT_PROTO_ERROR	RADIUS protocol error summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038657	38657	LOGID_EVENT_RAD_RPT_PROF_NOT_FOUND	RADIUS profile not found summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038658	38658	LOGID_EVENT_RAD_RPT_CTX_NOT_FOUND	RADIUS profile CTX not found summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038659	38659	LOGID_EVENT_RAD_RPT_ACCT_STOP_MISSED	RADIUS accounting stop message missing summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038660	38660	LOGID_EVENT_RAD_RPT_ACCT_EVENT	RADIUS accounting event summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038661	38661	LOGID_EVENT_RAD_RPT_OTHER	RADIUS endpoint block event or other event summary	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038662	38662	LOGID_EVENT_RAD_STAT_PROTO_ERROR	RADIUS accounting protocol error	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038663	38663	LOGID_EVENT_RAD_STAT_PROF_NOT_FOUND	RADIUS accounting profile not found	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038665	38665	LOGID_EVENT_RAD_STAT_ACCT_STOP_MISSED	RADIUS accounting stop message missing	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038666	38666	LOGID_EVENT_RAD_STAT_ACCT_EVENT	RADIUS accounting event	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038667	38667	LOGID_EVENT_RAD_STAT_OTHER	RADIUS other accounting event	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102038668	38668	LOGID_EVENT_RAD_STAT_EP_BLK	RADIUS endpoint block event	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101039424	39424	LOG_ID_EVENT_SSL_VPN_USER_TUNNEL_UP	SSL VPN tunnel up	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039425	39425	LOG_ID_EVENT_SSL_VPN_USER_TUNNEL_DOWN	SSL VPN tunnel down	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039426	39426	LOG_ID_EVENT_SSL_VPN_USER_SSL_LOGIN_FAIL	SSL VPN login fail	Event	vpn	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0101039936	39936	LOG_ID_EVENT_SSL_VPN_SESSION_WEB_TUNNEL_STATS	SSL VPN statistics	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039937	39937	LOG_ID_EVENT_SSL_VPN_SESSION_WEBAPP_DENY	SSL VPN deny	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101039938	39938	LOG_ID_EVENT_SSL_VPN_SESSION_WEBAPP_PASS	SSL VPN pass	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101039939	39939	LOG_ID_EVENT_SSL_VPN_SESSION_WEBAPP_TIMEOUT	SSL VPN timeout	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039940	39940	LOG_ID_EVENT_SSL_VPN_SESSION_WEBAPP_CLOSE	SSL VPN close	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039941	39941	LOG_ID_EVENT_SSL_VPN_SESSION_SYS_BUSY	SSL VPN system busy	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039942	39942	LOG_ID_EVENT_SSL_VPN_SESSION_CERT_OK	SSL VPN certificate OK	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039943	39943	LOG_ID_EVENT_SSL_VPN_SESSION_NEW_CON	SSL VPN new connection	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039944	39944	LOG_ID_EVENT_SSL_VPN_SESSION_ALERT	SSL VPN alert	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101039945	39945	LOG_ID_EVENT_SSL_VPN_SESSION_EXIT_FAIL	SSL VPN exit fail	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101039946	39946	LOG_ID_EVENT_SSL_VPN_SESSION_EXIT_ERR	SSL VPN exit error	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101039947	39947	LOG_ID_EVENT_SSL_VPN_SESSION_TUNNEL_UP	SSL VPN tunnel up	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039948	39948	LOG_ID_EVENT_SSL_VPN_SESSION_TUNNEL_DOWN	SSL VPN tunnel down	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039949	39949	LOG_ID_EVENT_SSL_VPN_SESSION_TUNNEL_STATS	SSL VPN statistics	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039950	39950	LOG_ID_EVENT_SSL_VPN_SESSION_TUNNEL_UNKNOWNTAG	SSL VPN unknown tag	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039951	39951	LOG_ID_EVENT_SSL_VPN_SESSION_TUNNEL_ERROR	SSL VPN tunnel error	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101039952	39952	LOG_ID_EVENT_SSL_VPN_SESSION_ENTER_CONSERVE_MODE	SSL VPN enter conserve mode	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101039953	39953	LOG_ID_EVENT_SSL_VPN_SESSION_LEAVE_CONSERVE_MODE	SSL VPN leave conserve mode	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040001	40001	LOG_ID_PPTP_TUNNEL_UP	PPTP tunnel up	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040002	40002	LOG_ID_PPTP_TUNNEL_DOWN	PPTP tunnel down	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040003	40003	LOG_ID_PPTP_TUNNEL_STAT	PPTP tunnel status	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040014	40014	LOG_ID_PPTP_REACH_MAX_CON	PPTP client connection limit reached	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101040017	40017	LOG_ID_L2TPD_CLIENT_CON_FAIL	L2TP client connection failed	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101040019	40019	LOG_ID_L2TPD_CLIENT_DISCON	L2TP client disconnected	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040021	40021	LOG_ID_PPTP_NOT_CONIG	PPTP not configured in VDOM	Event	vpn	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0101040022	40022	LOG_ID_PPTP_NO_IP_AVAIL	PPTP IP addresses unavailable	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101040024	40024	LOG_ID_PPTP_OUT_MEM	PPTP config list insufficient memory	Event	vpn	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0101040034	40034	LOG_ID_PPTP_START	PPTP daemon started	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101040035	40035	LOG_ID_PPTP_START_FAIL	PPTP daemon failed to start	Event	vpn	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0101040036	40036	LOG_ID_PPTP_EXIT	PPTP daemon exited	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101040037	40037	LOG_ID_PPTPD_SVR_DISCON	PPTP daemon disconnected	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040038	40038	LOG_ID_PPTPD_CLIENT_CON	PPTP client connected	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040039	40039	LOG_ID_PPTPD_CLIENT_DISCON	PPTP client disconnected	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040101	40101	LOG_ID_L2TP_TUNNEL_UP	L2TP tunnel up	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040102	40102	LOG_ID_L2TP_TUNNEL_DOWN	L2TP tunnel down	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040103	40103	LOG_ID_L2TP_TUNNEL_STAT	L2TP tunnel status	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101040114	40114	LOG_ID_L2TPD_START	L2TP daemon started	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101040115	40115	LOG_ID_L2TPD_EXIT	L2TP daemon exited	Event	vpn	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0101040118	40118	LOG_ID_L2TPD_CLIENT_CON	L2TP client connected	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100040704	40704	LOG_ID_EVENT_SYS_PERF	System performance statistics	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100040705	40705	LOG_ID_EVENT_SYS_CPU_USAGE	CPU usage statistics	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100040706	40706	LOG_ID_EVENT_SYS_BROKEN_SYMBOLIC_LINK	Delete broken symbolic link	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100040707	40707	LOG_ID_EVENT_SYS_CPU_USAGE_SINGLE_CORE	CPU single core usage statistics	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0117040960	40960	LOGID_EVENT_WEBPROXY_FWD_SRV_ERROR	Web proxy forward server error	Event	webproxy	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0117040961	40961	LOGID_EVENT_ICAP_REMOTE_SRV_STAT	Icap remote server stat	Event	webproxy	Notice	7.4.12,7.6.7,8.0.1
+0117040962	40962	LOGID_EVENT_PROXY_SRC_PORT_EXHAUSTED	Proxy source port exhausted	Event	webproxy	Notice	8.0.1
+0100041000	41000	LOG_ID_UPD_FGT_SUCC	FortiGate update succeeded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100041001	41001	LOG_ID_UPD_FGT_FAIL	FortiGate update failed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100041002	41002	LOG_ID_UPD_SRC_VIS	Source visibility signature package updated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100041006	41006	LOG_ID_UPD_FSA_VIRDB	FortiSandbox AV database updated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100041007	41007	LOG_ID_UPD_MANUAL_LICENSE_SUCC	FortiGate Manual License update	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100041008	41008	LOG_ID_UPD_MANUAL_LICENSE_FAIL	FortiGate Manual License is invalid	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100041009	41009	LOG_ID_UPD_DB_SIGN_INVALID	FortiGate database signature invalid	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100041011	41011	LOG_ID_UPD_DB_UNSIGNED_INSTALLED	FortiGate database without signature installed	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100041012	41012	LOG_ID_UPD_DEV_LIC_UPDATED	FortiGate device license updated	Event	system	Notice	8.0.1
+0100041013	41013	LOG_ID_UPD_ALC_LIC_UPDATED	FortiGate account license updated	Event	system	Notice	8.0.1
+1400041216	41216	LOGID_GTP_FORWARD	GTP forward	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041217	41217	LOGID_GTP_DENY	GTP deny	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041218	41218	LOGID_GTP_RATE_LIMIT	GTP rate limit	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041219	41219	LOGID_GTP_STATE_INVALID	GTP state invalid	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041220	41220	LOGID_GTP_TUNNEL_LIMIT	Tunnel limit GTP message. These messages occur only when the maximum number of GTP tunnels is reached. No new tunnels are created when the maximum number is reached	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041221	41221	LOGID_GTP_TRAFFIC_COUNT	Statistic summary information when the GTP tunnel is being torn down	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041222	41222	LOGID_GTP_USER_DATA	GTP user data	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041223	41223	LOGID_GTPV2_FORWARD	GTPv2 forward message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041224	41224	LOGID_GTPV2_DENY	GTPv2 deny message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041225	41225	LOGID_GTPV2_RATE_LIMIT	GTPv2 rate limit message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041226	41226	LOGID_GTPV2_STATE_INVALID	GTPv2 state invalid message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041227	41227	LOGID_GTPV2_TUNNEL_LIMIT	Tunnel limit GTP (version 2) message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041228	41228	LOGID_GTPV2_TRAFFIC_COUNT	Statistic summary information when the GTPv2 tunnel is being torn down	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041229	41229	LOGID_GTPU_FORWARD	GTPU forward message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1400041230	41230	LOGID_GTPU_DENY	GTPU deny message	GTP	gtp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1401041231	41231	LOGID_PFCP_FORWARD	PFCP forward message	GTP	pfcp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1401041232	41232	LOGID_PFCP_DENY	PFCP deny message	GTP	pfcp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1401041233	41233	LOGID_PFCP_TRAFFIC_COUNT	Statistic summary information when the PFCP session is being torn down	GTP	pfcp-all	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041984	41984	LOG_ID_EVENT_VPN_CERT_LOAD	Certificate loaded	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041985	41985	LOG_ID_EVENT_VPN_CERT_REMOVAL	Certificate removed	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041986	41986	LOG_ID_EVENT_VPN_CERT_REGEN	Certificate regenerated	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041987	41987	LOG_ID_EVENT_VPN_CERT_UPDATE	Certificate updated	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041988	41988	LOG_ID_EVENT_SSL_VPN_SETTING_UPDATE	SSL setting changed	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041989	41989	LOG_ID_EVENT_VPN_CERT_ERR	Certificate error	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041990	41990	LOG_ID_EVENT_VPN_CERT_UPDATE_FAILED	Certificate update failed	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041991	41991	LOG_ID_EVENT_VPN_CERT_EXPORT	Certificate exported	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0101041992	41992	LOG_ID_EVENT_VPN_CERT_CRL_EXPIRED	CRL certificate file is expired	Event	vpn	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100042201	42201	LOG_ID_NETX_VMX_ATTACH	VMX instance successfully attached	Event	system	Notice	7.2.13
+0100042202	42202	LOG_ID_NETX_VMX_DETACH	VMX instance successfully detached	Event	system	Notice	7.2.13
+0100042203	42203	LOG_ID_NETX_VMX_DENIED	VMX instance successfully denied	Event	system	Notice	7.2.13
+0102043008	43008	LOG_ID_EVENT_AUTH_SUCCESS	Authentication success	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043009	43009	LOG_ID_EVENT_AUTH_FAILED	Authentication failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043010	43010	LOG_ID_EVENT_AUTH_LOCKOUT	Authentication lockout	Event	user	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0102043011	43011	LOG_ID_EVENT_AUTH_TIME_OUT	Authentication timed out	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043014	43014	LOG_ID_EVENT_AUTH_FSAE_LOGON	FSSO logon authentication status	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043015	43015	LOG_ID_EVENT_AUTH_FSAE_LOGOFF	FSSO log off authentication status	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043016	43016	LOG_ID_EVENT_AUTH_NTLM_AUTH_SUCCESS	NTLM authentication successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043017	43017	LOG_ID_EVENT_AUTH_NTLM_AUTH_FAIL	NTLM authentication failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043018	43018	LOG_ID_EVENT_AUTH_FGOVRD_FAIL	FortiGuard override failed	Event	user	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0102043020	43020	LOG_ID_EVENT_AUTH_FGOVRD_SUCCESS	FortiGuard override successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043025	43025	LOG_ID_EVENT_AUTH_PROXY_SUCCESS	Explicit proxy authentication successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043026	43026	LOG_ID_EVENT_AUTH_PROXY_FAILED	Explicit proxy authentication failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043027	43027	LOG_ID_EVENT_AUTH_PROXY_TIME_OUT	Explicit proxy authentication timed out	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043028	43028	LOG_ID_EVENT_AUTH_PROXY_GROUP_INFO_FAILED	Explicit proxy user group query failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043029	43029	LOG_ID_EVENT_AUTH_WARNING_SUCCESS	FortiGuard authentication override successful	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043030	43030	LOG_ID_EVENT_AUTH_WARNING_TBL_FULL	FortiGuard authentication override failed	Event	user	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0102043032	43032	LOG_ID_EVENT_AUTH_PROXY_USER_LIMIT_REACHED	Explicit proxy authentication user limit reached	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043033	43033	LOG_ID_EVENT_AUTH_PROXY_MULTIPLE_LOGIN	Explicit proxy authentication user concurrent check failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043034	43034	LOG_ID_EVENT_AUTH_PROXY_NO_RESP	Explicit proxy authentication no response	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043037	43037	LOG_ID_EVENT_AUTH_IPV4_FLUSH	Authentication IPv4 logon flush	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043038	43038	LOG_ID_EVENT_AUTH_IPV6_FLUSH	Authentication IPv6 logon flush	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043039	43039	LOG_ID_EVENT_AUTH_LOGON	Authentication logon	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043040	43040	LOG_ID_EVENT_AUTH_LOGOUT	Authentication logout	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043041	43041	LOG_ID_EVENT_AUTH_DISCLAIMER_ACCEPT	Disclaimer accepted	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043042	43042	LOG_ID_EVENT_AUTH_DISCLAIMER_DECLINE	Disclaimer declined	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043043	43043	LOG_ID_EVENT_AUTH_EMAIL_COLLECTING_SUCCESS	Email collecting succeeded	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043044	43044	LOG_ID_EVENT_AUTH_EMAIL_COLLECTING_FAIL	Email collecting failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043045	43045	LOG_ID_EVENT_AUTH_8021X_SUCCESS	802.1x authentication succeeded	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043046	43046	LOG_ID_EVENT_AUTH_8021X_FAIL	802.1x authentication failed	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043050	43050	LOG_ID_EVENT_AUTH_FSAE_CONNECT	FSSO server connected	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043051	43051	LOG_ID_EVENT_AUTH_FSAE_DISCONNECT	FSSO server disconnected	Event	user	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0102043052	43052	LOG_ID_EVENT_AUTH_BACKUP_SUCCESS	Auth backup succeeded	Event	user	Notice	7.6.7,8.0.1
+0102043053	43053	LOG_ID_EVENT_AUTH_BACKUP_FAILED	Auth backup failed	Event	user	Warning	7.6.7,8.0.1
+0102043054	43054	LOG_ID_EVENT_AUTH_RESTORE_SUCCESS	Auth restore succeeded	Event	user	Notice	7.6.7,8.0.1
+0102043055	43055	LOG_ID_EVENT_AUTH_RESTORE_FAILED	Auth restore failed	Event	user	Warning	7.6.7,8.0.1
+0102043056	43056	LOG_ID_EVENT_AUTH_SERVER_REACHABILITY_UPDATE	Auth server reachability update	Event	user	Notice	7.6.7,8.0.1
+0102043057	43057	LOG_ID_EVENT_SCIM_EVENT	SCIM API request	Event	user	Notice	8.0.1
+0104043520	43520	LOG_ID_EVENT_WIRELESS_SYS	Wireless system activity	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043521	43521	LOG_ID_EVENT_WIRELESS_ROGUE	Rogue AP activity	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043522	43522	LOG_ID_EVENT_WIRELESS_WTP	Physical AP activity	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043524	43524	LOG_ID_EVENT_WIRELESS_STA	Wireless client activity	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043525	43525	LOG_ID_EVENT_WIRELESS_ONWIRE	Rogue AP on wire	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043526	43526	LOG_ID_EVENT_WIRELESS_WTPR	Physical AP radio activity	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043527	43527	LOG_ID_EVENT_WIRELESS_ROGUE_CFG	Rogue AP status configured	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043528	43528	LOG_ID_EVENT_WIRELESS_WTPR_ERROR	Physical AP radio error activity	Event	wireless	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0104043529	43529	LOG_ID_EVENT_WIRELESS_CLB	Wireless client load balancing	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043530	43530	LOG_ID_EVENT_WIRELESS_WIDS_WL_BRIDGE	Wireless bridge intrusion detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043531	43531	LOG_ID_EVENT_WIRELESS_WIDS_BR_DEAUTH	Wireless broadcasting deauthentication detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043532	43532	LOG_ID_EVENT_WIRELESS_WIDS_NL_PBRESP	Wireless null SSID probe response detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043533	43533	LOG_ID_EVENT_WIRELESS_WIDS_MAC_OUI	Wireless invalid MAC OUI detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043534	43534	LOG_ID_EVENT_WIRELESS_WIDS_LONG_DUR	Wireless long duration attack detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043535	43535	LOG_ID_EVENT_WIRELESS_WIDS_WEP_IV	Wireless Weak WEP IV detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043536	43536	LOG_ID_EVENT_WIRELESS_WIDS_GENERAL	Wireless threat detected	Event	wireless	Notice	7.6.7,8.0.1
+0104043537	43537	LOG_ID_EVENT_WIRELESS_WIDS_RISKY_ENCRYPTION	Wireless risky_encryption detected	Event	wireless	Notice	7.6.7,8.0.1
+0104043538	43538	LOG_ID_EVENT_WIRELESS_WIDS_VALID_STA_MISASSOC	Wireless valid_client_misassoc detected	Event	wireless	Notice	7.6.7,8.0.1
+0104043542	43542	LOG_ID_EVENT_WIRELESS_WIDS_EAPOL_FLOOD	Wireless EAPOL packet flooding detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043544	43544	LOG_ID_EVENT_WIRELESS_WIDS_MGMT_FLOOD	Wireless management flooding detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043546	43546	LOG_ID_EVENT_WIRELESS_WIDS_SPOOF_DEAUTH	Wireless spoofed deauthentication detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043548	43548	LOG_ID_EVENT_WIRELESS_WIDS_ASLEAP	Wireless Asleap attack detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043550	43550	LOG_ID_EVENT_WIRELESS_STA_LOCATE	Wireless station presence detection	Event	wireless	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0104043551	43551	LOG_ID_EVENT_WIRELESS_WTP_JOIN	Physical AP join	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043552	43552	LOG_ID_EVENT_WIRELESS_WTP_LEAVE	Physical AP leave	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043553	43553	LOG_ID_EVENT_WIRELESS_WTP_FAIL	Physical AP fail	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043554	43554	LOG_ID_EVENT_WIRELESS_WTP_UPDATE	Physical AP update	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043555	43555	LOG_ID_EVENT_WIRELESS_WTP_RESET	Physical AP reset	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043556	43556	LOG_ID_EVENT_WIRELESS_WTP_KICK	Physical AP kick	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043557	43557	LOG_ID_EVENT_WIRELESS_WTP_ADD_FAILURE	Physical AP add failure	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043558	43558	LOG_ID_EVENT_WIRELESS_WTP_CFG_ERR	Physical AP config error	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043559	43559	LOG_ID_EVENT_WIRELESS_WTP_SN_MISMATCH	Physical AP SN mismatch	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043560	43560	LOG_ID_EVENT_WIRELESS_SYS_AC_RESTARTED	Wireless system restarted	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043561	43561	LOG_ID_EVENT_WIRELESS_SYS_AC_HOSTAPD_UP	Wireless system hostapd up	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043562	43562	LOG_ID_EVENT_WIRELESS_SYS_AC_HOSTAPD_DOWN	Wireless system hostapd down	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043563	43563	LOG_ID_EVENT_WIRELESS_ROGUE_DETECT	Rogue AP detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043564	43564	LOG_ID_EVENT_WIRELESS_ROGUE_OFFAIR	Rogue AP off air	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043565	43565	LOG_ID_EVENT_WIRELESS_ROGUE_ONAIR	Rogue AP on air	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043566	43566	LOG_ID_EVENT_WIRELESS_ROGUE_OFFWIRE	Rogue AP off wire	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043567	43567	LOG_ID_EVENT_WIRELESS_FAKEAP_DETECT	Fake AP detected	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043568	43568	LOG_ID_EVENT_WIRELESS_FAKEAP_ONAIR	Fake AP on air	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043569	43569	LOG_ID_EVENT_WIRELESS_ROGUE_SUPPRESSED	Rogue AP suppressed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043570	43570	LOG_ID_EVENT_WIRELESS_ROGUE_UNSUPPRESSED	Rogue AP unsuppressed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043571	43571	LOG_ID_EVENT_WIRELESS_ROGUE_DETECT_CHG	Rogue AP change detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043572	43572	LOG_ID_EVENT_WIRELESS_STA_ASSO	Wireless client associated	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043573	43573	LOG_ID_EVENT_WIRELESS_STA_AUTH	Wireless client authenticated	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043574	43574	LOG_ID_EVENT_WIRELESS_STA_DASS	Wireless client disassociated	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043575	43575	LOG_ID_EVENT_WIRELESS_STA_DAUT	Wireless client deauthenticated	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043576	43576	LOG_ID_EVENT_WIRELESS_STA_IDLE	Wireless client idle	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043577	43577	LOG_ID_EVENT_WIRELESS_STA_DENY	Wireless client denied	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043578	43578	LOG_ID_EVENT_WIRELESS_STA_KICK	Wireless client kicked	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043579	43579	LOG_ID_EVENT_WIRELESS_STA_IP	Wireless client IP assigned	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043580	43580	LOG_ID_EVENT_WIRELESS_STA_LEAVE_WTP	Wireless client left WTP	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043581	43581	LOG_ID_EVENT_WIRELESS_STA_WTP_DISCONN	Wireless client disconnected by WTP	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043582	43582	LOG_ID_EVENT_WIRELESS_ROGUE_CFG_UNCLASSIFIED	Rogue AP status configured as unclassified	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043583	43583	LOG_ID_EVENT_WIRELESS_ROGUE_CFG_ACCEPTED	Rogue AP status configured as accepted	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043584	43584	LOG_ID_EVENT_WIRELESS_ROGUE_CFG_ROGUE	Rogue AP status configured as rogue	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043585	43585	LOG_ID_EVENT_WIRELESS_ROGUE_CFG_SUPPRESSED	Rogue AP status configured as suppressed	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043586	43586	LOG_ID_EVENT_WIRELESS_WTPR_DARRP_CHAN	Physical AP radio DARRP channel change	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043587	43587	LOG_ID_EVENT_WIRELESS_WTPR_DARRP_START	Physical AP radio DARRP enable	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043588	43588	LOG_ID_EVENT_WIRELESS_WTPR_OPER_CHAN	Physical AP radio operation channel change	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043589	43589	LOG_ID_EVENT_WIRELESS_WTPR_RADAR	Physical AP radio radar detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043590	43590	LOG_ID_EVENT_WIRELESS_WTPR_NOL	Physical AP radio channel removed from NOL	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043591	43591	LOG_ID_EVENT_WIRELESS_WTPR_COUNTRY_CFG_SUCCESS	Physical AP radio country config success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043592	43592	LOG_ID_EVENT_WIRELESS_WTPR_OPER_COUNTRY	Physical AP radio operation country	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043593	43593	LOG_ID_EVENT_WIRELESS_WTPR_CFG_TXPOWER	Physical AP radio config TX power	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043594	43594	LOG_ID_EVENT_WIRELESS_WTPR_OPER_TXPOWER	Physical AP radio operation TX power	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043595	43595	LOG_ID_EVENT_WIRELESS_CLB_DENY	Wireless client load balancing denied	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043596	43596	LOG_ID_EVENT_WIRELESS_CLB_RETRY	Wireless client load balancing retry	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043597	43597	LOG_ID_EVENT_WIRELESS_WTP_ADD	Physical AP add	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043598	43598	LOG_ID_EVENT_WIRELESS_WTP_ADD_XSS	Physical AP add XSS	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043599	43599	LOG_ID_EVENT_WIRELESS_WTP_DEL	Physical AP delete	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043600	43600	LOG_ID_EVENT_WIRELESS_WTPR_DARRP_STOP	Physical AP radio DARRP disable	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043601	43601	LOG_ID_EVENT_WIRELESS_STA_CAP_SIGNON	Wireless station sign on	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043602	43602	LOG_ID_EVENT_WIRELESS_STA_CAP_SIGNON_SUCCESS	Wireless station sign on success	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043603	43603	LOG_ID_EVENT_WIRELESS_STA_CAP_SIGNON_FAILURE	Wireless station sign on failed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043604	43604	LOG_ID_EVENT_WIRELESS_STA_CAP_EMAIL_REQUEST	Captive-portal VAP e-mail collect request sent	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043605	43605	LOG_ID_EVENT_WIRELESS_STA_CAP_EMAIL_SUCCESS	Captive-portal VAP e-mail collect success	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043606	43606	LOG_ID_EVENT_WIRELESS_STA_CAP_EMAIL_FAILURE	Captive-portal VAP e-mail collect failed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043607	43607	LOG_ID_EVENT_WIRELESS_STA_CAP_DISCLAIMER_CHECK	Captive-portal VAP disclaimer agreed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043608	43608	LOG_ID_EVENT_WIRELESS_STA_CAP_DISCLAIMER_DECLINE	Captive-portal VAP disclaimer declined	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043609	43609	LOG_ID_EVENT_WIRELESS_WTPR_DARRP_OPTIMIZATION_START	DARRP optimization start	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043610	43610	LOG_ID_EVENT_WIRELESS_WTPR_DARRP_OPTIMIZATION_STOP	DARRP optimization stop	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043611	43611	LOG_ID_EVENT_WIRELESS_SYS_AC_UP	Wireless controller start	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043612	43612	LOG_ID_EVENT_WIRELESS_SYS_AC_CFG_LOADED	Wireless controller configuration loaded	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043613	43613	LOG_ID_EVENT_WIRELESS_WTP_ERR	Physical AP error	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043614	43614	LOG_ID_EVENT_WIRELESS_DHCP_STAVATION	DHCP Starvation detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043615	43615	LOG_ID_EVENT_WIRELESS_SYS_AC_IPSEC_FAIL	Wireless controller IPsec setup failed	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043616	43616	LOG_ID_EVENT_WIRELESS_WTPR_NOL_ADD	Physical AP radio NOL added	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043618	43618	LOG_ID_EVENT_WIRELESS_WTP_IMAGE_RC_SUCCESS	Physical AP image receive success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043619	43619	LOG_ID_EVENT_WIRELESS_OFFENDINGAP_DETECT	Offending AP detected	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043620	43620	LOG_ID_EVENT_WIRELESS_OFFENDINGAP_ONAIR	Offending AP on air	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043621	43621	LOG_ID_EVENT_WIRELESS_WTP_DATA_CHAN_CHG	Wireless wtp data channel changed	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043622	43622	LOG_ID_EVENT_WIRELESS_WTP_VLAN_PROBE	WTP is probing vlan	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043623	43623	LOG_ID_EVENT_WIRELESS_WTP_VLAN_MISSING	VLAN not detected	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043624	43624	LOG_ID_EVENT_WIRELESS_WTP_VLAN_DETECTED	VLAN detected	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043625	43625	LOG_ID_EVENT_WIRELESS_STA_CAP_CMCC_SUCCESS	Wireless station CMCC sign on success	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043626	43626	LOG_ID_EVENT_WIRELESS_STA_CAP_CMCC_FAILURE	Wireless station CMCC sign on failed	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043627	43627	LOG_ID_EVENT_WIRELESS_STA_CAP_CMCC_TIMEOUT	Wireless station CMCC sign on timeout	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043628	43628	LOG_ID_EVENT_WIRELESS_STA_CAP_CMCC_MAC_AUTH_SUCCESS	Wireless station CMCC MAC auth success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043629	43629	LOG_ID_EVENT_WIRELESS_STA_RADIUS_AUTH_FAILURE	Wireless client RADIUS authentication failure	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043630	43630	LOG_ID_EVENT_WIRELESS_STA_RADIUS_AUTH_SUCCESS	Wireless client RADIUS authentication success	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043631	43631	LOG_ID_EVENT_WIRELESS_STA_RADIUS_AUTH_NO_RESP	Wireless client RADIUS authentication server not responding	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043632	43632	LOG_ID_EVENT_WIRELESS_STA_RADIUS_MAC_AUTH_FAILURE	Wireless client RADIUS MAC authentication failure	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043633	43633	LOG_ID_EVENT_WIRELESS_STA_RADIUS_MAC_AUTH_SUCCESS	Wireless client RADIUS MAC authentication success	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043634	43634	LOG_ID_EVENT_WIRELESS_STA_RADIUS_MAC_AUTH_NO_RESP	Wireless client RADIUS MAC authentication server not responding	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043635	43635	LOG_ID_EVENT_WIRELESS_STA_OKC_NO_MATCH	Wireless client authenticates through OKC failed with no match	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043636	43636	LOG_ID_EVENT_WIRELESS_STA_OKC_LOCAL_MATCH	Wireless client authenticates through local OKC success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043637	43637	LOG_ID_EVENT_WIRELESS_STA_OKC_INTER_AC_MATCH	Wireless client authenticates through inter AC OKC success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043638	43638	LOG_ID_EVENT_WIRELESS_STA_OKC_INTER_AP_MATCH	Wireless client authenticates through inter AP OKC success	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043639	43639	LOG_ID_EVENT_WIRELESS_STA_FT_INVALID_ACTION_REQ	Wireless client sent invalid FT action request	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043640	43640	LOG_ID_EVENT_WIRELESS_STA_FT_INVALID_AUTH_REQ	Wireless client sent invalid FT auth request	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043641	43641	LOG_ID_EVENT_WIRELESS_STA_FT_INVALID_REASSOC_REQ	Wireless client sent invalid FT reassociation request	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043642	43642	LOG_ID_EVENT_WIRELESS_STA_FT_ACTION_REQ	Wireless client sent FT action reqeust	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043643	43643	LOG_ID_EVENT_WIRELESS_STA_FT_ACTION_RESP	FT action response was sent to wireless client	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043644	43644	LOG_ID_EVENT_WIRELESS_STA_FT_AUTH_REQ	Wireless client sent FT auth request	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043645	43645	LOG_ID_EVENT_WIRELESS_STA_FT_AUTH_RESP	FT auth response was sent to wireless client	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043646	43646	LOG_ID_EVENT_WIRELESS_STA_FT_REASSOC_REQ	Wireless client sent FT reassociation request	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043647	43647	LOG_ID_EVENT_WIRELESS_STA_FT_REASSOC_RESP	FT reassociation response was sent to wireless client	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043648	43648	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_INVALID_SECOND_MSG	Wireless client 4 way handshake failed with invalid 2/4 message	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043649	43649	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_INVALID_FOURTH_MSG	Wireless client 4 way handshake failed with invalid 4/4 message	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043650	43650	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_FIRST_MSG	AP sent 1/4 message of 4 way handshake to wireless client	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043651	43651	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_SECOND_MSG	Wireless client sent 2/4 message of 4 way handshake	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043652	43652	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_THIRD_MSG	AP sent 3/4 message of 4 way handshake to wireless client	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043653	43653	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_FOURTH_MSG	Wireless client sent 4/4 message of 4 way handshake	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043654	43654	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_FIRST_GROUP_MSG	AP sent 1/2 message of group key handshake to wireless client	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043655	43655	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_SECOND_GROUP_MSG	Wireless client sent 2/2 message of group key handshake	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043656	43656	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_MAX_STA_CNT	Max sta count limit for the PSK was reached	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043657	43657	LOG_ID_EVENT_WIRELESS_STA_ASSOC_FAIL	Wireless station association failed	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043658	43658	LOG_ID_EVENT_WIRELESS_STA_DHCP_NO_RESP	Wireless station DHCP process failed with no server response	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043659	43659	LOG_ID_EVENT_WIRELESS_STA_DHCP_DIFF_OFFER	Another DHCP server sent DHCP offer to wireless station	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043660	43660	LOG_ID_EVENT_WIRELESS_STA_DHCP_NO_ACK	No DHCP ACK from server	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043661	43661	LOG_ID_EVENT_WIRELESS_STA_DHCP_NAK	DHCP server sent DHCP NAK	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043662	43662	LOG_ID_EVENT_WIRELESS_STA_DHCP_DUP_IP	IP offered has been used by another wireless station	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043663	43663	LOG_ID_EVENT_WIRELESS_STA_DHCP_DISCOVER	Wireless station sent DHCP DISCOVER	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043664	43664	LOG_ID_EVENT_WIRELESS_STA_DHCP_OFFER	DHCP server sent DHCP OFFER	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043665	43665	LOG_ID_EVENT_WIRELESS_STA_DHCP_DECLINE	Wireless station sent DHCP DECLINE	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043666	43666	LOG_ID_EVENT_WIRELESS_STA_DHCP_REQUEST	Wireless station sent DHCP REQUEST	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043667	43667	LOG_ID_EVENT_WIRELESS_STA_DHCP_ACK	DHCP server sent DHCP ACK	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043668	43668	LOG_ID_EVENT_WIRELESS_STA_DHCP_RELEASE	Wireless station sent DHCP RELEASE	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043669	43669	LOG_ID_EVENT_WIRELESS_STA_DHCP_INFORM	Wireless station sent DHCP INFORM	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043670	43670	LOG_ID_EVENT_WIRELESS_STA_DHCP_SELF_ASSIGNED	Wireless station is using self-assigned IP	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043671	43671	LOG_ID_EVENT_WIRELESS_STA_DNS_NO_RESP	Wireless station DNS process failed with no server response	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043672	43672	LOG_ID_EVENT_WIRELESS_STA_DNS_SERVER_FAILURE	Wireless station DNS process failed due to server failure	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043673	43673	LOG_ID_EVENT_WIRELESS_STA_DNS_NO_DOMAIN	Wireless station DNS process failed due to non-existing domain	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043674	43674	LOG_ID_EVENT_WIRELESS_STA_WPA_KRACK_FT_REASSOC	Wireless station WPA key reinstallation attack on FT reassociation	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043675	43675	LOG_ID_EVENT_WIRELESS_STA_AUTH_REQ	Authentication request from wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043676	43676	LOG_ID_EVENT_WIRELESS_STA_AUTH_RESP	Authentication response to wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043677	43677	LOG_ID_EVENT_WIRELESS_STA_ASSOC_REQ	Association request from wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043678	43678	LOG_ID_EVENT_WIRELESS_STA_REASSOC_REQ	Reassociation request from wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043679	43679	LOG_ID_EVENT_WIRELESS_STA_ASSOC_RESP	Association response to wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043680	43680	LOG_ID_EVENT_WIRELESS_STA_REASSOC_RESP	Reassociation response to wireless station	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043681	43681	LOG_ID_EVENT_WIRELESS_STA_PROBE_REQ	Probe request from wireless station	Event	wireless	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0104043682	43682	LOG_ID_EVENT_WIRELESS_STA_PROBE_RESP	Probe response to wireless station	Event	wireless	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0104043683	43683	LOG_ID_EVENT_WIRELESS_BLE_DEV_LOCATE	Wireless ble dev detection	Event	wireless	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0104043684	43684	LOG_ID_EVENT_WIRELESS_ADDRGRP_DUPLICATE_MAC	Wireless addrgrp duplicate mac	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043685	43685	LOG_ID_EVENT_WIRELESS_ADDRGRP_ADDR_APPLY	Wireless addrgrp address apply	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043686	43686	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_INVALID_SCHEDULE	PSK is out of any valid schedules	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043687	43687	LOG_ID_EVENT_WIRELESS_STA_WL_BRIDGE_TRAFFIC_STATS	Traffic stats for station with bridge wlan	Event	wireless	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0104043688	43688	LOG_ID_EVENT_WIRELESS_APCFG_RECEIVE	FortiAP receives the apcfg	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043689	43689	LOG_ID_EVENT_WIRELESS_APCFG_VALIDATING	FortiAP is validating the apcfg	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043690	43690	LOG_ID_EVENT_WIRELESS_APCFG_APPLY	FortiAP applies the apcfg	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043691	43691	LOG_ID_EVENT_WIRELESS_APCFG_REJECT	FortiAP rejects the apcfg	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043692	43692	LOG_ID_EVENT_WIRELESS_WTPR_ANTENNA_DEFECT_DETECT	Defect antenna detection	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043693	43693	LOG_ID_EVENT_WIRELESS_STA_WNM_ACTION_BSTM_REQ	AP sent WNM action BSTM request	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043694	43694	LOG_ID_EVENT_WIRELESS_STA_WNM_ACTION_BSTM_RESP_ACCEPT	Wireless client sent WNM action BSTM response accept	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043695	43695	LOG_ID_EVENT_WIRELESS_STA_WNM_ACTION_BSTM_RESP_REJECT	Wireless client sent WNM action BSTM response reject	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043696	43696	LOG_ID_EVENT_WIRELESS_WTPR_DRMA_START	Physical AP radio DRMA start	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043697	43697	LOG_ID_EVENT_WIRELESS_WTPR_DRMA_STOP	Physical AP radio DRMA stop	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043698	43698	LOG_ID_EVENT_WIRELESS_WTPR_DRMA_MODE	Physical AP radio DRMA mode	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043699	43699	LOG_ID_EVENT_WIRELESS_STA_DHCP6_SOLICIT	Wireless station sent DHCP6 SOLICIT	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043700	43700	LOG_ID_EVENT_WIRELESS_STA_DHCP6_ADVERTISE	DHCP6 server sent DHCP6 ADVERTISE	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043701	43701	LOG_ID_EVENT_WIRELESS_STA_DHCP6_REQUEST	Wireless station sent DHCP6 REQUEST	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043702	43702	LOG_ID_EVENT_WIRELESS_STA_DHCP6_CONFIRM	Wireless station sent DHCP6 CONFIRM	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043703	43703	LOG_ID_EVENT_WIRELESS_STA_DHCP6_RENEW	Wireless station sent DHCP6 RENEW	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043704	43704	LOG_ID_EVENT_WIRELESS_STA_DHCP6_REPLY	DHCP6 server sent DHCP6 REPLY	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043705	43705	LOG_ID_EVENT_WIRELESS_STA_DHCP6_RELEASE	Wireless station sent DHCP6 RELEASE	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043706	43706	LOG_ID_EVENT_WIRELESS_STA_DHCP6_RECONFIGURE	DHCP6 server sent DHCP6 RECONFIGURE	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043707	43707	LOG_ID_EVENT_WIRELESS_WTPR_SSID_UP	Physical AP radio ssid up	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043708	43708	LOG_ID_EVENT_WIRELESS_WTPR_SSID_DOWN	Physical AP radio ssid down	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043709	43709	LOG_ID_EVENT_WIRELESS_STA_DHCP_ENFORCEMENT	Wireless client denied by DHCP enforcement for using static IP address	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043710	43710	LOG_ID_EVENT_WIRELESS_SAM_IPERF	SAM iperf test result	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043711	43711	LOG_ID_EVENT_WIRELESS_SAM_PING	SAM ping test result	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043712	43712	LOG_ID_EVENT_WIRELESS_SAM_AUTH_FAILED	AP as station failed in SAM authentication	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043713	43713	LOG_ID_EVENT_WIRELESS_SAM_CWP_AUTH_FAILED	AP as station failed in SAM CWP authentication	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043714	43714	LOG_ID_EVENT_WIRELESS_WTP_PARTIAL_PASSWD	AP received partial login password	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043715	43715	LOG_ID_EVENT_WIRELESS_WTPR_BSS_COLOR_COLLISION	AP radio BSS color collision detected.	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043716	43716	LOG_ID_EVENT_WIRELESS_ADDRGRP_MAX_FW_ADDR	Wireless addrgrp reached firewal address maximum number	Event	wireless	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0104043717	43717	LOG_ID_EVENT_WIRELESS_STA_L3R_REHOME	Wireless client layer3 roaming rehome	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043719	43719	LOG_ID_EVENT_WIRELESS_STA_PROBE_LOW_RSSI	Probe request from wireless station failed due to low rssi	Event	wireless	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0104043720	43720	LOG_ID_EVENT_WIRELESS_FIPS	Physical AP FIPS activity	Event	wireless	Notice	7.4.12,7.6.7,8.0.1
+0104043721	43721	LOG_ID_EVENT_WIRELESS_STA_WPA_MSG_EXT_MPSK_RESULT	External MPSK authentication result	Event	wireless	Notice	7.4.12,7.6.7,8.0.1
+0104043723	43723	LOG_ID_EVENT_WIRELESS_SYS_AC_DOWN	Wireless controller down	Event	wireless	Notice	7.4.12,7.6.7,8.0.1
+0104043724	43724	LOG_ID_EVENT_WIRELESS_WTPR_SKIP_CAC	AP radio DFS Channel CAC skip, Zero-Wait-DFS.	Event	wireless	Notice	7.6.7,8.0.1
+0104043725	43725	LOG_ID_EVENT_WIRELESS_WTPR_AI_DARRP_SUPPORT_START	Physical AP radio AI DARRP support enable	Event	wireless	Notice	7.6.7,8.0.1
+0104043726	43726	LOG_ID_EVENT_WIRELESS_WTPR_AI_DARRP_SUPPORT_STOP	Physical AP radio AI DARRP support disable	Event	wireless	Notice	7.6.7,8.0.1
+0104043727	43727	LOG_ID_EVENT_WIRELESS_WTPR_AI_DARRP_CHAN	Physical AP radio DARRP channel change from AI	Event	wireless	Notice	7.6.7,8.0.1
+0104043728	43728	LOG_ID_EVENT_WIRELESS_WTPR_AI_DARRP_OPTIMIZATION_TRIGGER	DARRP optimization request from AI start	Event	wireless	Notice	7.6.7,8.0.1
+0104043729	43729	LOG_ID_EVENT_WIRELESS_WTP_AUTO_GEN_CERT_SUCC	Wireless controller certificate auto generation succeed	Event	wireless	Notice	7.6.7,8.0.1
+0104043730	43730	LOG_ID_EVENT_WIRELESS_WTP_AUTO_GEN_CERT_FAIL	Wireless controller certificate auto generation failed	Event	wireless	Warning	7.6.7,8.0.1
+0104043731	43731	LOG_ID_EVENT_WIRELESS_STA_USERGROUP_UPDATE	Wireless station usergroup updated	Event	wireless	Notice	7.6.7,8.0.1
+0104043732	43732	LOG_ID_EVENT_WIRELESS_STA_AUTH_RESP_DROPPED	Authentication response to wireless station dropped by AP	Event	wireless	Notice	7.6.7,8.0.1
+0104043733	43733	LOG_ID_EVENT_WIRELESS_STA_ASSOC_RESP_DROPPED	Association response to wireless station dropped by AP	Event	wireless	Notice	7.6.7,8.0.1
+0104043734	43734	LOG_ID_EVENT_WIRELESS_STA_REASSOC_RESP_DROPPED	Reassociation response to wireless station dropped by AP	Event	wireless	Notice	7.6.7,8.0.1
+0104043735	43735	LOG_ID_EVENT_WIRELESS_WTP_LOC_IMG_DOWNLOAD_BEG	Physical AP local image download begins	Event	wireless	Notice	8.0.1
+0104043736	43736	LOG_ID_EVENT_WIRELESS_WTP_LOC_IMG_DOWNLOAD_END	Physical AP local image download finishes	Event	wireless	Notice	8.0.1
+0104043737	43737	LOG_ID_EVENT_WIRELESS_STA_LOCKOUT_REJECT	Wirelessstation rejected because it is locked out	Event	wireless	Warning	8.0.1
+0104043738	43738	LOG_ID_EVENT_WIRELESS_STA_LOCKOUT_LOCKED	Wirelessstation locked out due to too many failed login attempts	Event	wireless	Warning	8.0.1
+0100043776	43776	LOG_ID_EVENT_NAC_QUARANTINE	NAC quarantine	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100043777	43777	LOG_ID_EVENT_NAC_ANOMALY_QUARANTINE	NAC anomaly quarantine	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100043778	43778	LOG_ID_EVENT_NAC_QUARANTINE_EXPIRY	NAC quarantine expiry	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100043800	43800	LOG_ID_EVENT_ELBC_BLADE_JOIN	Blade ready to process traffic	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043801	43801	LOG_ID_EVENT_ELBC_BLADE_LEAVE	Blade not ready to process traffic	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043802	43802	LOG_ID_EVENT_ELBC_MASTER_BLADE_FOUND	Primary blade found	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043803	43803	LOG_ID_EVENT_ELBC_MASTER_BLADE_LOST	Primary blade lost	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043804	43804	LOG_ID_EVENT_ELBC_MASTER_BLADE_CHANGE	Primary blade changed	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043805	43805	LOG_ID_EVENT_ELBC_ACTIVE_CHANNEL_FOUND	ELBC channel active	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043806	43806	LOG_ID_EVENT_ELBC_ACTIVE_CHANNEL_LOST	ELBC channel inactive	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043807	43807	LOG_ID_EVENT_ELBC_ACTIVE_CHANNEL_CHANGE	ELBC channel failover	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043808	43808	LOG_ID_EVENT_ELBC_CHASSIS_ACTIVE	ELBC chassis active	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100043809	43809	LOG_ID_EVENT_ELBC_CHASSIS_INACTIVE	ELBC chassis inactive	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0814044032	44032	LOGID_EVENT_VOIP_SIP	VoIP SIP	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0814044033	44033	LOGID_EVENT_VOIP_SIP_BLOCK	VoIP SIP blocked	VoIP	voip	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0814044034	44034	LOGID_EVENT_VOIP_SIP_FUZZING	VoIP SIP fuzzing	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0814044035	44035	LOGID_EVENT_VOIP_SCCP_REGISTER	VoIP SCCP registered	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0814044036	44036	LOGID_EVENT_VOIP_SCCP_UNREGISTER	VoIP SCCP unregistered	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0814044037	44037	LOGID_EVENT_VOIP_SCCP_CALL_BLOCK	VoIP SCCP call blocked	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0814044038	44038	LOGID_EVENT_VOIP_SCCP_CALL_INFO	VoIP SCCP call information	VoIP	voip	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044544	44544	LOGID_EVENT_CONFIG_PATH	Path configured	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044545	44545	LOGID_EVENT_CONFIG_OBJ	Object configured	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044546	44546	LOGID_EVENT_CONFIG_ATTR	Attribute configured	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044547	44547	LOGID_EVENT_CONFIG_OBJATTR	Object attribute configured	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044548	44548	LOGID_EVENT_CONFIG_EXEC	Action performed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044555	44555	LOGID_EVENT_CMDB_DEADLOCK_DETECTED	CMDB lock deadlock is detected.	Event	system	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100044557	44557	LOGID_EVENT_CONFIG_REQUEST_DENIED	CMDB denied request for restricted table	Event	system	Information	7.6.7,8.0.1
+0100044558	44558	LOGID_EVENT_NEWCLI_SPAWN_ATTEMPT	Attempt to spawn a new cli instance	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100044559	44559	LOGID_EVENT_INSTALL_IPROPE	Firewall policy installation	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100044560	44560	LOGID_EVENT_CONFIG_ACCPROFILE_SUPER_ADMIN	Configure admin accprofile as super_admin	Event	system	Notice	7.6.7,8.0.1
+0100044561	44561	LOGID_EVENT_CONFIG_REQUEST_UNAUTH	CMDB denied request from unauthenticated admin session	Event	system	Warning	7.6.7,8.0.1
+0100044562	44562	LOGID_EVENT_CONFIG_SENSITIVE_INFO	CMDB get request for sensitive information table	Event	system	Warning	7.6.7,8.0.1
+0107045057	45057	LOG_ID_FCC_ADD	FortiClient connection added	Event	endpoint	Information	7.2.13
+0107045058	45058	LOG_ID_FCC_CLOSE	FortiClient connection closed	Event	endpoint	Information	7.2.13
+0107045061	45061	LOG_ID_FCC_CLOSE_BY_TYPE	FortiClient connection closed by type	Event	endpoint	Information	7.2.13
+0107045071	45071	LOG_ID_FCC_VULN_SCAN	FortiClient Vulnerability Scan	Event	endpoint	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0107045101	45101	LOG_ID_EC_REG_SUCCEED	FortiClient registered	Event	endpoint	Notice	7.4.12,7.6.7,8.0.1
+0107045114	45114	LOG_ID_EC_REG_QUARANTINE	FortiClient endpoint quarantined	Event	endpoint	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0107045115	45115	LOG_ID_EC_REG_UNQUARANTINE	FortiClient endpoint quarantine removed	Event	endpoint	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0107045121	45121	LOG_ID_EC_EMS_WS_NOTIFICATION	EMS WebSocket notification	Event	endpoint	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0107045122	45122	LOG_ID_EC_EMS_REST_API_ERROR	EMS REST API error	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045123	45123	LOG_ID_EC_EMS_WS_CONN_ERROR	EMS WebSocket connection error	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045124	45124	LOG_ID_EC_VPND_CONNECT	FortiClient VPN connected	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045125	45125	LOG_ID_EC_VPND_DISCONNECT	FortiClient VPN disconnected	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045126	45126	LOG_ID_EC_CLOUD_ENTITLEMENT_LOST	EMS Cloud entitlement lost and connection dropped	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045128	45128	LOG_ID_EC_EMS_REST_API_NEW_SUCCESS	EMS REST API recovered from an error	Event	endpoint	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0107045129	45129	LOG_ID_EC_EMS_EMS_VERIFY	FCEMS entry has been verified	Event	endpoint	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0107045130	45130	LOG_ID_EC_EMS_EMS_VERIFY_FAILED	FCEMS entry has failed to be verified	Event	endpoint	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0107045131	45131	LOG_ID_EC_EMS_EMS_UNVERIFY	FCEMS entry has been unverified	Event	endpoint	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0107045132	45132	LOG_ID_EC_EMS_UPGRADE_FAIL	EMS entry could not be upgraded	Event	endpoint	Error	7.4.12,7.6.7
+0107045133	45133	LOG_ID_EC_SHM_MISSING_QUERY	FCEMS shared memory missing query statistics	Event	endpoint	Warning	7.4.12,7.6.7,8.0.1
+0107045134	45134	LOG_ID_EC_SHM_ENDPOINT_UPDATE	Endpoint ZTNA information has been updated	Event	endpoint	Information	7.6.7,8.0.1
+0107045135	45135	LOG_ID_EC_SHM_ENDPOINT_DELETE	Endpoint has been deleted	Event	endpoint	Information	7.6.7,8.0.1
+0100046000	46000	LOG_ID_VIP_REAL_SVR_ENA	VIP real server enabled	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100046001	46001	LOG_ID_VIP_REAL_SVR_DISA	VIP real server disabled	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100046002	46002	LOG_ID_VIP_REAL_SVR_UP	VIP real server up	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100046003	46003	LOG_ID_VIP_REAL_SVR_DOWN	VIP real server down	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100046004	46004	LOG_ID_VIP_REAL_SVR_ENT_HOLDDOWN	VIP real server entered hold-down	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100046005	46005	LOG_ID_VIP_REAL_SVR_FAIL_HOLDDOWN	VIP real server health check failed during hold-down	Event	system	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0100046006	46006	LOG_ID_VIP_REAL_SVR_FAIL	VIP real server health check failed	Event	system	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0111046400	46400	LOG_ID_EVENT_EXT_SYS	FortiExtender system activity	Event	fortiextender	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0111046401	46401	LOG_ID_EVENT_EXT_LOCAL	FortiExtender controller activity	Event	fortiextender	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0111046402	46402	LOG_ID_EVENT_EXT_LOCAL_ERROR	FortiExtender controller activity error	Event	fortiextender	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0111046403	46403	LOG_ID_EVENT_EXT_REMOTE_EMERG	Remote FortiExtender emergency activity	Event	fortiextender	Emergency	7.2.13,7.4.12,7.6.7,8.0.1
+0111046404	46404	LOG_ID_EVENT_EXT_REMOTE_ALERT	Remote FortiExtender alert activity	Event	fortiextender	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+0111046405	46405	LOG_ID_EVENT_EXT_REMOTE_CRITICAL	Remote FortiExtender critical activity	Event	fortiextender	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0111046406	46406	LOG_ID_EVENT_EXT_REMOTE_ERROR	Remote FortiExtender error activity	Event	fortiextender	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0111046407	46407	LOG_ID_EVENT_EXT_REMOTE_WARNING	Remote FortiExtender warning activity	Event	fortiextender	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0111046408	46408	LOG_ID_EVENT_EXT_REMOTE_NOTIF	Remote FortiExtender notify activity	Event	fortiextender	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0111046409	46409	LOG_ID_EVENT_EXT_REMOTE_INFO	Remote FortiExtender info activity	Event	fortiextender	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0111046410	46410	LOG_ID_EVENT_EXT_REMOTE_DEBUG	Remote FortiExtender debug activity	Event	fortiextender	Debug	7.2.13,7.4.12,7.6.7,8.0.1
+0100046501	46501	LOG_ID_INTERNAL_LTE_MODEM_DETECTION	LTE modem detection	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046502	46502	LOG_ID_INTERNAL_LTE_MODEM_GPSD	LTE modem GPS daemon started or stopped	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046503	46503	LOG_ID_INTERNAL_LTE_MODEM_GPS_LOC_ACQUISITION	LTE modem GPS location acquisition	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046504	46504	LOG_ID_INTERNAL_LTE_MODEM_BILLD	LTE modem billing daemon started or stopped	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046505	46505	LOG_ID_INTERNAL_LTE_MODEM_BILLING_PURGED	LTE billing data purged	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046506	46506	LOG_ID_INTERNAL_LTE_MODEM_BILLING_DAILY_LOG	LTE billing daily usage information	Event	system	Information	7.2.13
+0100046507	46507	LOG_ID_INTERNAL_LTE_MODEM_FW_UPGRADE	LTE modem firmware upgrade event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046508	46508	LOG_ID_INTERNAL_LTE_MODEM_QDL_DETECTION	LTE modem QDL device detection event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046509	46509	LOG_ID_INTERNAL_LTE_MODEM_REBOOT	LTE modem reboot event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046510	46510	LOG_ID_INTERNAL_LTE_MODEM_OP_MODE	LTE modem operation mode	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046511	46511	LOG_ID_INTERNAL_LTE_MODEM_POWER_ON_OFF	LTE modem powered on or powered off	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046512	46512	LOG_ID_INTERNAL_LTE_MODEM_SIM_STATE	LTE modem SIM card state event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046513	46513	LOG_ID_INTERNAL_LTE_MODEM_LINK_CONNECTION	LTE modem data link connection event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046514	46514	LOG_ID_INTERNAL_LTE_MODEM_MANUAL_HANDOVER	LTE modem manual handover event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046515	46515	LOG_ID_INTERNAL_LTE_MODEM_IP_ADDR	LTE modem ip address event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046516	46516	LOG_ID_INTERNAL_LTE_MODEM_BEARER_TECH_CHANGE	LTE modem bearer event	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100046517	46517	LOG_ID_INTERNAL_LTE_MODEM_WRONG_PIN	LTE unlock SIM PIN failed.	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100046518	46518	LOG_ID_INTERNAL_LTE_MODEM_SIM_SWITCH	LTE modem active SIM card switch event	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046519	46519	LOG_ID_INTERNAL_LTE_MODEM_SIM_SWITCH_CONNECTION_STATE	LTE modem active SIM card switched: modem disconnection detected	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100046520	46520	LOG_ID_INTERNAL_LTE_MODEM_SIM_SWITCH_LINK_MONITOR	LTE modem active SIM card switched: link monitor probe failure detected	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100046521	46521	LOG_ID_INTERNAL_LTE_MODEM_SIM_FLIP	LTE modem active SIM card slot flipped back and forth in short time	Event	system	Warning	7.4.12,7.6.7,8.0.1
+0100046522	46522	LOG_ID_INTERNAL_LTE_MODEM_BILLING_DATA_ALERT	LTE billing data usage reached configured threshold	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046523	46523	LOG_ID_INTERNAL_LTE_MODEM_BILLING_TIME_REFRESH	LTE billing time passed, refresh billing date counter	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046524	46524	LOG_ID_INTERNAL_LTE_MODEM_SIM_SWITCH_DATA_PLAN	LTE modem active SIM card switched: data plan reached	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046525	46525	LOG_ID_INTERNAL_LTE_MODEM_BILLING_STOP_NETWORK	LTE modem stop network due to data plan reached	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046526	46526	LOG_ID_INTERNAL_LTE_MODEM_BILLING_DATA_PLAN_OVER	LTE billing data usage reached data limit	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046527	46527	LOG_ID_INTERNAL_LTE_MODEM_SIM_SWITCH_SIM_STATE	LTE modem active SIM card switched: SIM state empty or error	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046600	46600	LOG_ID_EVENT_AUTOMATION_TRIGGERED	Automation stitch triggered	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100046703	46703	LOG_ID_INTERNAL_5G_MODEM_IPV4_LINK_STATE	Cellular modem IPV4 link state changed	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046705	46705	LOG_ID_INTERNAL_5G_MODEM_FW_UPGRADE	5G modem firmware upgrade event	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046708	46708	LOG_ID_INTERNAL_5G_MODEM_MODE	Cellular modem changed operation mode	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046709	46709	LOG_ID_INTERNAL_5G_MODEM_SIM_STATE	Cellular modem active sim card state changed	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046710	46710	LOG_ID_INTERNAL_5G_MODEM_SIM_SWITCH	Cellular modem sim switched	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046711	46711	LOG_ID_INTERNAL_5G_MODEM_AUTO_SIM_SWITCH_REASON	Cellular modem auto sim switch triggered	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046713	46713	LOG_ID_INTERNAL_5G_MODEM_SIGNAL_MODE	Cellular modem signal mode changed	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100046714	46714	LOG_ID_INTERNAL_5G_MODEM_IPV6_LINK_STATE	Cellular modem IPV6 link state changed	Event	system	Information	7.6.7,8.0.1
+0100046716	46716	LOG_ID_INTERNAL_5G_MODEM_ESIM	5G modem eSIM event	Event	system	Information	7.6.7,8.0.1
+0100046900	46900	LOG_ID_POE_STATUS_REPORT	PoE device status reported	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100047000	47000	LOG_ID_MALWARE_LIST_TRUNCATED_ENTER	External blocklist list is truncated	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100047001	47001	LOG_ID_MALWARE_LIST_TRUNCATED_EXIT	External blocklist list is no longer truncated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100047002	47002	LOG_ID_FILE_HASH_EMS_LIST_TRUNCATED_ENTER	EMS file-hash list is truncated	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100047003	47003	LOG_ID_FILE_HASH_EMS_LIST_TRUNCATED_EXIT	EMS file-hash list is no longer truncated	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100047004	47004	LOG_ID_FILE_HASH_EMS_LIST_LOAD	EMS file-hash list loaded	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100047005	47005	LOG_ID_MALWARE_STREAM_TRUNCATED_ENTER	Malware stream hash list is truncated	Event	system	Warning	7.6.7,8.0.1
+0100047006	47006	LOG_ID_MALWARE_STREAM_TRUNCATED_EXIT	Malware stream hash list is no longer truncated	Event	system	Notice	7.6.7,8.0.1
+0100047203	47203	LOG_ID_ENTER_BYPASS	Bypass ports pair entered bypass mode	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100047204	47204	LOG_ID_EXIT_BYPASS	Bypass ports pair exited bypass mode	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0116047301	47301	LOG_ID_EVENT_REST_API_OK	REST API request success	Event	rest-api	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0116047302	47302	LOG_ID_EVENT_REST_API_ERR	REST API request failed	Event	rest-api	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0120047400	47400	LOG_ID_WEB_SVC_MEMORY_PROFILE	Memory profiling for web-svc task.	Event	web-svc	Information	7.4.12,7.6.7,8.0.1
+0120047401	47401	LOG_ID_WEB_SVC_RESTART	Daemon web-svc has restarted	Event	web-svc	Information	7.4.12,7.6.7,8.0.1
+0105048040	48040	LOG_ID_WANOPT_TUNNEL_CREATE	WANOPT Tunnel successfully created	Event	wanopt	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0105048041	48041	LOG_ID_WANOPT_TUNNEL_CLOSED	WANOPT Tunnel closed	Event	wanopt	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0105048101	48101	LOG_ID_WANOPT_AUTH_FAIL_PSK	WAN Optimization peer PSK authentication failed	Event	wanopt	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0105048102	48102	LOG_ID_WANOPT_AUTH_FAIL_OTH	WAN Optimization peer authentication failed	Event	wanopt	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0105048301	48301	LOG_ID_UNEXP_APP_TYPE	Unexpected application type for WAN Optimization	Event	wanopt	Critical	7.2.13,7.4.12,7.6.7,8.0.1
+0100049002	49002	LOG_ID_VNP_DPDK_PRIMARY_RESTART	VNP Primary restarted	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100049004	49004	LOGID_EVENT_HYPERV_SRIOV_SHOW_UP	Hyper-V SR-IOV VF secondary is hot plugged	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100049005	49005	LOGID_EVENT_HYPERV_SRIOV_DISAPPEAR	Hyper-V SR-IOV VF secondary is hot unplugged	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0103051000	51000	LOG_ID_NB_TBL_CHG	Neighbor table changed	Event	router	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0110052000	52000	LOG_ID_EVENT_SECURITY_AUDIT_FABRIC_SUMMARY	Security Rating summary	Event	security-rating	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0110052001	52001	LOG_ID_EVENT_SECURITY_AUDIT_FABRIC_CHANGE	Security Rating result change	Event	security-rating	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0110052002	52002	LOG_ID_EVENT_SECURITY_AUDIT_FABRIC_RESULT	Security Rating check result	Event	security-rating	Notice	7.4.12,7.6.7,8.0.1
+0100053000	53000	LOG_ID_SDNC_CONNECTED	Connected to SDN server	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053001	53001	LOG_ID_SDNC_DISCONNECTED	Disconnected from SDN server	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053002	53002	LOG_ID_SDNC_SUBSCRIBE	Dynamic SDN address channel opened	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053003	53003	LOG_ID_SDNC_UNSUBSCRIBE	Dynamic SDN address channel closed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053010	53010	LOG_ID_INTERNAL_FDS_FTC	FortiToken-Cloud data received	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100053050	53050	LOG_ID_FTC_AUTH_FAILED	FortiToken-Cloud authentication failure	Event	system	Information	7.4.12,7.6.7,8.0.1
+0101053100	53100	LOG_ID_VPN_OCVPN_REGISTERED	Overlay Controller VPN registered	Event	vpn	Notice	7.2.13
+0101053101	53101	LOG_ID_VPN_OCVPN_UNREGISTERED	Overlay Controller VPN unregistered	Event	vpn	Notice	7.2.13
+0101053102	53102	LOG_ID_VPN_OCVPN_COMM_ESTABLISHED	Overlay Controller VPN server communication established	Event	vpn	Notice	7.2.13
+0101053103	53103	LOG_ID_VPN_OCVPN_COMM_ERROR	Overlay Controller VPN server communication error	Event	vpn	Error	7.2.13
+0101053104	53104	LOG_ID_VPN_OCVPN_DNS_ERROR	Overlay Controller VPN DNS error	Event	vpn	Notice	7.2.13
+0101053105	53105	LOG_ID_VPN_OCVPN_ROUTE_ERROR	Overlay Controller VPN routing error	Event	vpn	Notice	7.2.13
+0112053200	53200	LOG_ID_CONNECTOR_OBJECT_ADD	Dynamic address added	Event	connector	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0112053201	53201	LOG_ID_CONNECTOR_OBJECT_REMOVE	Dynamic address removed	Event	connector	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0112053202	53202	LOG_ID_CONNECTOR_API_FAILED	SDN Connector API failed	Event	connector	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0112053203	53203	LOG_ID_CONNECTOR_OBJECT_UPDATE	Dynamic address updated.	Event	connector	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0112053204	53204	LOG_ID_CONNECTOR_OBJECT_CANT_ADD	Dynamic address can't be added	Event	connector	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0112053205	53205	LOG_ID_CONNECTOR_OBJECT_CANT_REMOVE	Dynamic address can't be removed	Event	connector	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100053300	53300	LOG_ID_VNE_PRO_UPDATE_COMPLETED	VNE provision server update completed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053301	53301	LOG_ID_VNE_PRO_UPDATE_FAILED	VNE provision server update failed	Event	system	Information	7.2.13,7.4.12,7.6.7,8.0.1
+0100053311	53311	LOG_ID_NPU_PER_MAPPING_ALLOCATION	Resource per mapping allocation	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100053312	53312	LOG_ID_NPD_INFO	NPD INFO	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100053313	53313	LOG_ID_NPD_WARNING	NPD WARNING MSG	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100053314	53314	LOG_ID_NPD_ERROR	NPD ERROR MSG	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100053315	53315	LOG_ID_LPM_ERROR	LPM ERROR MSG	Event	system	Error	7.2.13,7.4.12,7.6.7,8.0.1
+0100053316	53316	LOG_ID_LPM_INFO	LPM INFO MSG	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100053320	53320	LOG_ID_FORTICONVERTER_RESULT_READY	FortiConverter ticket has a result file ready	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100053321	53321	LOG_ID_FORTICONVERTER_CONFIG_UPLOADED	Uploaded local config to a FortiConverter ticket	Event	system	Notice	7.4.12,7.6.7,8.0.1
+0100053326	53326	LOG_ID_NPU_HEALTH_INFO	NPU health info event	Event	system	Information	7.6.7,8.0.1
+0100053327	53327	LOG_ID_NPU_HEALTH_WARNING	NPU health warning event	Event	system	Warning	7.6.7,8.0.1
+0100053328	53328	LOG_ID_NPU_HEALTH_ERROR	NPU health error event	Event	system	Error	7.6.7,8.0.1
+0100053400	53400	LOG_ID_FMG_TUNNEL_UP	Central Management connectivity is active	Event	system	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+0100053401	53401	LOG_ID_FMG_TUNNEL_DOWN	Central Management connectivity is inactive	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100053402	53402	LOG_ID_FGFM_RECOVERY	FGFM recovery is triggered	Event	system	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0100053406	53406	LOG_ID_2GB_CSF_UPGRADE	Security Fabric settings changed during upgrade	Event	system	Information	7.2.13,7.4.12,7.6.7
+0100053407	53407	LOG_ID_FABRIC_VPN_PSK_SECRET_UPG_SET	Fabric VPN settings changed during upgrade	Event	system	Information	7.4.12,7.6.7,8.0.1
+0100053408	53408	LOG_ID_CSF_UPSTREAM_WILDCARD_CREATE_UPG	Upstream wildcard authorizationis created	Event	system	Information	8.0.1
+0100053409	53409	LOG_ID_CSF_TRUSTED_LIST_REMOVED	A system.csf.trusted-list entry was deleted during the upgrade	Event	system	Information	8.0.1
+0100053410	53410	LOG_ID_CSF_TRUSTED_LIST_UPGRADED	A system.csf.trusted-list entry was changed during the upgrade	Event	system	Information	8.0.1
+0118053412	53412	LOG_ID_EVENT_TELEMETRY_AGENT_ONLINE	Agent online	Event	telemetry	Information	7.6.7,8.0.1
+0118053413	53413	LOG_ID_EVENT_TELEMETRY_AGENT_OFFLINE	Agent offline	Event	telemetry	Information	7.6.7,8.0.1
+0118053414	53414	LOG_ID_EVENT_TELEMETRY_AGENT_ADD	Agent added	Event	telemetry	Information	7.6.7,8.0.1
+0118053415	53415	LOG_ID_EVENT_TELEMETRY_AGENT_DELETE	Agent deleted	Event	telemetry	Information	7.6.7,8.0.1
+0118053416	53416	LOG_ID_EVENT_TELEMETRY_CERTIFICATE_ERROR	Certificate error	Event	telemetry	Error	7.6.7,8.0.1
+1500054000	54000	LOG_ID_DNS_QUERY	DNS query message	DNS	dns-query	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1501054200	54200	LOG_ID_DNS_RESOLV_ERROR	DNS resolution error message	DNS	dns-response	Error	7.2.13,7.4.12,7.6.7,8.0.1
+1501054400	54400	LOG_ID_DNS_URL_FILTER_BLOCK	Domain blocked because it is in the domain-filter list	DNS	dns-response	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1501054401	54401	LOG_ID_DNS_URL_FILTER_ALLOW	Domain allowed because it is in the domain-filter list	DNS	dns-response	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1501054600	54600	LOG_ID_DNS_BOTNET_IP	Domain blocked by DNS botnet C&amp;C (IP)	DNS	dns-response	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1501054601	54601	LOG_ID_DNS_BOTNET_DOMAIN	Domain blocked by DNS botnet C&amp;C (Domain)	DNS	dns-response	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1501054800	54800	LOG_ID_DNS_FTGD_WARNING	FortiGuard rating error warning	DNS	dns-response	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1501054801	54801	LOG_ID_DNS_FTGD_ERROR	FortiGuard rating error occurred	DNS	dns-response	Error	7.2.13,7.4.12,7.6.7,8.0.1
+1501054802	54802	LOG_ID_DNS_FTGD_CAT_ALLOW	Domain is monitored	DNS	dns-response	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1501054803	54803	LOG_ID_DNS_FTGD_CAT_BLOCK	Domain belongs to a denied category in policy	DNS	dns-response	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1501054804	54804	LOG_ID_DNS_SAFE_SEARCH	DNS Safe Search enforced	DNS	dns-response	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1501054805	54805	LOG_ID_DNS_LOCAL	DNS local query	DNS	dns-response	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1501054806	54806	LOG_ID_DNS_SVCPARAM_ECH	ECHconfig removal	DNS	dns-response	Notice	7.6.7,8.0.1
+1501054807	54807	LOG_ID_DNS_NXDOMAIN_PASS	Domain is non-existent	DNS	dns-response	Notice	7.6.7,8.0.1
+2300056001	56001	LOG_ID_FSW_FLOW	(null)	FORTI-SWITCH	fsw-flow	Information	7.2.13,7.4.12,7.6.7,8.0.1
+2000060000	60000	LOG_ID_ICAP_SERVER_ERROR	Traffic blocked as it cannot be forwarded to ICAP Server.	ICAP	icap	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+2000060001	60001	LOG_ID_ICAP_INFECTION_BLOCK	Traffic blocked as ICAP server found infection	ICAP	icap	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+2000060002	60002	LOG_ID_ICAP_CONN_ERROR	Traffic dropped as ICAP connection is closed	ICAP	icap	Warning	7.4.12,7.6.7,8.0.1
+2000060002	60002	LOG_ID_ICAP_SERVER_CLOSE_CONN	Traffic dropped as ICAP server connection is closed.	ICAP	icap	Warning	7.2.13
+2000060003	60003	LOG_ID_ICAP_ALLOW	Traffic allowed after ICAP scan	ICAP	icap	Information	8.0.1
+1600061000	61000	LOG_ID_SSH_COMMAND_BLOCK	SSH shell command is blocked	SSH	ssh-command	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1600061001	61001	LOG_ID_SSH_COMMAND_BLOCK_ALERT	SSH shell command is blocked	SSH	ssh-command	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+1600061002	61002	LOG_ID_SSH_COMMAND_PASS	SSH shell command is detected	SSH	ssh-command	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1600061003	61003	LOG_ID_SSH_COMMAND_PASS_ALERT	SSH shell command is detected	SSH	ssh-command	Alert	7.2.13,7.4.12,7.6.7,8.0.1
+1601061010	61010	LOG_ID_SSH_CHANNEL_BLOCK	SSH channel is blocked	SSH	ssh-channel	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1601061011	61011	LOG_ID_SSH_CHANNEL_PASS	SSH channel is detected	SSH	ssh-channel	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1602061012	61012	LOG_ID_SSH_HOST_KEY_WARNING	SSH connection is blocked, because host-key is not trust	SSH	ssh-hostkey	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1602061013	61013	LOG_ID_SSH_HOST_KEY_NOTIF	SSH host-key is not trust	SSH	ssh-hostkey	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1603061014	61014	LOG_ID_SSH_UNSUPPORT_PROTO_BLOCK	SSH connection is blocked, because unsupported SSH protocol	SSH	ssh-unsupport-proto	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1603061015	61015	LOG_ID_SSH_UNSUPPORT_PROTO_PASS	Unsupported SSH protocol is detected	SSH	ssh-unsupport-proto	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1701062004	62004	LOG_ID_SSL_EXEMPT_ADDR	SSL connection is exempted based on address	SSL	ssl-exempt	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1701062006	62006	LOG_ID_SSL_EXEMPT_ALLOWLIST	SSL connection is exempted based on allowlist	SSL	ssl-exempt	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1701062007	62007	LOG_ID_SSL_EXEMPT_FTGD_CATEGORY	SSL connection is exempted based on FortiGuard category rating	SSL	ssl-exempt	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1701062008	62008	LOG_ID_SSL_EXEMPT_LOCAL_CATEGORY	SSL connection is exempted based on local category rating	SSL	ssl-exempt	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1701062009	62009	LOG_ID_SSL_EXEMPT_USER_CATEGORY	SSL connection is exempted based on user category rating	SSL	ssl-exempt	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1702062100	62100	LOG_ID_SSL_NEGOTIATION_INSPECT	Continue inspect the SSL connection	SSL	ssl-negotiation	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1702062101	62101	LOG_ID_SSL_NEGOTIATION_BLOCK	SSL connection is blocked due to its SSL negotiation	SSL	ssl-negotiation	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1702062102	62102	LOG_ID_SSL_NEGOTIATION_BYPASS	SSL connection is bypassed due to its SSL negotiation	SSL	ssl-negotiation	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1702062103	62103	LOG_ID_SSL_NEGOTIATION_INFO	SSL connection information	SSL	ssl-negotiation	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1703062200	62200	LOG_ID_SSL_SERVER_CERT_INFO	SSL server certificate information	SSL	ssl-server-cert-info	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1704062220	62220	LOG_ID_SSL_HANDSHAKE_INFO	SSL handshake information	SSL	ssl-handshake	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1700062300	62300	LOG_ID_SSL_ANOMALY_CERT_BLOCKLISTED	SSL connection is blocked due to the server certificate is blocklisted	SSL	ssl-anomaly	Warning	7.2.13,7.4.12,7.6.7
+1700062300	62300	LOG_ID_SSL_ANOMALY_SVR_CERT_BLOCKLISTED	SSL connection is blocked due to the server certificate is blocklisted	SSL	ssl-anomaly	Warning	8.0.1
+1700062301	62301	LOG_ID_SSL_ANOMALY_CERT_RESIGN_TRUSTED	Server certificate has security problem	SSL	ssl-anomaly	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1700062302	62302	LOG_ID_SSL_ANOMALY_CERT_RESIGN_UNTRUSTED	Re-signed server certificate as untrusted due to security problem	SSL	ssl-anomaly	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1700062303	62303	LOG_ID_SSL_ANOMALY_CERT_BLOCKED	SSL connection is blocked due to server certificate security problem	SSL	ssl-anomaly	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1700062304	62304	LOG_ID_SSL_ANOMALY_CERT_SNI_MISMATCHED	SSL connection is blocked due to server certificate and SNI mismatched	SSL	ssl-anomaly	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1700062305	62305	LOG_ID_SSL_ANOMALY_CERT_PROBE_FAILURE_BLOCK	SSL connection is blocked due to unable to retrieve server's certificate	SSL	ssl-anomaly	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1700062306	62306	LOG_ID_SSL_ANOMALY_CERT_PROBE_FAILURE_PASS	SSL connection is bypassed due to unable to retrieve server's certificate	SSL	ssl-anomaly	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+1700062307	62307	LOG_ID_SSL_ANOMALY_CERT_SNI_MISMATCHED_INFO	Server certificate and SNI mismatched	SSL	ssl-anomaly	Information	7.2.13,7.4.12,7.6.7,8.0.1
+1700062308	62308	LOG_ID_SSL_ANOMALY_HANDSHAKE_FAILURE	Error occured during SSL handshake.	SSL	ssl-anomaly	Information	7.4.12,7.6.7,8.0.1
+1700062309	62309	LOG_ID_SSL_ANOMALY_CERT_INVALID	Server certificate has security problem	SSL	ssl-anomaly	Notice	7.4.12,7.6.7,8.0.1
+1700062310	62310	LOG_ID_SSL_ANOMALY_CLT_CERT_BLOCKLISTED	SSL connection is blocked due to the client certificate is blocklisted	SSL	ssl-anomaly	Warning	8.0.1
+1700062311	62311	LOG_ID_SSL_ANOMALY_CLT_CERT_EMPTY	SSL connection is blocked due to the client certificate is empty	SSL	ssl-anomaly	Warning	8.0.1
+0114063002	63002	LOG_ID_CIFS_CONN_FAIL	Unable to connect to the CIFS Domain Controller	Event	cifs-auth-fail	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0114063003	63003	LOG_ID_CIFS_AUTH_FAIL	Unable to authenticate with the CIFS Domain Controller	Event	cifs-auth-fail	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0114063004	63004	LOG_ID_CIFS_AUTH_INTERNAL_ERROR	An error occurred in processing CIFS authentication	Event	cifs-auth-fail	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+0114063005	63005	LOG_ID_CIFS_AUTH_KRB_ERROR	An error occurred in processing CIFS authentication.	Event	cifs-auth-fail	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1900064000	64000	LOG_ID_FILE_FILTER_BLOCK	File was blocked by file filter	FILE-FILTER	file-filter	Warning	7.2.13,7.4.12,7.6.7,8.0.1
+1900064001	64001	LOG_ID_FILE_FILTER_LOG	File was detected by file filter	FILE-FILTER	file-filter	Notice	7.2.13,7.4.12,7.6.7,8.0.1
+2400064600	64600	LOG_ID_OT_VPATCH_BLOCK	Traffic was blocked by OT virtual patch	virtual-patch	ot-vpatch	Warning	7.4.12,7.6.7,8.0.1
+2400064601	64601	LOG_ID_OT_VPATCH_LOG	Traffic was detected by OT virtual patch	virtual-patch	ot-vpatch	Notice	7.4.12,7.6.7,8.0.1
+2401064610	64610	LOG_ID_LOCALIN_VPATCH_BLOCK	Traffic was blocked by local-in virtual patch	virtual-patch	localin-vpatch	Warning	7.4.12,7.6.7,8.0.1
+2401064611	64611	LOG_ID_LOCALIN_VPATCH_LOG	Traffic was detected by local-in virtual patch	virtual-patch	localin-vpatch	Notice	7.4.12,7.6.7,8.0.1
+2600065290	65290	LOG_ID_DEBUG_PRINT	(null)	Debug	debug	Information	7.6.7,8.0.1

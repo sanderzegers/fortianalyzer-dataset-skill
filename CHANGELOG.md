@@ -2,6 +2,15 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.6.0 — 2026-10-15
+
+### Added
+- `fortigate-logids.tsv`: every FortiGate logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1 (1,549 rows: 10-digit logid, message ID, name, meaning, type, subtype, severity, versions). Claude searches it with grep, so it costs a few lines per lookup, not the whole file. All 328 distinct logids seen in real logs on two FAZ instances match exactly.
+- `scripts/build-fortigate-logids.py`: rebuilds the file from Fortinet's Log Reference PDFs for any list of versions. It computes the 10-digit logid from the reference's own type and subtype codes, repairs page breaks inside entries, and keeps the best-spaced meaning when PDF extraction glued words together (four 8.0.1-only meanings stay glued).
+
+### Changed
+- `SKILL.md`, `fortigate-logmodel.md`, `investigating.md` and the `logid` tables point to the file for logids not listed. HA failover success (`0108035016`) added to the log model.
+
 ## 0.5.0 — 2026-10-15
 
 ### Added

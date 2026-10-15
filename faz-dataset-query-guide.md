@@ -2308,7 +2308,7 @@ Missing funcs:    ebtr_agg_flat()  ebtr_value()  — NOT installed, avoid these
 
 ## 17. `logid` Reference
 
-Common `logid` values used to filter specific event types. `logid` is a 10-digit string such as `0100032001`: two digits log type (`01` event, `02` antivirus, `15` DNS), two digits subtype, then the message ID. `logid_to_int(logid)` returns the message ID (`32001`), so `logid = '32001'` matches nothing; prefer the full string. This is a **selection**, not a complete list: the meanings follow the FortiOS 7.6.4 Log Message Reference, with notes from real logs added, and the last column says whether the logid occurred in real logs on two FAZ 7.6 instances. For the complete list of your version, see the FortiOS Log Message Reference ("Log ID numbers"); for what your FAZ logs, group `$log-event` by `logid, logdesc`. The full map by topic is in [fortigate-logmodel.md](faz-dataset/fortigate-logmodel.md).
+Common `logid` values used to filter specific event types. `logid` is a 10-digit string such as `0100032001`: two digits log type (`01` event, `02` antivirus, `15` DNS), two digits subtype, then the message ID. `logid_to_int(logid)` returns the message ID (`32001`), so `logid = '32001'` matches nothing; prefer the full string. This is a **selection**, not a complete list: the meanings follow the FortiOS 7.6.4 Log Message Reference, with notes from real logs added, and the last column says whether the logid occurred in real logs on two FAZ 7.6 instances. For every documented logid (FortiOS 7.2.13–8.0.1), grep [fortigate-logids.tsv](faz-dataset/fortigate-logids.tsv); for what your FAZ logs, group `$log-event` by `logid, logdesc`. The full map by topic is in [fortigate-logmodel.md](faz-dataset/fortigate-logmodel.md).
 
 ### FortiGate Log IDs
 
