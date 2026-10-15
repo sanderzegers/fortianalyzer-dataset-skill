@@ -2,6 +2,25 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.10.0 — 2026-10-15
+
+### Added
+- `cols-adom-tables.md`: what FAZ's UEBA is and how it fills `epid`/`euid`, based on Fortinet's admin guide and measured on two FAZ instances:
+  - derived from logs, with data sources configured per ADOM (FortiMail and the EMS connector off by default);
+  - one endpoint per interface without FortiClient;
+  - reason codes below 1024 (documented list, plus `105` and `109` seen but undocumented);
+  - fill rates per device type: FortiGate, FortiClient and FortiAuthenticator (users) are covered, FortiMail and FortiWeb are not;
+  - consistency across device types: `epid` 78/78 and 48/48, `euid` 9/9.
+- Provenance per attribute (`attrdatasrc`: `FGT`, `FGTAPI`, `EMS`), `detecttype`, and the finding that `euname` is FAZ's normalised name rather than the log value (97 % agree after normalising).
+- Patterns: where an endpoint's identity came from, why rows have no ID, sessions per user preferring the log's own user field.
+- `investigating.md`: UEBA IDs as the first-choice cross-device key for FortiGate/FortiClient/FortiAuthenticator, to be confirmed against device fields.
+
+### Fixed
+- Real columns of `$ADOM_ENDPOINT` (`mac`, `epdevtype`, `fctuid`, `osversion`, `ownereuname`, ... instead of `epmac`, `eptype`, `dvid`), `$ADOM_ENDUSER` (no `euip`; adds directory attributes and a personal-data warning) and `$ADOM_EPEU_DEVMAP` (`devid`, not `dvid`).
+
+### Notes
+- FAZ sometimes rejects queries on the ADOM and FortiClient tables with "SQL query is forbidden" (e.g. scalar subqueries); simple single-table queries worked.
+
 ## 0.9.0 — 2026-10-15
 
 ### Added
