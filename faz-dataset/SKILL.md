@@ -48,7 +48,7 @@ For column names, read **only the files matching the log types needed**:
 
 Do NOT read column files that are not needed for the current query.
 
-For FortiGate, [fortigate-logmodel.md](fortigate-logmodel.md) maps which `logid` holds which event, what one row stands for, and the `sessionid`/`tunnelid` links. Read it for event-log reports (admin, configuration, VPN, HA, SD-WAN) and before joining security logs to traffic. For FortiMail, [fortimail-logmodel.md](fortimail-logmodel.md) maps where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`) and which keys link records. Read it when a report or question involves admin or quarantine actions, delivery status, or more than one table. The other product files list columns and values only, so for them, search every log type as investigating.md describes before concluding that something isn't logged.
+For FortiGate, [fortigate-logmodel.md](fortigate-logmodel.md) maps which `logid` holds which event, what one row stands for, and the `sessionid`/`tunnelid` links. Read it for event-log reports (admin, configuration, VPN, HA, SD-WAN) and before joining security logs to traffic. For FortiWeb, [fortiweb-logmodel.md](fortiweb-logmodel.md) lists the `log_id`s FortiWeb 7.6+ actually sends: its Log Message Reference doesn't match them, so never take FortiWeb event IDs from the reference. For FortiMail, [fortimail-logmodel.md](fortimail-logmodel.md) maps where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`) and which keys link records. Read it when a report or question involves admin or quarantine actions, delivery status, or more than one table. The other product files list columns and values only, so for them, search every log type as investigating.md describes before concluding that something isn't logged.
 
 ### Other Fortinet devices
 
@@ -57,7 +57,7 @@ FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and For
 | Device (type number) | Log types | File |
 |---|---|---|
 | FortiMail (4) | `history`, `emailfilter`, `virus`, `event` | [fortimail.md](fortimail.md), plus [fortimail-logmodel.md](fortimail-logmodel.md) for events, links and cross-table patterns |
-| FortiWeb (5) | `attack`, `traffic`, `event` | [fortiweb.md](fortiweb.md) |
+| FortiWeb (5) | `attack`, `traffic`, `event` | [fortiweb.md](fortiweb.md), plus [fortiweb-logmodel.md](fortiweb-logmodel.md) for event IDs, attack ↔ traffic links and patterns |
 | FortiADC (20) | `traffic`, `event`, `attack` | [fortiadc.md](fortiadc.md) |
 | FortiSandbox (10) | `malware`, `netalert`, `event` | [fortisandbox.md](fortisandbox.md) |
 | FortiManager (1), FortiAnalyzer (7) | `event`, `appevent` | [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |

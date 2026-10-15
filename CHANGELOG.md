@@ -2,6 +2,16 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.7.0 — 2026-10-15
+
+### Added
+- `fortiweb-logmodel.md`: every `log_id` seen from five FortiWeb 7.6+ VMs on two FAZ instances (26 event, 10 attack, 2 traffic), with subtype, `action`/`status`, meaning and whether the reference documents it. Also the attack `main_type` table, what one row stands for, the attack ↔ traffic link (`device_id` + `src` + `src_port` + `http_url`, within 2 s; 98.7–100 %), and seven patterns tested on both FAZes (admin logins, lockouts, config changes, blocked attacks per site, block responses, server pool changes, update failures).
+- `fortiweb.md`, `SKILL.md` and `investigating.md` point to the log model.
+
+### Notes
+- The FortiWeb Log Message Reference (7.6.0, 8.0.7) doesn't match the IDs FortiWeb 7.6+ sends: configuration changes are all `9000001`, and several frequent events are undocumented ([issue #10](https://github.com/sanderzegers/fortianalyzer-dataset-skill/issues/10)). Unlike FortiGate, there is therefore no full FortiWeb ID index.
+- `msg_id` is a running record number; it does not link attack and traffic rows.
+
 ## 0.6.0 — 2026-10-15
 
 ### Added
