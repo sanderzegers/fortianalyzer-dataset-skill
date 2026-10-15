@@ -2,6 +2,24 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.11.0 — 2026-10-15
+
+### Added
+- `fortimanager-logids.tsv`: all 446 messages of the FortiManager & FortiAnalyzer Log Reference 7.2.12, 7.4.11, 7.6.7 and 8.0.0 (`log_id`, message ID, `LOG_ID_*` name, table, subtype, severity, the `desc` text seen in real logs, versions), extracted from the reference PDFs. All 18 `log_id`s seen in real logs are in it with matching subtype and severity.
+- `fortimanager-fortianalyzer.md`:
+  - a where-is-it-logged table with the row grain per `log_id` (installs, previews, checkins, object changes, device manager, logins, FGFM, security console);
+  - admin change vs. FortiManager auto-update: `objcfg` rows without `session_id` and with `user = 'admin'` follow a change made directly on the FortiGate (47 of 47 change minutes, single deployment), 70 % of `objcfg` rows;
+  - one install = preview + install + checkin per device, linked to the admin's object edits by `session_id`;
+  - install outcome in `result` (`successfully` / `failed(<reason>)`) and `confstatus` in `changes`;
+  - severity filter: no Information-level message arrived in the deployment examined, so successful admin logins are missing;
+  - the same `log_id` can mean different things per version (subtype numbers moved, e.g. `0040049002`).
+- Cross-device link FortiManager install ↔ FortiGate config change (`user = '<admin>@FortiManager'`, `ui` `fgfm_tunnel` / `fgfm_fmg(<ip>)`) by device name + `itime`: 167 of 180 FortiGate rows, FortiGate rows 7–79 s before the install row; in `investigating.md` and `fortigate-logmodel.md`. FortiGate HA secondaries repeat every change as `ha_daemon`.
+- Patterns: changes per admin split from auto-updates, install results per device, who changed the FortiGates (FortiManager, HA sync, local).
+
+### Fixed
+- Two FortiManager patterns used `count(*) AS changes`; `changes` is a column, so they failed with "not under aggregate function". Documented that no alias may share a column name (`changes`, `timestamp`, `result`, ...).
+- `session_id` is UInt32 and `user_type` UInt16, not String; `objcfg` also has `purge`, `dvm` also `Reload device` / `Update device`; `action` and `status` are empty on all FortiManager rows.
+
 ## 0.10.0 — 2026-10-15
 
 ### Added

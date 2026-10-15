@@ -47,7 +47,7 @@ Always filter on the full `logid`. `logdesc` text can change between FortiOS ver
 
 | logid | logdesc | Key columns | Notes |
 |---|---|---|---|
-| `0100044547` | Object attribute configured | `user`, `ui`, `action` (`Add`, `Edit`, `Delete`, `Move`, `Rename`), `cfgpath`, `cfgobj`, `cfgattr` | Any change to a table entry, by an admin or by FortiManager. `user` is empty on some changes made by the system itself (about 30 % on the lab FAZ) |
+| `0100044547` | Object attribute configured | `user`, `ui`, `action` (`Add`, `Edit`, `Delete`, `Move`, `Rename`), `cfgpath`, `cfgobj`, `cfgattr` | Any change to a table entry, by an admin or by FortiManager. `user` is empty on some changes made by the system itself (about 30 % on the lab FAZ). **Source:** FortiManager installs have `user = '<admin>@FortiManager'` and `ui` `fgfm_tunnel` or `fgfm_fmg(<ip>)`; the HA secondary repeats every change with `ui = 'ha_daemon'` (on both FAZes the largest share of rows), so count on the primary or exclude `ha_daemon` |
 | `0100044546` | Attribute configured | as above | Changes to global settings (`system.settings`, `system.sdwan`, ...) |
 | `0100032102` | Configuration changed | `user`, `ui` | One summary row per admin session that changed something |
 | `0100036882` | Configuration manually saved | | |
@@ -134,6 +134,7 @@ Wi-Fi 802.1X results are under `wireless`: `0104043630` RADIUS authentication su
 | sandbox submission `0201009233` (`$log-virus`) | sandbox verdict `0201009238` / `0211009234` (`$log-virus`) | `devid` + `lower(analyticscksum)` (SHA-256) | 119 of 119 and 8 of 8 submissions had a verdict, on average 3–4 minutes later. Works whatever sandbox the FortiGate uses (on-premises or cloud), and in a single query |
 | sandbox submission | FortiSandbox `$log-malware` | `lower(analyticscksum)` ↔ `lower(sha256)` | Two queries (one per device type). 100 % for a FortiGate submitting to a FortiSandbox that logs to the same FAZ; 0 % for one submitting elsewhere (cloud). FortiSandbox adds `mcate`, `ftype`, VM run |
 | FortiGate session | FortiWeb behind it (VIP) | client `srcip` + `srcport` ↔ FortiWeb `src` + `src_port`, FortiWeb time within the session (`dtime - duration` … `dtime`) | Two queries. 99.5 % and 92.3 % of FortiWeb attack rows found their FortiGate session. Needs the client IP passed through to FortiWeb (no source NAT) |
+| config change by FortiManager (`0100044547`, `user` `...@FortiManager`) | FortiManager install `0012021015` (device type FortiManager) | `lower(devname)` = `lower(device)`, user without `@FortiManager`, install row 7–79 s after (compare `itime`) | Two queries. 167 of 180 rows on one deployment; fortimanager-fortianalyzer.md |
 | any log | user identity | `coalesce(nullifna(user), nullifna(unauthuser), ipstr(srcip))` | faz-sql-reference.md |
 
 ## Patterns
