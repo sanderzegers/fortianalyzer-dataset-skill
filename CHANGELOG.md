@@ -2,6 +2,22 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.13.0 — 2026-10-15
+
+### Added
+- `investigating.md` "FortiGate: start with the traffic log": for traffic questions, start with `$log-traffic`, also when the question names DNS, web filter, antivirus or IPS. Includes:
+  - match rates of security rows to their traffic session (production FAZ: 99.998 % webfilter, all DNS, IPS signature, antivirus, file-filter and SSL rows with a session ID; lab about 98 %);
+  - the rows without a session by design (DoS anomaly, sandbox verdicts);
+  - when the traffic log is silent;
+  - what each `action` means for a failing flow;
+  - an order of work (traffic outcome per hour → event log → security log);
+  - a tested "is this flow working, and what changed?" pattern.
+- `SKILL.md`: the same rule in the Investigating routing line.
+
+### Fixed
+- Traffic `action` values: added `dns` ("DNS query return error") and `start`; `ip-conn` means failed connection attempts (FortiOS Log Reference).
+- `fortigate-logmodel.md`: the security log ↔ traffic link now gives the rates with a 7-hour traffic window instead of 81–96 % within the same hour.
+
 ## 0.12.0 — 2026-10-15
 
 ### Added

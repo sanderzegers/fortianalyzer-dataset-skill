@@ -4,7 +4,7 @@ Read this when the user wants a question answered from the logs ("who released q
 
 ## Workflow
 
-1. **Find where the event is logged** before writing the real query. Don't assume from the log type's name (see below).
+1. **Find where the event is logged** before writing the real query. Don't assume from the log type's name (see below). For traffic through a FortiGate ("can't reach", "blocked", "what changed"), start with the traffic log, also for DNS, web filter, antivirus and IPS questions (see "FortiGate: start with the traffic log").
 2. **Profile in aggregate**: counts per `type`/`subtype`, per enum value, per `msg` template. Look at the shape before the detail.
 3. **Correlate** through a documented key (session ID, hash, message ID). Only fall back to time windows when no key exists.
 4. **Verify** every link and every "nothing else" before reporting it (see "Verify before you claim").
@@ -13,6 +13,46 @@ Read this when the user wants a question answered from the logs ("who released q
 ## Data minimisation
 
 Prefer counts, enum values and `msg` templates for the overview, and pull names, addresses, subjects or IPs when the question needs them, for the rows it needs. Keep them out of reports unless the reader needs them. This is also good analysis practice: the shape of the data first, then the detail. Whether log data may be processed by this model at all is the user's decision (contract, provider, local or cloud model), not something this skill can enforce. If the user sets a stricter rule, follow it.
+
+## FortiGate: start with the traffic log
+
+When a question is about traffic through a FortiGate, start with `$log-traffic`, even when the question names a security feature: "can't reach the DNS server", "the download is blocked", "what changed since it stopped working". The DNS, web filter, antivirus or IPS log comes second, for the detail.
+
+- **The traffic log sees the session; a security log only sees what its profile logged.** Every session the policy logs gets a traffic row with the policy, interfaces, server, NAT and outcome. A security log row exists only when a profile on that policy logged something. In the lab, 6 of one client's 16,313 DNS sessions over 6 hours had a DNS log entry, while the traffic log showed every query, its server and its outcome. That was enough to see the client switch DNS servers and one server never answer.
+- **Nearly every session-based security row has its traffic row.** Linked by `devid` + `vd` + `sessionid`, with the traffic window running 7 hours past the event. On a production FAZ: 1,362,249 of 1,362,270 webfilter rows, 857,612 of 857,613 DNS rows, 669 of 669 IPS signature hits, and all antivirus, file-filter and SSL rows with a session ID. On a lab FAZ about 98 %; the misses clustered in a few minutes, so probably lost traffic logs.
+- **No traffic row, by design**: DoS anomaly rows (`0720018432` / `0720018433`, `subtype = 'anomaly'`, `sessionid` 0: the DoS policy acts before a session exists), FortiSandbox verdicts (`0201009238`, `sessionid` 0; link them to the submission by hash, fortigate-logmodel.md), and sessions still open (the traffic row is written when the session closes, plus interim rows for long sessions; extend the window past the event).
+- **The traffic log can be silent too.** Policies with traffic logging off, denied traffic without deny logging, and traffic to the FortiGate itself (`subtype = 'local'`) without local-in logging leave no traffic row. This follows from the FortiOS logging settings and wasn't measured in either estate. If the traffic log is empty for a flow that should exist, say so and check the security and event logs.
+- **The `countX` columns tell you which security log to open.** `countdns`, `countweb`, `countav`, `countips`, `countapp`, `countssl`, `countff` > 0 mark a session that a profile logged (cols-tlog.md).
+
+What `action` says about a failing flow (definitions from the FortiOS Log Reference):
+
+| `action` | Meaning | Typical "doesn't work" reading |
+|---|---|---|
+| `accept` with `rcvdpkt` 0 | Allowed UDP/ICMP session, no reply | Forwarded, but the server never answered: check the server and the path behind the FortiGate |
+| `timeout` | Allowed session timed out | TCP without an answer |
+| `dns` | "DNS query return error" | The DNS answer was an error |
+| `ip-conn` | "Failed connection attempts" | The FortiGate couldn't connect onward |
+| `deny` | Denied by policy | Look at `policyid` (0 = implicit deny) |
+| `client-rst` / `server-rst` | Reset by client / server | The server refused (closed port, application) |
+| `close` | TCP closed with FIN | Normal end |
+
+Order of work for "it worked, now it doesn't":
+
+1. **Outcome per hour** for the flow (query below). The hour where `act`, `reply`, `server`, `policyid` or `dstintf` changes is when it broke and what changed with it.
+2. **Event log of that device around that hour**: configuration changes (`0100044547` / `0100044546`, including FortiManager installs), interface, routing, SD-WAN and HA events (fortigate-logmodel.md).
+3. **Security log** only where `countX` > 0 or `action = 'dns'`, for the profile's verdict.
+
+```sql
+-- Is a flow working, and what changed? Outcome per hour for one client and one service
+SELECT toString(toStartOfHour(itime), timezone()) AS hour_faz, devname, policyid, dstintf,
+       ipstr(dstip) AS server, ifNull(action, '') AS act,
+       if(ifNull(rcvdpkt, 0) > 0, 'reply', 'no_reply') AS reply,
+       countIf(ifNull(countdns, 0) > 0) AS with_dns_log, count(*) AS sessions
+FROM $log-traffic
+WHERE $filter AND ipstr(srcip) = '192.0.2.10' AND dstport = 53
+GROUP BY hour_faz, devname, policyid, dstintf, server, act, reply
+ORDER BY hour_faz, sessions DESC
+```
 
 ## Find where something is logged
 

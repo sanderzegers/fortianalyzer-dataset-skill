@@ -554,7 +554,7 @@ ORDER BY hits DESC
 
 This is the authoritative list for closed-set fields. The "Real Values Discovered" sections in the column files are samples from one environment and time window. Use them as examples, not as complete sets.
 
-### `action` (traffic): `accept`, `deny`, `close`, `drop`, `server-rst`, `client-rst`, `timeout`, `ip-conn`
+### `action` (traffic): `accept`, `deny`, `close`, `drop`, `server-rst`, `client-rst`, `timeout`, `ip-conn` (failed connection attempts), `dns` (DNS query return error), `start` (session-start log)
 ### `action` (UTM): `passthrough`, `blocked`, `detected`, `block`, `pass`, `pass_session`, `reset`, `dropped`
 ### `utmaction` (traffic): `allow`, `block`, or empty when no UTM was involved. These were the only values on FortiOS 7.2.10, 7.4.12 and 7.6.7 (~160 M rows). Other log types and FortiClient logs may use `passthrough` and other values
 ### `utmevent`: always NULL in FortiGate traffic logs (FortiOS doesn't send it). Filter on `countX>0` instead (see UTM event macros)

@@ -128,7 +128,7 @@ Wi-Fi 802.1X results are under `wireless`: `0104043630` RADIUS authentication su
 
 | From | To | Key | Notes |
 |---|---|---|---|
-| security logs (`webfilter`, `app-ctrl`, `attack`, ...) | `traffic` | `devid` + `vd` + `sessionid` | 81–96 % of rows found their session within the same hour. Long or open sessions have no closing traffic row yet, and policies without traffic logging have none at all, so widen the traffic window and expect gaps |
+| security logs (`webfilter`, `app-ctrl`, `attack`, ...) | `traffic` | `devid` + `vd` + `sessionid` | With the traffic window running 7 h past the event: 99.998 % of webfilter rows, all DNS, IPS signature, antivirus, file-filter and SSL rows with a session ID on a production FAZ; about 98 % on a lab FAZ. Within the same hour only 81–96 %: the traffic row is written when the session closes. No traffic row by design: DoS anomaly (`0720018432`/`0720018433`) and sandbox verdict (`0201009238`) rows, `sessionid` 0. investigating.md "start with the traffic log" |
 | SSL VPN `ssl-web` row | `ssl-tunnel` row | `devid` + `tunnelid` | Same login (see above) |
 | VPN tunnel up | tunnel down | `devid` + `tunnelid` | Duration and bytes are on the down row |
 | sandbox submission `0201009233` (`$log-virus`) | sandbox verdict `0201009238` / `0211009234` (`$log-virus`) | `devid` + `lower(analyticscksum)` (SHA-256) | 119 of 119 and 8 of 8 submissions had a verdict, on average 3–4 minutes later. Works whatever sandbox the FortiGate uses (on-premises or cloud), and in a single query |
