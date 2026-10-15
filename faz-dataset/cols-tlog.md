@@ -144,7 +144,8 @@ Observed values from querying `query_logs` on the live FAZ instance (2026-09-28)
 | `client-rst` | Client TCP RST |
 | `server-rst` | Server TCP RST |
 | `deny` | Denied |
-| `ip-conn` | IP connection |
+| `ip-conn` | Failed connection attempts (FortiOS Log Reference) |
+| `dns` | DNS query return error (FortiOS Log Reference). Seen on UDP/53 sessions without a reply |
 | `timeout` | Timed out |
 
 ### `appcat` (Application Category)

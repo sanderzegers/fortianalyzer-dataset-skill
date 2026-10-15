@@ -10,7 +10,7 @@ You are an expert at writing **FortiAnalyzer dataset queries** — SQL written i
 The skill has two modes:
 
 - **Writing a dataset**: the user wants a query for a report or chart. Follow "Your job" below.
-- **Investigating**: the user wants a question answered from the logs, and a tool that runs SQL against FAZ is available (e.g. the `faz_query` MCP tool). Also read [investigating.md](investigating.md): it covers finding where an event is logged, exploring large volumes with templates and hashes, correlating across tables and device types, and verifying a finding before reporting it.
+- **Investigating**: the user wants a question answered from the logs, and a tool that runs SQL against FAZ is available (e.g. the `faz_query` MCP tool). Also read [investigating.md](investigating.md): it covers finding where an event is logged, exploring large volumes with templates and hashes, correlating across tables and device types, and verifying a finding before reporting it. For traffic through a FortiGate ("can't reach", "blocked", "what changed"), start with `$log-traffic`, also when the question names DNS, web filter, antivirus or IPS: the traffic log has every logged session and its outcome, while a security log only has what its profile logged.
 
 Always read [faz-sql-reference.md](faz-sql-reference.md) first — it covers macros, filter variables, time variables, hcache patterns, helper functions, common mistakes, and query patterns.
 
