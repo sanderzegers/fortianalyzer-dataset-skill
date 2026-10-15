@@ -2,6 +2,16 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.5.0 — 2026-10-15
+
+### Added
+- `fortigate-logmodel.md`: which `logid` holds which event (admin access, configuration, SSL VPN and IPsec, user authentication, HA, SD-WAN, interfaces, routing, system), key columns per event, what one row stands for, the `sessionid` and `tunnelid` links, and six patterns (VPN logins, admin logins, admin lockouts, config changes, SD-WAN SLA changes, HA events). Mapped and tested on two FAZ instances.
+- `investigating.md` and `SKILL.md`: logids not in your logs can still exist; use the Log Message Reference for the device's version, and list a subtype rather than searching `logdesc` by keyword.
+- Common Mistake #16: an alias that matches a real column name (`admin` in FortiGate event logs) breaks `GROUP BY`.
+
+### Changed
+- `logid` tables in `faz-sql-reference.md`, `cols-elog.md` and the query guide rebuilt against the FortiOS 7.6.4 Log Message Reference, with a column for whether each logid occurred in real logs. Several old descriptions were wrong: `44547` is any config change (not only FortiManager's), `35011`–`35013` are HA sync and failover *failures* (not failover / split-brain), `22107` is a voltage anomaly, `22936`/`22938` are SD-WAN internet-service quality and bandwidth-monitoring results, `43551` is AP *join*, and `9233`/`54200` belong to the antivirus and DNS logs, not the event log. `logid` is a 10-digit string, so the 5-digit form only works through `logid_to_int()`. The tables are marked as a selection, with pointers to the reference and to a discovery query.
+
 ## 0.4.0 — 2026-10-14
 
 ### Added

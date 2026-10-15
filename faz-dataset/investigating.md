@@ -21,6 +21,8 @@ Product logs don't always put an event where its name suggests. FortiMail logs a
 - Search **every** log type of that device type for the keyword, **one log type and one keyword per query**.
 - Never combine a broad `OR` text filter with `ORDER BY count DESC LIMIT n`. A frequent but irrelevant match fills the page and hides the rows you want. In one case, 11,000 DMARC rows containing `p=quarantine` hid the 559 quarantine-release rows.
 - Group the matches by a `msg` template (below). This shows which families of messages contain the word, instead of one sample row.
+- **"Not in my logs" never means "doesn't exist".** Logs only show what happened in the period. For FortiGate, which event exists and what it means is in Fortinet's Log Message Reference for that FortiOS version (fortigate-logmodel.md). Use the reference to find an event and the logs to see which fields are actually filled.
+- Keywords can miss: event names don't always use the word you search for (the FortiGate HA failover event is "Virtual cluster member state moved"). List a whole subtype instead.
 
 ```sql
 -- Which log types and subtypes mention a keyword at all (run once per log type)
@@ -79,6 +81,7 @@ To correlate two devices, run one query per device and carry the keys across:
 | FortiMail `virus` | FortiSandbox `malware` | SHA-256: `extract(msg, 'checksum: ([0-9a-fA-F]{64})')` ↔ `lower(sha256)` | FortiMail logs only the rating; FortiSandbox adds `mcate`, `ftype`, `vmos`. Files inside an archive get their **own** jobs and hashes, so the archive's hash shows the container's verdict only |
 | FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
+| FortiGate security logs | FortiGate traffic | `devid` + `vd` + `sessionid` | 81–96 % match within the same hour; see fortigate-logmodel.md "Linking records" |
 
 ## Verify before you claim
 

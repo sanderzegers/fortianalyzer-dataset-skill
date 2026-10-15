@@ -123,16 +123,27 @@ WHERE logid_to_int(logid) = 26001
 
 ## logid Reference
 
-| logid | Description |
-|---|---|
-| `32001` / `32002` / `32003` | Admin login success / failed / logout |
-| `44547` | FortiManager config change |
-| `26001` | DHCP lease assignment |
-| `26003` | DHCP release/expiry |
-| `20099` | Interface up/down |
-| `35011`–`35013` | HA failover / split-brain |
-| `22925` / `22933` / `22936` / `22938` | SD-WAN SLA events / link degraded / restored |
-| `43522` / `43551` | WiFi managed AP joined / left |
+`logid` is a 10-digit string such as `0100032001`: two digits log type (`01` event, `02` antivirus, `15` DNS), two digits subtype, then the message ID. `logid_to_int(logid)` returns the message ID (`32001`), so `logid = '32001'` matches nothing; prefer the full string. This is a **selection**, not a complete list: the meanings follow the FortiOS 7.6.4 Log Message Reference, with notes from real logs added, and the last column says whether the logid occurred in real logs on two FAZ 7.6 instances. For the complete list of your version, see the FortiOS Log Message Reference ("Log ID numbers"); for what your FAZ logs, group `$log-event` by `logid, logdesc`. The full map by topic is in [fortigate-logmodel.md](fortigate-logmodel.md).
+
+| logid | Short | Category | Meaning | Seen in logs |
+|---|---|---|---|---|
+| `0100032001` / `0100032002` / `0100032003` | `32001` / `32002` / `32003` | Admin | Admin login successful / failed / logout | yes |
+| `0100032021` | `32021` | Admin | Admin login disabled after failed attempts (source IP only in `msg`) | yes |
+| `0100044547` / `0100044546` | `44547` / `44546` | Config | Object attribute / attribute configured: any config change, by an admin or FortiManager | yes |
+| `0100026001` / `0100026002` / `0100026003` | `26001` / `26002` / `26003` | DHCP | DHCP ack / release / statistics | yes |
+| `0100020099` | `20099` | Interface | Interface status changed (interface name only in `msg`) | yes |
+| `0100022105` / `0100022107` / `0100022108` / `0100022109` | `22105` / `22107` / `22108` / `22109` | Hardware | Power supply failed / voltage anomaly / fan anomaly / temperature too high | no |
+| `0100022106` | `22106` | Hardware | Optional power supply not detected | yes |
+| `0108037892` | `37892` | HA | Virtual cluster member state moved (failover) | yes |
+| `0108035011` / `0108035012` / `0108035013` | `35011` / `35012` / `35013` | HA | HA secondary synchronization failed / secondary sync failed / HA failover failed | no |
+| `0113022933` / `0113022925` | `22933` / `22925` | SD-WAN | SLA notification (state change) / SLA information (measurements) | yes |
+| `0113022936` / `0113022938` | `22936` / `22938` | SD-WAN | Internet service passive quality information / bandwidth monitoring result | no |
+| `0101039424` / `0101039947` | `39424` / `39947` | VPN | SSL VPN tunnel up, `ssl-web` / `ssl-tunnel` (one tunnel-mode login writes both) | yes |
+| `0101037138` | `37138` | VPN | IPsec connection status changed (tunnel up/down) | yes |
+| `0104043551` | `43551` | WiFi | Physical AP join | yes |
+| `0104043630` / `0104043629` | `43630` / `43629` | WiFi | Client RADIUS authentication success / failure | yes |
+| `0201009233` | `9233` | Antivirus log | File submitted to Sandbox (`$log-virus`, not event) | yes |
+| `1501054200` | `54200` | DNS log | DNS resolution error (`$log-dns`, not event) | yes |
 
 ## Real Values Discovered from FAZ Instance
 

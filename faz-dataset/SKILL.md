@@ -20,7 +20,7 @@ For column names, read **only the files matching the log types needed**:
 |---|---|
 | Common columns (all log types) | [cols-common.md](cols-common.md) |
 | Traffic | [cols-tlog.md](cols-tlog.md) |
-| Event | [cols-elog.md](cols-elog.md) |
+| Event | [cols-elog.md](cols-elog.md); which `logid` holds which event (admin, config, VPN, HA, SD-WAN, ...): [fortigate-logmodel.md](fortigate-logmodel.md) |
 | Web Filter | [cols-wlog.md](cols-wlog.md) |
 | App Control | [cols-alog.md](cols-alog.md) |
 | Antivirus | [cols-vlog.md](cols-vlog.md) |
@@ -48,7 +48,7 @@ For column names, read **only the files matching the log types needed**:
 
 Do NOT read column files that are not needed for the current query.
 
-For FortiMail, [fortimail-logmodel.md](fortimail-logmodel.md) maps where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`) and which keys link records. Read it when a report or question involves admin or quarantine actions, delivery status, or more than one table. The other product files list columns and values only, so for them, search every log type as investigating.md describes before concluding that something isn't logged.
+For FortiGate, [fortigate-logmodel.md](fortigate-logmodel.md) maps which `logid` holds which event, what one row stands for, and the `sessionid`/`tunnelid` links. Read it for event-log reports (admin, configuration, VPN, HA, SD-WAN) and before joining security logs to traffic. For FortiMail, [fortimail-logmodel.md](fortimail-logmodel.md) maps where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`) and which keys link records. Read it when a report or question involves admin or quarantine actions, delivery status, or more than one table. The other product files list columns and values only, so for them, search every log type as investigating.md describes before concluding that something isn't logged.
 
 ### Other Fortinet devices
 
@@ -134,7 +134,7 @@ Ask before writing: should the daily average count all days in the report period
 - Use `ipstr()` to format IP addresses for display
 - Use `nullifna()` on `user`, `unauthuser`, `app` columns (they use "N/A" sentinel)
 - Use `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` for user identity
-- Use `logid_to_int(logid)` for numeric logid comparisons (except fct-event where logid is UInt64)
+- `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event where logid is UInt64). The logid tables in this skill are a selection; for a logid not listed, use the FortiOS Log Message Reference for the device's version, or list the subtype from the FAZ (fortigate-logmodel.md). Never treat a logid as non-existent because it isn't in the logs
 - `epid`/`euid` < 1024 are system IDs — null them out before endpoint/user joins
 - Omit LIMIT by default — the chart's Top-N setting controls row count; add LIMIT only if the user asks or the dataset feeds a table with no Top-N
 
