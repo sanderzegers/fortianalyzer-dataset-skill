@@ -70,7 +70,9 @@ SELECT cityHash64(lower(`to`)) AS rcpt_hash, count(*) AS n FROM $log-history WHE
 
 **One query, and one dataset, covers one device type.** FAZ resolves every `$log-<type>` macro within the device type of the query, and some names are aliases: with FortiMail as the device type, `$log-malware` resolves to FortiMail's own `virus` table, not to FortiSandbox. The query runs without error and returns plausible counts. So joining two devices in one SQL statement isn't possible, and a query that runs proves nothing about which table a macro hit. Check it with a column that only the intended table has, or with a direct row-count comparison.
 
-To correlate two devices, run one query per device and carry the keys across:
+**First choice where it applies: FAZ's own identity keys.** FAZ's UEBA stamps log rows with `epid` (endpoint) and `euid` (user), and the same endpoint or user gets the same ID across device types: FortiClient ↔ FortiGate `epid` 78 of 78 and 48 of 48, FortiAuthenticator ↔ FortiGate `euid` 9 of 9. They cover FortiGate, FortiClient and (users only) FortiAuthenticator; FortiMail and FortiWeb rows get none (codes `3`, `104`, `105`). They are FAZ's interpretation, configured per ADOM (data sources, exclusion rules), with values below 1024 as reasons instead of IDs, so confirm a finding against the device fields (`srcip`, `srcmac`, `user`, `fctuid`/`uid`). Details, codes and fill rates: cols-adom-tables.md.
+
+Otherwise, to correlate two devices, run one query per device and carry the keys across:
 
 1. Query device A for the keys (hashes, IDs). Filter to the cases you care about, since query tools usually cap the result size.
 2. Paste them into an `IN (...)` list in the query for device B, run with B's device type.
@@ -84,6 +86,7 @@ To correlate two devices, run one query per device and carry the keys across:
 | FortiGate `$log-virus` submission (`0201009233`) | FortiSandbox `malware` | `lower(analyticscksum)` ↔ `lower(sha256)` | 100 % per FortiGate that submits to this FortiSandbox, 0 % for one submitting elsewhere. For the verdict alone you don't need FortiSandbox: FortiGate logs it itself (`0201009238`, `fsaverdict`; fortigate-logmodel.md) |
 | FortiWeb `attack` | FortiGate `traffic` (FortiWeb behind a VIP) | client IP + client port, FortiWeb time within the FortiGate session (`dtime - duration` … `dtime`) | 99.5 % / 92.3 % on two estates. Needs the client IP passed through to FortiWeb (no source NAT) |
 | FortiMail `virus` (`File ... checksum: <sha256> ... sent to FortiSandbox`) | FortiSandbox `malware` | SHA-256 ↔ `lower(sha256)` | 1,464 of 1,468 files (99.7 %), on both units of a FortiMail cluster |
+| FortiGate / FortiClient / FortiAuthenticator rows | each other | FAZ UEBA `epid` / `euid` (> 1024) | Same ID for the same endpoint/user across device types (see above); derived by FAZ, so check against device fields |
 | FortiClient `fct-traffic` / `fct-event` (`uid`) | FortiGate `traffic` (`fctuid`) | `toString(fctuid) = toString(uid)` (UUID) | Exact identity. Endpoints found: 45 of 46 (98 %) in one estate, 136 of 427 (32 %) in the other: only endpoints on the network pass these FortiGates. Session level (source IP + port + destination + port, within the session) matched 22 of 30 where the FortiGate saw the source IP |
 | FortiMail inbound (`client_ip`) | FortiGate traffic to FortiMail (port 25) | sending server IP + time (FortiMail logs no source port) | **Untested**: in the estate with FortiMail, inbound mail didn't pass a FortiGate logging to the same FAZ |
 | FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |

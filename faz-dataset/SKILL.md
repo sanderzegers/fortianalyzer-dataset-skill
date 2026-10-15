@@ -42,7 +42,7 @@ For column names, read **only the files matching the log types needed**:
 | Virtual Patch (no own table — stored in the security table) | [cols-virtual-patch.md](cols-virtual-patch.md) |
 | FortiClient Event | [cols-fct-event.md](cols-fct-event.md). **Device type FortiClient (3)**: with FortiGate selected, `$log-fct-*` returns an empty table |
 | FortiClient Traffic | Own schema, not FortiGate's: `uid` (FortiClient UID = FortiGate `fctuid`), `hostname`, `srcip`/`srcport`, `dstip`/`dstport`, `remotename`, `url`, `utmaction` (`passthrough`, `blocked`, `userbrowsed`), `browsetime`, `devicemac`, `emsserial`, `fctver`, `os`. Device type FortiClient (3) |
-| ADOM reference tables (`$ADOM_ENDPOINT`, `$ADOM_ENDUSER`, `devtable_ext`, etc.) | [cols-adom-tables.md](cols-adom-tables.md) |
+| ADOM reference tables (`$ADOM_ENDPOINT`, `$ADOM_ENDUSER`, `devtable_ext`, etc.) and FAZ's UEBA endpoint/user identification (`epid`/`euid` on log rows) | [cols-adom-tables.md](cols-adom-tables.md) |
 | SOC/SIEM tables (`$event`, `$incident`, `$event_history`, `$incident_history`) | [cols-soc-tables.md](cols-soc-tables.md) |
 | Materialized views (`fv_*` — built-in dashboards only) | [cols-fv-views.md](cols-fv-views.md) |
 
@@ -135,7 +135,7 @@ Ask before writing: should the daily average count all days in the report period
 - Use `nullifna()` on `user`, `unauthuser`, `app` columns (they use "N/A" sentinel)
 - Use `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` for user identity
 - `logid` is a 10-digit string (`0100032001`); `logid_to_int(logid)` returns the 5-digit message ID for numeric comparisons (except fct-event and FortiAuthenticator, where `logid` is UInt64; there, never filter on `logid` in `WHERE`/`HAVING`, see Common Mistake #17). [fortigate-logids.tsv](fortigate-logids.tsv) lists every FortiGate logid documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1 (logid, message ID, name, meaning, type, subtype, severity, versions). **Search it with grep, never read it whole** (about 1,550 lines): `grep -i 'failover' fortigate-logids.tsv`, `grep '^0100032021' fortigate-logids.tsv`. It says which events exist and what they mean; real logs show which fields are filled. Never treat a logid as non-existent because it isn't in the logs
-- `epid`/`euid` < 1024 are system IDs — null them out before endpoint/user joins
+- `epid`/`euid` are FAZ's UEBA identification, derived from the logs and configured per ADOM; values below 1024 are reason codes (not IDs) — null them out before endpoint/user joins. The device log fields stay the source of truth (cols-adom-tables.md)
 - Omit LIMIT by default — the chart's Top-N setting controls row count; add LIMIT only if the user asks or the dataset feeds a table with no Top-N
 
 ## Output format
