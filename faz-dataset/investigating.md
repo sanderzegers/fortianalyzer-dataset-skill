@@ -93,6 +93,8 @@ Otherwise, to correlate two devices, run one query per device and carry the keys
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
 | FortiWeb attack | FortiWeb traffic | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 s | 98.7–100 %; `msg_id` does **not** link them; see fortiweb-logmodel.md |
 | FortiGate VPN login | FortiAuthenticator RADIUS authentication | normalised user name (`DOMAIN\\user`, `user@domain` → `user`) + FortiAuthenticator event within ~2 min before | **Untested**: neither estate examined used FortiAuthenticator for VPN; see fortiauthenticator.md |
+| FortiGate config change (`0100044547`/`0100044546`, `user` `<admin>@FortiManager`) | FortiManager install (`0012021015`) | `lower(devname)` ↔ `lower(device)` + user without `@FortiManager` + `itime`, FortiGate rows 7–79 s before the install row | 167 of 180 FortiGate rows on one deployment; the rest from one device whose name differs in FortiManager (probably HA member vs. cluster). Compare on `itime`: `dtime` is in each device's own time zone. See fortimanager-fortianalyzer.md |
+| FortiGate direct change (not `@FortiManager`, not `ha_daemon`) | FortiManager auto-update (`objcfg`, `user = 'admin'`, no `session_id`) | device name + `itime` within ±2 min | 47 of 47 change minutes on one deployment |
 | FortiGate security logs | FortiGate traffic | `devid` + `vd` + `sessionid` | 81–96 % match within the same hour; see fortigate-logmodel.md "Linking records" |
 
 ## Verify before you claim
