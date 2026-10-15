@@ -48,6 +48,13 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
   - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
   - GenAI fields in app-control logs: FortiOS 7.6.4+.
 - **FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAuthenticator:** columns and types were read from the FAZ schema, values were sampled from production logs, and every example query in the product files was run. The checks found traps a FortiGate-trained query falls into, e.g. `device_id` instead of `devid`, FortiMail's `;`-joined `disposition`, a FortiSandbox `level` that is `alert` even for clean files, and a `timestamp` column in FortiManager/FortiAnalyzer logs that breaks the usual `$flex_timestamp AS timestamp`. FortiAnalyzer's own logs weren't available; its tables were verified by schema only.
+- **Cross-device links**, measured on both FAZes:
+  - FortiGate sandbox submissions ↔ FortiSandbox jobs by SHA-256: 100 % for a FortiGate submitting to the FortiSandbox that logs to the same FAZ, 0 % for one submitting elsewhere.
+  - FortiGate submissions ↔ the verdict FortiGate logs itself: 119/119 and 8/8, within one query.
+  - FortiWeb attacks ↔ the FortiGate session in front of FortiWeb by client IP + port: 99.5 % / 92.3 %.
+  - FortiMail ↔ FortiSandbox by SHA-256: 99.7 %.
+  - FortiClient `uid` ↔ FortiGate `fctuid`: exact identity for endpoints on the network.
+  - FortiMail ↔ FortiGate couldn't be tested.
 - **FortiAuthenticator log types** ([fortiauthenticator-logids.tsv](faz-dataset/fortiauthenticator-logids.tsv)): all 238 log types of FortiAuthenticator 6.6.9. Fortinet publishes no reference, so the list was taken from the device's own Log Types page. All 53 logids seen on two FAZes are in it with matching categories. Found on the way: filtering on FortiAuthenticator's `logid` in `WHERE` silently returns 0 rows (filter on `logdesc` instead). The FortiGate VPN ↔ FortiAuthenticator link couldn't be tested: neither estate authenticates VPN through FortiAuthenticator.
 - **FortiWeb log model** ([fortiweb-logmodel.md](faz-dataset/fortiweb-logmodel.md)): every `log_id` seen from five FortiWeb 7.6+ VMs on both FAZes, with the `action`/`status` that tell events apart, and the attack ↔ traffic link (same connection and URL within 2 s; `msg_id` does not link them). Fortinet's FortiWeb Log Message Reference doesn't match what the firmware sends: only 19 of 38 seen IDs are documented, and all config changes arrive as `9000001` instead of the documented per-object IDs ([issue #10](https://github.com/sanderzegers/fortianalyzer-dataset-skill/issues/10)). So there is no FortiWeb ID index; IDs come from real logs. All seven patterns ran on both FAZes.
 - **FortiGate logid index** ([fortigate-logids.tsv](faz-dataset/fortigate-logids.tsv)): all 1,549 logids documented in FortiOS 7.2.13, 7.4.12, 7.6.7 and 8.0.1, with name, meaning, type, subtype, severity and the versions that document each one. Built from Fortinet's Log Reference PDFs by [scripts/build-fortigate-logids.py](scripts/build-fortigate-logids.py). Checked against real logs: all 328 distinct logids seen on both FAZes are in the file with the exact 10-digit value. Claude greps the file instead of reading it.
@@ -91,7 +98,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.8.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.9.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 

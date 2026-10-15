@@ -81,6 +81,11 @@ To correlate two devices, run one query per device and carry the keys across:
 | From | To | Key | Notes |
 |---|---|---|---|
 | FortiMail `virus` | FortiSandbox `malware` | SHA-256: `extract(msg, 'checksum: ([0-9a-fA-F]{64})')` ↔ `lower(sha256)` | FortiMail logs only the rating; FortiSandbox adds `mcate`, `ftype`, `vmos`. Files inside an archive get their **own** jobs and hashes, so the archive's hash shows the container's verdict only |
+| FortiGate `$log-virus` submission (`0201009233`) | FortiSandbox `malware` | `lower(analyticscksum)` ↔ `lower(sha256)` | 100 % per FortiGate that submits to this FortiSandbox, 0 % for one submitting elsewhere. For the verdict alone you don't need FortiSandbox: FortiGate logs it itself (`0201009238`, `fsaverdict`; fortigate-logmodel.md) |
+| FortiWeb `attack` | FortiGate `traffic` (FortiWeb behind a VIP) | client IP + client port, FortiWeb time within the FortiGate session (`dtime - duration` … `dtime`) | 99.5 % / 92.3 % on two estates. Needs the client IP passed through to FortiWeb (no source NAT) |
+| FortiMail `virus` (`File ... checksum: <sha256> ... sent to FortiSandbox`) | FortiSandbox `malware` | SHA-256 ↔ `lower(sha256)` | 1,464 of 1,468 files (99.7 %), on both units of a FortiMail cluster |
+| FortiClient `fct-traffic` / `fct-event` (`uid`) | FortiGate `traffic` (`fctuid`) | `toString(fctuid) = toString(uid)` (UUID) | Exact identity. Endpoints found: 45 of 46 (98 %) in one estate, 136 of 427 (32 %) in the other: only endpoints on the network pass these FortiGates. Session level (source IP + port + destination + port, within the session) matched 22 of 30 where the FortiGate saw the source IP |
+| FortiMail inbound (`client_ip`) | FortiGate traffic to FortiMail (port 25) | sending server IP + time (FortiMail logs no source port) | **Untested**: in the estate with FortiMail, inbound mail didn't pass a FortiGate logging to the same FAZ |
 | FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
 | FortiWeb attack | FortiWeb traffic | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 s | 98.7–100 %; `msg_id` does **not** link them; see fortiweb-logmodel.md |
@@ -95,6 +100,7 @@ A correlation by time or by name is a lead, not a fact. Before writing it down a
 - **Re-check every "nothing else" against the filter that produced it.** If the query had `risk NOT IN ('Clean')`, it can only say "no other non-clean jobs", not "nothing else was submitted".
 - **Know the row grain before counting.** A FortiSandbox cluster logs each scan once per member; one FortiMail single release writes 2 rows. Count the entity (`uniqExact(sha256)`, `count(DISTINCT session_id)`), not rows.
 - **Check what a verdict is based on.** A FortiSandbox High Risk rating without a VM run (`vmos` empty) and without a malware name is a static heuristic, not observed behaviour.
+- **Give both sides of a comparison the same period.** FAZ's "last N days" periods exclude today and "last N hours" exclude the current hour (faz-sql-reference.md). Comparing today's FortiMail rows with a FortiSandbox `last-n-days 30` window matched 8.7 %; with matching windows it matched 99.7 %.
 - **Watch for features switched on mid-period.** Check the per-day counts of a classifier or category before averaging over the whole period. A detection that only starts on day 4 skews every per-day figure.
 
 ## Query tools

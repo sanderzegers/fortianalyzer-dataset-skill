@@ -10,7 +10,7 @@ Where FortiGate events are logged, what one row stands for, and how records link
 | `$log-webfilter`, `$log-app-ctrl`, `$log-attack`, `$log-virus`, `$log-dns`, ... | detection or event within a session | Several rows per session are normal. Link to the session by `sessionid` (below) |
 | `$log-event` | event | Identify it by **`logid`** (10 digits, e.g. `0100032001`) or `logdesc`, not by `msg`. `subtype` groups the logids |
 
-Some logids belong to other tables: `0201009233` "File submitted to Sandbox" is in `$log-virus`, `1501054200` "DNS resolution error" in `$log-dns`. The first two digits of `logid` give the log type (`01` event, `02` antivirus, `15` DNS), the next two the subtype, and `logid_to_int()` returns the rest.
+Some logids belong to other tables: `0201009233` "File submitted to Sandbox", `0201009238` "File verdict returned from FortiSandbox" (`fsaverdict`: `clean`, `low risk`, `medium risk`, `high risk`) and `0211009234` "File reported infected by FortiSandbox" (`FSA/RISK_HIGH`, `action=blocked`) are in `$log-virus`, `1501054200` "DNS resolution error" in `$log-dns`. The submitted file's SHA-256 is in `analyticscksum`. The first two digits of `logid` give the log type (`01` event, `02` antivirus, `15` DNS), the next two the subtype, and `logid_to_int()` returns the rest.
 
 `wireless` and `switch-controller` events dominate `$log-event` by volume (millions of rows a week in a large estate: FortiSwitch status, Wi-Fi association and 4-way-handshake steps). Filter on `logid` or `subtype` before counting anything else.
 
@@ -131,6 +131,9 @@ Wi-Fi 802.1X results are under `wireless`: `0104043630` RADIUS authentication su
 | security logs (`webfilter`, `app-ctrl`, `attack`, ...) | `traffic` | `devid` + `vd` + `sessionid` | 81–96 % of rows found their session within the same hour. Long or open sessions have no closing traffic row yet, and policies without traffic logging have none at all, so widen the traffic window and expect gaps |
 | SSL VPN `ssl-web` row | `ssl-tunnel` row | `devid` + `tunnelid` | Same login (see above) |
 | VPN tunnel up | tunnel down | `devid` + `tunnelid` | Duration and bytes are on the down row |
+| sandbox submission `0201009233` (`$log-virus`) | sandbox verdict `0201009238` / `0211009234` (`$log-virus`) | `devid` + `lower(analyticscksum)` (SHA-256) | 119 of 119 and 8 of 8 submissions had a verdict, on average 3–4 minutes later. Works whatever sandbox the FortiGate uses (on-premises or cloud), and in a single query |
+| sandbox submission | FortiSandbox `$log-malware` | `lower(analyticscksum)` ↔ `lower(sha256)` | Two queries (one per device type). 100 % for a FortiGate submitting to a FortiSandbox that logs to the same FAZ; 0 % for one submitting elsewhere (cloud). FortiSandbox adds `mcate`, `ftype`, VM run |
+| FortiGate session | FortiWeb behind it (VIP) | client `srcip` + `srcport` ↔ FortiWeb `src` + `src_port`, FortiWeb time within the session (`dtime - duration` … `dtime`) | Two queries. 99.5 % and 92.3 % of FortiWeb attack rows found their FortiGate session. Needs the client IP passed through to FortiWeb (no source NAT) |
 | any log | user identity | `coalesce(nullifna(user), nullifna(unauthuser), ipstr(srcip))` | faz-sql-reference.md |
 
 ## Patterns
@@ -185,4 +188,17 @@ FROM $log-event
 WHERE $filter AND logid IN ('0108037892', '0108037911', '0108037901', '0108037898')
 GROUP BY devname, logdesc
 ORDER BY events DESC
+
+-- Sandbox verdict per submitted file (submission and verdict are both in $log-virus)
+SELECT s.devname, s.sha, s.filename, v.verdict, v.action, v.t - s.t AS seconds_to_verdict
+FROM (SELECT devid, devname, lower(analyticscksum) AS sha, any(filename) AS filename, min(dtime) AS t
+      FROM $log-virus
+      WHERE $filter AND logid = '0201009233' AND length(ifNull(analyticscksum, '')) = 64
+      GROUP BY devid, devname, sha) s
+LEFT JOIN (SELECT devid, lower(analyticscksum) AS sha, any(ifNull(fsaverdict, '')) AS verdict,
+                  any(action) AS action, min(dtime) AS t
+           FROM $log-virus
+           WHERE $filter AND logid IN ('0201009238', '0211009234') AND length(ifNull(analyticscksum, '')) = 64
+           GROUP BY devid, sha) v ON s.devid = v.devid AND s.sha = v.sha
+ORDER BY v.verdict DESC
 ```

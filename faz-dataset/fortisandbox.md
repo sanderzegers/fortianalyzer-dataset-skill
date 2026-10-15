@@ -43,6 +43,7 @@ Most rows are clean URL and file checks. Filter `risk NOT IN ('Clean', '')` for 
 - **Archives:** the files inside an archive are scanned as their own jobs, with their own `sha256`, `fname` and `ftype` (`js`, `vbs`, `xls`, ...). The archive's own job usually shows `Clean`. The verdict a mail gateway shows for an archive is the worst of its contents.
 - **Static vs dynamic verdicts:** `vmos` is filled when the file ran in a VM. A `High Risk` without `vmos` and with `mname = 'N/A'` comes from static analysis (for example macro heuristics), not from observed behaviour.
 - **Same file, different verdicts:** a hash can be `Clean` in one job and `Low Risk`/`Medium Risk` in another (rescans with newer engines). Use the worst or the latest verdict per `sha256`, and say which.
+- **FortiGate submissions** (`stype='Device'`): link them through the SHA-256 in FortiGate's `analyticscksum` (`$log-virus`, logid `0201009233`). FortiGate also logs the verdict itself (`0201009238`, `fsaverdict`), so for verdicts alone the FortiSandbox log isn't needed (fortigate-logmodel.md).
 - **Mail submissions** (`stype='Device'` with an address in `suser`): link them to FortiMail through the SHA-256 in FortiMail's `virus` log (fortimail-logmodel.md). Inner archive files have no shared key; match them by time and recipient (investigating.md).
 
 ## `$log-netalert`

@@ -40,8 +40,8 @@ For column names, read **only the files matching the log types needed**:
 | Anomaly (same table as IPS/Attack — filter `subtype='anomaly'`) | [cols-anomaly.md](cols-anomaly.md) |
 | ICAP (no own table — stored in the protocol table) | [cols-icap.md](cols-icap.md) |
 | Virtual Patch (no own table — stored in the security table) | [cols-virtual-patch.md](cols-virtual-patch.md) |
-| FortiClient Event | [cols-fct-event.md](cols-fct-event.md) |
-| FortiClient Traffic | Same as cols-tlog.md (FCT shares tlog columns) |
+| FortiClient Event | [cols-fct-event.md](cols-fct-event.md). **Device type FortiClient (3)**: with FortiGate selected, `$log-fct-*` returns an empty table |
+| FortiClient Traffic | Own schema, not FortiGate's: `uid` (FortiClient UID = FortiGate `fctuid`), `hostname`, `srcip`/`srcport`, `dstip`/`dstport`, `remotename`, `url`, `utmaction` (`passthrough`, `blocked`, `userbrowsed`), `browsetime`, `devicemac`, `emsserial`, `fctver`, `os`. Device type FortiClient (3) |
 | ADOM reference tables (`$ADOM_ENDPOINT`, `$ADOM_ENDUSER`, `devtable_ext`, etc.) | [cols-adom-tables.md](cols-adom-tables.md) |
 | SOC/SIEM tables (`$event`, `$incident`, `$event_history`, `$incident_history`) | [cols-soc-tables.md](cols-soc-tables.md) |
 | Materialized views (`fv_*` — built-in dashboards only) | [cols-fv-views.md](cols-fv-views.md) |

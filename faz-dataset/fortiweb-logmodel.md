@@ -93,6 +93,7 @@ Filter configuration changes on `subtype = 'admin'` (and `action`), not on docum
 |---|---|---|---|
 | attack row | traffic row of the same request | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 seconds | All attack rows on one FAZ, 98.7 % on the other. Blocked requests carried HTTP `500` in the traffic log on both FAZes (`404` twice): the block response, which is configurable |
 | attack row | traffic of the same connection | `device_id` + `src` + `src_port` | Keep-alive connections carry several requests |
+| attack row | FortiGate session in front of FortiWeb | client `src` + `src_port` ↔ FortiGate `srcip` + `srcport`, within the FortiGate session | Second query with the FortiGate device type. 99.5 % / 92.3 % matched; needs the client IP passed through (no source NAT). See investigating.md |
 
 ## Patterns
 

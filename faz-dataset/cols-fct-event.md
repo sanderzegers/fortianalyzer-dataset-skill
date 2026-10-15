@@ -1,8 +1,10 @@
 # `$log-fct-event` — FortiClient Event Log
 
-**Important differences from FortiGate logs:** endpoint-agent logs, not network device logs.
+**Important differences from FortiGate logs:** endpoint-agent logs, not network device logs. FortiClient is its own device type (3) in FAZ: query and build datasets with that device type. With FortiGate selected, `$log-fct-event` resolves to an empty table.
+
+`uid` is the FortiClient UID (a UUID), the same value FortiGate logs as `fctuid` in its traffic log (investigating.md). **Count endpoints by `uid`, not `devid`:** in FortiClient logs `devid`/`devname` is the EMS server that forwarded the logs (1 value against 249 `uid`s in one day on one FAZ). FAZ also rejects a scalar subquery that aggregates `devid` over a FortiClient table (`SELECT (SELECT uniqExact(devid) FROM $log-fct-event ...)` → "SQL query is forbidden"), while the same aggregate as the main query works.
 - No `srcip`/`dstip` — uses `deviceip`/`remip` instead
-- `logid` is **UInt64** (not String) — do NOT use `logid_to_int()`. Don't filter on it in `WHERE`/`HAVING` either: FAZ handles a `logid` filter as a string, so `WHERE logid = 12345` fails with "no supertype for types String, UInt16" (Common Mistake #17). Count by `logid` inside `SELECT` (`countIf`) instead
+- `logid` is **UInt64** (not String) — do NOT use `logid_to_int()`. Don't filter on it in `WHERE`/`HAVING` either: FAZ handles a `logid` filter as a string, so `WHERE logid = 12345` fails with "no supertype for types String, UInt16" (Common Mistake #17). Count by `logid` inside `SELECT` (`countIf`) instead. Tested: `WHERE logid IN (96957)` returned 0 rows where `countIf(logid = 96957)` counted 193,281
 - No `sessionid` / `policyid`
 
 All common columns apply where relevant (see cols-common.md).

@@ -2,6 +2,23 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.9.0 — 2026-10-15
+
+### Added
+- Cross-device links, tested on two FAZ instances, in `investigating.md`, `fortigate-logmodel.md`, `fortiweb-logmodel.md` and `fortisandbox.md`:
+  - FortiGate sandbox submission (`0201009233`, `analyticscksum`) ↔ FortiSandbox `malware` (`sha256`): 100 % for a FortiGate submitting to the FortiSandbox that logs to the same FAZ, 0 % for one submitting elsewhere.
+  - FortiGate sandbox submission ↔ FortiGate's own verdict log (`0201009238` / `0211009234`, `fsaverdict`) by `devid` + SHA-256: 119/119 and 8/8, in a single query, whatever sandbox is used.
+  - FortiWeb attack ↔ FortiGate session in front of FortiWeb by client IP + port within the session: 99.5 % / 92.3 %; needs the client IP passed through (no source NAT).
+- Pattern: sandbox verdict per submitted file (FortiGate `$log-virus`).
+  - FortiMail `virus` ↔ FortiSandbox `malware` by SHA-256: 1,464 of 1,468 files (99.7 %), on both units of a FortiMail cluster.
+  - FortiClient `uid` ↔ FortiGate `fctuid`: exact identity; 98 % / 32 % of endpoints present in FortiGate traffic (only endpoints on the network). Session-level match 22 of 30 where the FortiGate saw the source IP.
+  - FortiMail ↔ FortiGate: untested (inbound mail didn't pass a FortiGate logging to the same FAZ).
+- Report periods documented: FAZ's "last N days" periods exclude today and "last N hours" exclude the current hour. Comparisons need the same period on both sides (a misaligned window turned 99.7 % into 8.7 %).
+
+### Fixed
+- FortiClient logs need device type FortiClient (3); with FortiGate selected, `$log-fct-*` resolves to empty tables. FortiClient traffic has its own schema (not FortiGate's, as `SKILL.md` claimed). In FortiClient logs `devid`/`devname` is the EMS server; count endpoints by `uid`.
+- Common Mistake #17 confirmed for `fct-event` with real data (`WHERE logid IN` 0 rows vs `countIf` 193,281).
+
 ## 0.8.0 — 2026-10-15
 
 ### Added
