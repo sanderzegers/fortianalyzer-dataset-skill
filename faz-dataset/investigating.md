@@ -74,6 +74,8 @@ To correlate two devices, run one query per device and carry the keys across:
 
 1. Query device A for the keys (hashes, IDs). Filter to the cases you care about, since query tools usually cap the result size.
 2. Paste them into an `IN (...)` list in the query for device B, run with B's device type.
+
+   For larger sets, results are capped at 100 rows by the FAZ API itself (the CLI client of the MCP server too). Pack each side into **one row**, e.g. `SELECT arrayStringConcat(groupArray(concat(toString(h), ':', toString(t))), ',') FROM (...)`, write it to a file with the CLI client, and compare the two files locally. Hash identities with `cityHash64(CAST(col AS String))`: hashing a `LowCardinality` column directly can't be returned ("LowCardinality(UInt64) is not supported").
 3. Where no shared key exists, match on time window plus a hashed identifier, and treat the result as a lead until it is verified.
 
 | From | To | Key | Notes |
@@ -82,6 +84,7 @@ To correlate two devices, run one query per device and carry the keys across:
 | FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
 | FortiWeb attack | FortiWeb traffic | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 s | 98.7–100 %; `msg_id` does **not** link them; see fortiweb-logmodel.md |
+| FortiGate VPN login | FortiAuthenticator RADIUS authentication | normalised user name (`DOMAIN\\user`, `user@domain` → `user`) + FortiAuthenticator event within ~2 min before | **Untested**: neither estate examined used FortiAuthenticator for VPN; see fortiauthenticator.md |
 | FortiGate security logs | FortiGate traffic | `devid` + `vd` + `sessionid` | 81–96 % match within the same hour; see fortigate-logmodel.md "Linking records" |
 
 ## Verify before you claim

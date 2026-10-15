@@ -2,6 +2,15 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.8.0 — 2026-10-15
+
+### Added
+- `fortiauthenticator-logids.tsv`: all 238 log types of FortiAuthenticator 6.6.9 (ID, name, sub category, FAZ `subtype`, description, `logdesc` constant where seen, seen in logs). Taken from the device's Logging > Log Access > Log Types page, since Fortinet publishes no FortiAuthenticator log reference. All 53 logids seen on two FAZ instances are in it, with matching categories.
+- `scripts/build-fortiauthenticator-logids.py`: rebuilds the file from the saved Log Types pages and keeps the `logdesc`/seen columns.
+- `fortiauthenticator.md`: log type ranges per category, the missing logids in the `logdesc` table, log types never seen (accounting, HA, hardware), the FortiGate VPN correlation method (marked untested), and three patterns (admin access, second-factor failures, authentications by method).
+- Common Mistake #17: filtering on a numeric `logid`. Where `logid` is a number (FortiAuthenticator, FortiClient `fct-event`), FAZ handles a `logid` filter in `WHERE`/`HAVING` as a string: `WHERE logid IN (...)` silently returns 0 rows or errors, while the same condition inside `countIf` counts correctly. String `logid` (FortiGate, FortiSandbox, FortiManager) and FortiWeb's numeric `log_id` aren't affected. Warnings added to `cols-fct-event.md` and `SKILL.md`.
+- `investigating.md`: the 100-row cap applies to the FAZ API itself; pack larger sets into one row and compare locally. Hash `LowCardinality` columns via `CAST(... AS String)`.
+
 ## 0.7.0 — 2026-10-15
 
 ### Added
