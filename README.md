@@ -48,6 +48,7 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
   - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
   - GenAI fields in app-control logs: FortiOS 7.6.4+.
 - **FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAuthenticator:** columns and types were read from the FAZ schema, values were sampled from production logs, and every example query in the product files was run. The checks found traps a FortiGate-trained query falls into, e.g. `device_id` instead of `devid`, FortiMail's `;`-joined `disposition`, a FortiSandbox `level` that is `alert` even for clean files, and a `timestamp` column in FortiManager/FortiAnalyzer logs that breaks the usual `$flex_timestamp AS timestamp`. FortiAnalyzer's own logs weren't available; its tables were verified by schema only.
+- **FortiGate log model** ([fortigate-logmodel.md](faz-dataset/fortigate-logmodel.md)): which `logid` holds admin, configuration, VPN, user-authentication, HA, SD-WAN and system events, mapped and checked on both FAZes. Key findings: a tunnel-mode SSL VPN login writes two tunnel-up rows (count it once), lockouts and interface changes carry the IP or interface only in `msg`, and 81–96 % of security-log rows find their session in the traffic log by `sessionid` within the same hour. The `logid` tables were checked against Fortinet's Log Message Reference: the 7.6.4 reference covered 325 of the 328 logids seen in real logs, several old descriptions were corrected (`44547` is any config change, `35013` is HA failover *failed*), and the tables now say they are a selection and whether each logid was seen. All six patterns ran on both FAZes.
 - **FortiMail log model** ([fortimail-logmodel.md](faz-dataset/fortimail-logmodel.md)): where each kind of event is logged (quarantine releases are in `emailfilter`, not `event`), and the `session_id` links between history, checks, sandbox stages and SMTP delivery lines. Mapped on one production deployment, about 2.4 million messages over 30 days. The release-audit, newsletter-flood and delivery-status patterns were run against it; deployment-specific numbers are marked as such.
 - **Dialect checks:** `WITH TOTALS` fails, grouping by a `LIKE`/`match()` result on a `LowCardinality` column fails, and both FAZ snake_case and ClickHouse regex function names work. Macros resolve within the selected device type, so one dataset can't join two device types.
 - **Quirks that hold on every version:**
@@ -87,7 +88,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.4.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.5.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 
