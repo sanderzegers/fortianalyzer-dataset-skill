@@ -154,4 +154,17 @@ A correlation by time or by name is a lead, not a fact. Before writing it down a
 - A tool that submits SQL through FAZ's dataset SQL endpoint (the one behind the GUI's Dataset **Test** button) behaves like that button: a query that works there works as a dataset. The report-run merge step (Common Mistake #12 in faz-sql-reference.md) isn't exercised.
 - Through that endpoint, `toDate()` and `dtime` come back as Unix epoch numbers. Wrap them in `toString()` for readable dates.
 - Say which time window a result covers. fortianalyzer-sql-mcp returns it as `window` (FAZ time zone); its `period='custom', start='-24h'` covers the last 24 hours up to now, which no built-in period does.
-- Row caps, concurrent-query limits, period names and which log-type names the tool accepts depend on the tool. Follow its own instructions. The SQL macro (`FROM $log-malware`) decides the table, whatever log type the tool was told.
+- Concurrent-query limits, period names and which log-type names the tool accepts depend on the tool. Follow its own instructions. The SQL macro (`FROM $log-malware`) decides the table, whatever log type the tool was told.
+
+## When a result hits the row cap
+
+Query tools cap the rows they return. Through FAZ's dataset SQL endpoint the cap is 100 rows, whatever the SQL `LIMIT` says. fortianalyzer-sql-mcp marks such a result `truncated`, gives the size of the full result as `total_rows` (exact up to 1000) and adds a `note`. A truncated result is a partial result:
+
+- The rows are the first ones in the query's order, so without `ORDER BY` they are an arbitrary subset. Don't count them, don't average them, and don't conclude that a value, host or event is missing because it isn't among them.
+- Don't report from it. Decide what the question needs, and run a query that fits in the cap:
+  1. **A number** (how many, how much): `count(*)`, `count(DISTINCT ...)`, `sum(...)` in one row.
+  2. **The shape** (which values, how often): `GROUP BY` the column, with `count(*)`. If that is still over 100 groups, read `total_rows` for the number of groups and take the top N.
+  3. **The top N or the latest N**: `ORDER BY ... DESC LIMIT n`.
+  4. **Specific rows** (the events of one host or one session): add filters or narrow the period until the result fits.
+  5. **Every row really is needed**: page with a stable order. `ORDER BY` columns that make each row unique (add a tiebreak such as `itime, sessionid`), then `LIMIT 100 OFFSET 100`, `200`, ... Each page is a separate query over the same window, so fix the window with absolute `custom` times; with a relative or open-ended period, new logs shift the pages. For large sets, pack the result into one row instead (see "Correlate across device types").
+- Say it in the report when an answer rests on a top N or on a sample, not on the full result.
