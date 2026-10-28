@@ -72,6 +72,8 @@ Always filter on the full `logid`. `logdesc` text can change between FortiOS ver
 
 **Count each SSL VPN login once.** Every tunnel-mode login writes both an `ssl-web` and an `ssl-tunnel` row with the same `tunnelid` (3,689 of 3,689 on one FAZ). Count logins with `0101039424`, tunnel-mode logins with `0101039947`, and traffic with `0101039948`. Where SSL VPN isn't in use (the lab FAZ), remote access shows only as IPsec.
 
+**The client's address is `remip`** on every VPN row above, including failed logins (`0101039426`): `ipstr(remip)`. Don't look for it in `srcip`, `ip` or `client_addr`, and don't report that VPN logs have no source IP.
+
 **IPsec user.** On dial-up tunnels the login name is in `xauthuser` (XAuth) or `user`. On site-to-site tunnels `user` can hold the peer ID instead of a person. Separate them by `vpntunnel` (the phase 1 name).
 
 ### User authentication

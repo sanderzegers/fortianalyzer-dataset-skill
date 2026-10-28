@@ -2,6 +2,22 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.15.0 — 2026-10-28
+
+Driven by 58 pi-agent sessions with a small model (qwen36-35b-a3b, thinking off). It read the right files in only some sessions, read the wrong product files in others, and lost the skill after context compactions. When it did read the device's files first, it answered with almost no failed queries.
+
+### Added
+- `SKILL.md` "Before the first query": a checklist with a table from question type to device type and the exact files to read; read nothing else up front; re-read after a context compaction; without a query tool, write the query instead of looking for credentials. Don't claim to have read the skill before step 2.
+- `SKILL.md` "Mistakes that keep happening": the errors behind most failed queries in those sessions, with the fix for each (alias named like a column, `GROUP BY`, `HAVING`, `OR` beside `$filter`, IP comparison with `ipstr()`, hours and days in FAZ time, functions from other dialects, Nullable strings, FortiMail/FortiWeb column names, epoch dates, the reported window). Apply a tool's `hint:` line; don't retry the same query more than twice.
+- `investigating.md` "Verify before you claim": check the files before reporting that something isn't logged; check totals against their parts; only queried numbers in reports and exports; know today's date and read dates as day.month.year.
+- `fortimail-logmodel.md`: count each release once (only one of the two release rows carries the original session ID), and report how many releases linked to their quarantine row.
+- `fortigate-logmodel.md`: the VPN client address is `remip`, also on failed logins.
+
+### Changed
+- `SKILL.md` description: names everyday questions (VPN logins, configuration changes, quarantine, blocked traffic) so the skill is picked for questions that don't mention datasets.
+- `fortisandbox.md`: how to query `malware` with fortianalyzer-sql-mcp; a tool rejecting the name doesn't mean the logs are missing.
+- `investigating.md` "Query tools": the checks and `hint:` lines of fortianalyzer-sql-mcp.
+
 ## 0.14.0 — 2026-10-16
 
 ### Added
