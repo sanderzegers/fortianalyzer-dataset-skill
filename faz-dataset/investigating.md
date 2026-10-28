@@ -148,12 +148,17 @@ A correlation by time or by name is a lead, not a fact. Before writing it down a
 - **Compare devices on `itime`, not `dtime`.** `dtime` is each device's own clock; on one estate the devices spread from UTC−4 to UTC+11. `itime` is FAZ arrival time, seconds after the event (faz-sql-reference.md "Time zones").
 - **Give both sides of a comparison the same period.** FAZ's "last N days" periods exclude today and "last N hours" exclude the current hour (faz-sql-reference.md). Comparing today's FortiMail rows with a FortiSandbox `last-n-days 30` window matched 8.7 %; with matching windows it matched 99.7 %.
 - **Watch for features switched on mid-period.** Check the per-day counts of a classifier or category before averaging over the whole period. A detection that only starts on day 4 skews every per-day figure.
+- **"Not logged" and "field is empty" need the files, not just a failed query.** Before you report that a device doesn't log something, check the device's log model and column file. A failed query usually means a wrong column or table: VPN client addresses are in `remip`, not `srcip`, and a tool that rejects `malware` as a log-type name doesn't mean FortiSandbox has no logs.
+- **Check a total against its parts.** When a table has a total column, compare it with the sum of its cells; when two queries should agree, run both. A mismatch usually means double-counted rows.
+- **Every number you report or write to a file comes from a query you ran.** Mark estimates as estimates, and never put approximate or remembered figures (`~5,900`) into an export. Figures from a context summary are not verified: rerun the query.
+- **Know today's date and read the user's dates correctly.** Run `SELECT toString(now())` when you aren't sure of the date. Read dates such as `8.9.2026` and `16.9.26` as day.month.year (8 September) unless the user writes otherwise.
 
 ## Query tools
 
 - A tool that submits SQL through FAZ's dataset SQL endpoint (the one behind the GUI's Dataset **Test** button) behaves like that button: a query that works there works as a dataset. The report-run merge step (Common Mistake #12 in faz-sql-reference.md) isn't exercised.
 - Through that endpoint, `toDate()` and `dtime` come back as Unix epoch numbers. Wrap them in `toString()` for readable dates.
 - Say which time window a result covers. fortianalyzer-sql-mcp returns it as `window` (FAZ time zone); its `period='custom', start='-24h'` covers the last 24 hours up to now, which no built-in period does.
+- fortianalyzer-sql-mcp (since its pull request #4) rejects a `$log` query without `$filter` and an unparenthesised `OR` beside it, accepts `90d`-style periods, and adds a `hint:` line to known SQL errors. Apply the hint before retrying.
 - Concurrent-query limits, period names and which log-type names the tool accepts depend on the tool. Follow its own instructions. The SQL macro (`FROM $log-malware`) decides the table, whatever log type the tool was told.
 
 ## When a result hits the row cap

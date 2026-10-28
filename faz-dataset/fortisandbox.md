@@ -2,7 +2,7 @@
 
 FortiSandbox log types: `malware` (one row per scan job), `netalert` (network alerts from sniffer mode), `event` (system). Columns verified on FAZ 7.6 with FortiSandbox logs (October 2026). `netalert` had no rows, so its values are unverified.
 
-Use the macros `$log-malware`, `$log-netalert` and `$log-event` with the FortiSandbox device type. FAZ resolves them. Some query tools only know the FortiGate log-type list and reject `malware`/`netalert` by name; in FAZ itself they work. With another device type selected (FortiMail, for example), `$log-malware` resolves to that device's own table, so FortiSandbox data can't be joined into another device's query.
+Use the macros `$log-malware`, `$log-netalert` and `$log-event` with the FortiSandbox device type. FAZ resolves them. Some query tools only know the FortiGate log-type list and reject `malware`/`netalert` by name; in FAZ itself they work. With fortianalyzer-sql-mcp, pass `dev='fortisandbox'`, leave `log` empty and write `FROM $log-malware` (older versions: `log='event'`). A tool rejecting the name says nothing about the data: never conclude from it that FortiSandbox logs are missing. With another device type selected (FortiMail, for example), `$log-malware` resolves to that device's own table, so FortiSandbox data can't be joined into another device's query.
 
 ## Differences from other device types
 

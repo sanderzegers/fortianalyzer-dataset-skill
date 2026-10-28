@@ -43,6 +43,10 @@ Not seen in the logs examined: releases by end users from the personal quarantin
 | `virus` | FortiSandbox `malware` | SHA-256 from `msg` (`checksum: ...`) ↔ `sha256` | A second query with the FortiSandbox device type and the **same period** (see investigating.md). 99.7 % of submitted files matched, on both cluster units. FortiMail's file names (`<queue ID>…#<original name>`) differ from FortiSandbox's `fname`, so the hash is the only key |
 | `history` | `history` | `message_id` | The same message in several sessions (forwarding, re-sends). Empty on rejected sessions |
 
+**Count each release once.** A single admin release writes two `emailfilter` rows (investigating.md "Verify before you claim"), and only one of them carries `original session ID(...)`. Count releases on that row, as the pattern below does, or with `count(DISTINCT extract(msg, 'original session ID\\(([^)]+)\\)'))`. Counting every row that mentions "released" doubles the figure, and a per-admin total then no longer matches its per-reason cells.
+
+**Not every release links to its quarantine row.** The `history` row of the quarantined message must fall inside the same period. Mail quarantined before the period was released without a match, so report how many releases linked (one test: 536 of about 585).
+
 ## Delivery status
 
 `event`/`smtp` rows are sendmail log lines with `action='NONE'` and `status='N/A'`. Classify them by `msg`:

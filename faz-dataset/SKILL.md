@@ -1,18 +1,41 @@
 ---
 name: faz-dataset
-description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets, and for investigating questions directly in FAZ logs through a SQL tool such as the faz_query MCP. Knows FAZ macros, log table structure, column names, hcache, where events are logged, how records link across tables and devices, and common query patterns for FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs.
+description: Expert mode for writing FortiAnalyzer dataset queries (FAZ SQL dialect) for use in the GUI under Reports / Datasets, and for investigating questions directly in FAZ logs through a SQL tool such as the faz_query MCP. Use it for ANY question answered from FortiAnalyzer logs, before the first query, for example traffic, blocked or failing connections, DNS, VPN logins, admin logins, configuration changes and FortiManager installs, attacks, mail quarantine and releases, sandbox verdicts. Knows FAZ macros, log table structure, column names, hcache, where events are logged, how records link across tables and devices, and common query patterns for FortiGate, FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAnalyzer and FortiAuthenticator logs.
 ---
 
 # FortiAnalyzer Dataset Query Expert
 
 You are an expert at writing **FortiAnalyzer dataset queries** — SQL written in the FAZ GUI dialect that users enter under **Reports > Datasets** (or Report Templates > Chart Dataset).
 
+## Before the first query
+
+Do these steps for every new question, before you write or run any SQL. Don't tell the user you have read or understood the skill until you have read the files in step 2.
+
+1. **Pick the device type** from the question. Ask if it isn't clear (FortiGate and FortiMail both have an `emailfilter` log, for example).
+2. **Read these files completely** with the read tool. They are short enough to read whole; the reference file is about 800 lines.
+
+   | Question about | Device type (`dev`) | Read |
+   |---|---|---|
+   | FortiGate traffic: can't reach, blocked, bandwidth, sessions, DNS, web filter, antivirus, IPS | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [cols-common.md](cols-common.md), [cols-tlog.md](cols-tlog.md), plus the column file of any security log you query (table below) |
+   | FortiGate events: admin logins, configuration changes, FortiManager installs, VPN (SSL and IPsec), HA, SD-WAN, wireless | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [fortigate-logmodel.md](fortigate-logmodel.md), [cols-elog.md](cols-elog.md) |
+   | FortiMail: mail flow, quarantine, releases, spam, newsletters, attachments | `fortimail` | [faz-sql-reference.md](faz-sql-reference.md), [fortimail.md](fortimail.md), [fortimail-logmodel.md](fortimail-logmodel.md). Not cols-emailfilter.md or cols-common.md: those are FortiGate's |
+   | FortiWeb | `fortiweb` | [faz-sql-reference.md](faz-sql-reference.md), [fortiweb.md](fortiweb.md), [fortiweb-logmodel.md](fortiweb-logmodel.md) |
+   | FortiSandbox | `fortisandbox` | [faz-sql-reference.md](faz-sql-reference.md), [fortisandbox.md](fortisandbox.md) |
+   | FortiManager, FortiAnalyzer | `fortimanager`, `fortianalyzer` | [faz-sql-reference.md](faz-sql-reference.md), [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |
+   | FortiADC, FortiAuthenticator | `fortiadc`, `fortiauthenticator` | [faz-sql-reference.md](faz-sql-reference.md), [fortiadc.md](fortiadc.md) or [fortiauthenticator.md](fortiauthenticator.md) |
+   | Endpoints, users, MAC addresses across devices (UEBA) | | [faz-sql-reference.md](faz-sql-reference.md), [cols-adom-tables.md](cols-adom-tables.md) |
+
+   When you answer from live logs through a query tool, also read [investigating.md](investigating.md). A question about two device types needs both rows.
+3. **Read nothing else up front.** Open other files when the question leads there, not in advance. Grep the `.tsv` log-ID lists, never read them whole.
+4. **After a context compaction**, when the files above are only summarised in your context, read them again before the next query.
+5. **If no FortiAnalyzer query tool is available** (no `faz_query` or similar), write the query for the user to run and say so. Don't look for credentials, environment variables or another tool's configuration.
+
 The skill has two modes:
 
 - **Writing a dataset**: the user wants a query for a report or chart. Follow "Your job" below.
 - **Investigating**: the user wants a question answered from the logs, and a tool that runs SQL against FAZ is available (e.g. the `faz_query` MCP tool). Also read [investigating.md](investigating.md): it covers finding where an event is logged, exploring large volumes with templates and hashes, correlating across tables and device types, what to do when a result hits the tool's row cap (a truncated result is never the answer), and verifying a finding before reporting it. For traffic through a FortiGate ("can't reach", "blocked", "what changed"), start with `$log-traffic`, also when the question names DNS, web filter, antivirus or IPS: the traffic log has every logged session and its outcome, while a security log only has what its profile logged.
 
-Always read [faz-sql-reference.md](faz-sql-reference.md) first — it covers macros, filter variables, time variables, hcache patterns, helper functions, common mistakes, and query patterns.
+[faz-sql-reference.md](faz-sql-reference.md) is always part of step 2 — it covers macros, filter variables, time variables, hcache patterns, helper functions, common mistakes, and query patterns.
 
 For column names, read **only the files matching the log types needed**:
 
@@ -116,6 +139,27 @@ How to ask:
 **Example:**
 User: "FortiMail report with average mails per day and max mails per hour per recipient"
 Ask before writing: should the daily average count all days in the report period, or only days the recipient received mail? Should it count all mail, or only inbound mail that wasn't rejected? (fortimail.md has the columns: `$log-history`, recipient in `` `to` ``, one recipient per row.)
+
+## Mistakes that keep happening
+
+These caused most failed queries in real sessions. Check every query against them before running it.
+
+| Don't | Do instead |
+|---|---|
+| Give an alias the name of a real column: `count(*) AS total`, `toDate(itime) AS itime`, `... AS domain` | Use a name no table has (`total_n`, `day_faz`). Otherwise `GROUP BY`, `ORDER BY` and `HAVING` take the column and fail with "not under aggregate function" (Common Mistake #16) |
+| Select a column that is neither aggregated nor in `GROUP BY` | Add it to `GROUP BY` or wrap it (`any()`, `min()`, `max()`) |
+| Filter an aggregate in `WHERE` (`WHERE cnt > 100`) | `HAVING cnt > 100`, or an outer query |
+| `WHERE $filter AND a OR b` | `WHERE $filter AND (a OR b)`. Without parentheses, b escapes the period and the query scans every log |
+| Compare or `LIKE` an IP column as text (`srcip = '10.1.2.3'`) | `ipstr(srcip) = '10.1.2.3'`. IP columns are IPv6 values (`::ffff:10.1.2.3`) |
+| `toHour(from_itime(itime))`, `toDate(itime)` for FAZ days | `toHour(toDateTime(itime, timezone()))`, `toDate(itime, timezone())`. `from_itime()` returns text; plain `toDate(itime)` is UTC |
+| Functions from other SQL dialects: `splitPart`, `toUTF8`, `upperCase`, `from_unix_timestamp`, `percentile...` | `splitByString(sep, s)[n]`, nothing, `upper()`, `toDateTime(n)`, `quantile(0.95)(x)` |
+| String functions on Nullable columns (`splitByChar('@', to)`) | `splitByChar('@', ifNull(to, ''))` |
+| FortiGate names on other devices: `devid`, `level` on FortiMail, FortiWeb, FortiADC | `device_id`, `pri`. Columns differ per device type: take them from the device's file |
+| Unquoted `to` / `from` on FortiMail | `` `to` ``, `` `from` `` |
+| Read a date column as a date: `toDate()` and `dtime` come back as Unix epoch numbers | `toString(...)` around them |
+| Report a number without its window. "Last N days" periods end yesterday | Say the window the query covered (the tool's `window`) |
+
+When a query tool returns an error with a `hint:` line, apply the hint before retrying. Don't retry the same query with small changes more than twice: read the relevant file section instead.
 
 ## Key rules
 
