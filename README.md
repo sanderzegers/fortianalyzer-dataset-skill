@@ -100,7 +100,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.15.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.16.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 

@@ -9,14 +9,14 @@ You are an expert at writing **FortiAnalyzer dataset queries** — SQL written i
 
 ## Before the first query
 
-Do these steps for every new question, before you write or run any SQL. Don't tell the user you have read or understood the skill until you have read the files in step 2.
+Do these steps for every new question, before you write or run any SQL, **also for the second and later questions in a session**: a new question about another device type or another kind of problem needs its own files. Don't tell the user you have read or understood the skill until you have read the files in step 2.
 
 1. **Pick the device type** from the question. Ask if it isn't clear (FortiGate and FortiMail both have an `emailfilter` log, for example).
 2. **Read these files completely** with the read tool. They are short enough to read whole; the reference file is about 800 lines.
 
    | Question about | Device type (`dev`) | Read |
    |---|---|---|
-   | FortiGate traffic: can't reach, blocked, bandwidth, sessions, DNS, web filter, antivirus, IPS | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [cols-common.md](cols-common.md), [cols-tlog.md](cols-tlog.md), plus the column file of any security log you query (table below) |
+   | FortiGate traffic: can't reach, blocked, bandwidth, sessions, DNS, web filter, antivirus, IPS | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [cols-common.md](cols-common.md), [cols-tlog.md](cols-tlog.md), plus the column file of any security log you query (table below). For "it stopped working" or "what changed", also [fortigate-logmodel.md](fortigate-logmodel.md) for configuration changes |
    | FortiGate events: admin logins, configuration changes, FortiManager installs, VPN (SSL and IPsec), HA, SD-WAN, wireless | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [fortigate-logmodel.md](fortigate-logmodel.md), [cols-elog.md](cols-elog.md) |
    | FortiMail: mail flow, quarantine, releases, spam, newsletters, attachments | `fortimail` | [faz-sql-reference.md](faz-sql-reference.md), [fortimail.md](fortimail.md), [fortimail-logmodel.md](fortimail-logmodel.md). Not cols-emailfilter.md or cols-common.md: those are FortiGate's |
    | FortiWeb | `fortiweb` | [faz-sql-reference.md](faz-sql-reference.md), [fortiweb.md](fortiweb.md), [fortiweb-logmodel.md](fortiweb-logmodel.md) |
@@ -27,7 +27,7 @@ Do these steps for every new question, before you write or run any SQL. Don't te
 
    When you answer from live logs through a query tool, also read [investigating.md](investigating.md). A question about two device types needs both rows.
 3. **Read nothing else up front.** Open other files when the question leads there, not in advance. Grep the `.tsv` log-ID lists, never read them whole.
-4. **After a context compaction**, when the files above are only summarised in your context, read them again before the next query.
+4. **After a context compaction**, when the files above are only summarised in your context, read them again before the next query. A compaction summary never carries the skill's rules, so treat every file you read before it as unread.
 5. **If no FortiAnalyzer query tool is available** (no `faz_query` or similar), write the query for the user to run and say so. Don't look for credentials, environment variables or another tool's configuration.
 
 The skill has two modes:
@@ -152,12 +152,13 @@ These caused most failed queries in real sessions. Check every query against the
 | `WHERE $filter AND a OR b` | `WHERE $filter AND (a OR b)`. Without parentheses, b escapes the period and the query scans every log |
 | Compare or `LIKE` an IP column as text (`srcip = '10.1.2.3'`) | `ipstr(srcip) = '10.1.2.3'`. IP columns are IPv6 values (`::ffff:10.1.2.3`) |
 | `toHour(from_itime(itime))`, `toDate(itime)` for FAZ days | `toHour(toDateTime(itime, timezone()))`, `toDate(itime, timezone())`. `from_itime()` returns text; plain `toDate(itime)` is UTC |
+| Filter an hour or day on `dtime` (`toHour(toDateTime(dtime, timezone())) = 11`) | Filter on `itime` as above, or set the window with a custom period. `dtime` is the device's own clock: on a FortiGate in another time zone (one in the US, for example) "11:00" on `dtime` is a different hour, and the event you look for isn't in the result |
 | Functions from other SQL dialects: `splitPart`, `toUTF8`, `upperCase`, `from_unix_timestamp`, `percentile...` | `splitByString(sep, s)[n]`, nothing, `upper()`, `toDateTime(n)`, `quantile(0.95)(x)` |
 | String functions on Nullable columns (`splitByChar('@', to)`) | `splitByChar('@', ifNull(to, ''))` |
 | FortiGate names on other devices: `devid`, `level` on FortiMail, FortiWeb, FortiADC | `device_id`, `pri`. Columns differ per device type: take them from the device's file |
 | Unquoted `to` / `from` on FortiMail | `` `to` ``, `` `from` `` |
 | Read a date column as a date: `toDate()` and `dtime` come back as Unix epoch numbers | `toString(...)` around them |
-| Report a number without its window. "Last N days" periods end yesterday | Say the window the query covered (the tool's `window`) |
+| Describe a window from the period's name ("30 days ending yesterday", "the week starts on Sunday") | Report the window the query covered (the tool's `window`). Whether "last N days" includes today and which day a week starts on differ between FAZes |
 
 When a query tool returns an error with a `hint:` line, apply the hint before retrying. Don't retry the same query with small changes more than twice: read the relevant file section instead.
 
@@ -165,7 +166,7 @@ When a query tool returns an error with a `hint:` line, apply the hint before re
 
 - Always use `$log-{type}` as the table in FROM — never hardcode `sp1_FGT_tlog` etc.
 - Always include `$filter` in WHERE — it provides mandatory time/device scope
-- Mind the clocks: periods and `$flex_timescale` use the FAZ time zone, `toDate(itime)` / `toHour(itime)` are UTC unless you pass `timezone()`, and `dtime` is each device's own clock. "Last N days" periods exclude today. When you report a result, say which window it covers (faz-sql-reference.md "Time zones" and "Report periods")
+- Mind the clocks: periods and `$flex_timescale` use the FAZ time zone, `toDate(itime)` / `toHour(itime)` are UTC unless you pass `timezone()`, and `dtime` is each device's own clock, so filter times on `itime`. Whether "last N days" periods include today differs between FAZes. When you report a result, say which window it covers (faz-sql-reference.md "Time zones" and "Report periods")
 - Write `${...}` macro logic inline unless the macro is confirmed working (see the macro status table in faz-sql-reference.md). Many, e.g. `${USER}` and `${THREAT_*}`, don't expand in custom datasets
 - Use `devname` directly for device names. FAZ joins it onto every log row (all device types), so no `devtable_ext` join is needed
 - If FAZ reports "Missing columns", the column doesn't exist in that FAZ log table (unless the error starts with `MERGE:`, see Common Mistakes #12). That's never caused by the FortiGate's FortiOS version, because FAZ defines the same columns for all devices. Suggest `SELECT * FROM $log-x WHERE $filter LIMIT 1` to list the real columns

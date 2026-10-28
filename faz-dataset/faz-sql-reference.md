@@ -121,18 +121,18 @@ ORDER BY utc_offset_h
 
 ### Report periods
 
-FAZ's report periods use the FAZ time zone. "Last N" periods cover complete days, hours or weeks only. Tested on FAZ 7.6 on a Thursday at 17:03:
+FAZ's report periods use the FAZ time zone. **Where a period ends is not the same on every FAZ or every query**, so never describe a window from the period's name. Read the window the query covered and report that. Seen on FAZ 7.6:
 
-| Period | Window |
+| Period | Window seen |
 |---|---|
-| Today, This week, This month, ... | From the start of the day / week / month up to now. Weeks start on Sunday |
+| Today, This week, This month, ... | From the start of the day / week / month up to now. The week started on **Sunday** on one FAZ (lab, October 2026) and on **Monday** on another (production, 28 Oct 2026) |
 | Yesterday | Yesterday 00:00:00 – 23:59:59 |
-| Last N days (`last-n-days`), Last 7 / 14 / 30 days | Complete days up to yesterday 23:59:59: **today is excluded** |
-| Last N hours (`last-n-hours 2`) | 15:00:00 – 16:59:59: **the current hour is excluded** |
-| Last N weeks (`last-n-weeks 1`), Last week | Complete Sunday–Saturday weeks before the current one |
+| Last N days (`last-n-days`), Last 7 / 14 / 30 days | Both ways: complete days up to yesterday 23:59:59, today excluded (lab, a Thursday at 17:03; production, a `14d` query on 16 Oct 2026), **and** a rolling window up to the current minute (production, `7d`, `30d` and `last-n-days` on 28 Oct 2026, e.g. 28 Sep 20:53 – 28 Oct 20:53) |
+| Last N hours (`last-n-hours 2`) | 15:00:00 – 16:59:59 at 17:03: **the current hour is excluded** |
+| Last N weeks (`last-n-weeks 1`), Last week | Complete weeks before the current one |
 | Custom | Start to end, to the minute. The end is included only up to `hh:mm:00` |
 
-A report for "the last 7 days" therefore never shows today's events. When comparing two queries, give both the **same** period: comparing today's rows with a "last 30 days" window finds almost nothing, because that window ended at midnight. For "the last 24 hours" up to now, use a custom period. When reporting a result, say which window and time zone it covers. Query tools may return this (fortianalyzer-sql-mcp returns `window`); otherwise select `toString(toDateTime($start_time))`, `toString(toDateTime($end_time))` and `timezone()`.
+When comparing two queries, give both the **same** window, preferably a custom one: a "last 30 days" window that ended at midnight finds almost nothing of today's rows. For "the last 24 hours" or any span that must include today, use a custom period. When reporting a result, say which window and time zone it covers. Query tools may return this (fortianalyzer-sql-mcp returns `window`); otherwise select `toString(toDateTime($start_time))`, `toString(toDateTime($end_time))` and `timezone()`.
 
 ## ${MACRO} Expansions
 

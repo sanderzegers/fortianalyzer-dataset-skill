@@ -2,6 +2,18 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.16.0 — 2026-10-28
+
+From a test round of 0.15.0 with the same model: single questions in a fresh session mostly passed (SSL VPN, FortiGate config changes, FortiWeb, releases per admin, FortiSandbox). A long session failed after a compaction, and the period documentation didn't match what the production FAZ returned.
+
+### Changed
+- `faz-sql-reference.md` "Report periods", `SKILL.md`, `investigating.md`: where "last N days" periods end differs between FAZes and queries. On a production FAZ on 28 Oct 2026, `7d`, `30d` and `last-n-days` ran up to the current minute and the week started on Monday; earlier tests saw complete days ending yesterday and weeks from Sunday. Models repeated "30 days ending yesterday" while the returned window said otherwise. Report the window the query covered instead.
+- `SKILL.md` "Before the first query": do the checklist again for every later question in a session; for "it stopped working / what changed" on a FortiGate, also read fortigate-logmodel.md; after a compaction, treat every file read before it as unread.
+
+### Added
+- `SKILL.md` "Mistakes that keep happening": filter hours and days on `itime`, not `dtime`. In the failed session the model filtered `toHour(dtime) = 11` for a FortiGate in the US, looked at the wrong hour and missed the 1,761 denied DNS sessions that a run on `itime` found.
+- `fortimail-logmodel.md`: the release row without `original session ID` is the same release, not an unlinked one; releases vs. released messages; `history` has one row per recipient, so group it by `session_id` before joining.
+
 ## 0.15.0 — 2026-10-28
 
 Driven by 58 pi-agent sessions with a small model (qwen36-35b-a3b, thinking off). It read the right files in only some sessions, read the wrong product files in others, and lost the skill after context compactions. When it did read the device's files first, it answered with almost no failed queries.
