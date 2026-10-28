@@ -23,7 +23,7 @@ Event logs cover many subtypes with ~200 columns. All common columns apply (see 
 | Column | Type | Description |
 |---|---|---|
 | **`cfgtid`** | Nullable(UInt32) | Config transaction ID — `cfgtid > 0` filters config change events |
-| `cfgpath` | Nullable(String) | Config object path (e.g. `firewall policy`) |
+| `cfgpath` | Nullable(String) | Config table, dot-separated, with `:` for nested tables (e.g. `firewall.policy`, `system.zone`, `webfilter.profile:ftgd-wf`). Seen on two production FAZes in one week: 17 and 37 distinct values |
 | `cfgobj` | Nullable(String) | Config object name |
 | `cfgattr` | Nullable(String) | Attribute changed |
 | `cfgcomment` | Nullable(String) | Change comment |

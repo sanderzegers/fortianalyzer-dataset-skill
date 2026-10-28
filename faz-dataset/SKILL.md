@@ -16,7 +16,7 @@ Do these steps for every new question, before you write or run any SQL, **also f
 
    | Question about | Device type (`dev`) | Read |
    |---|---|---|
-   | FortiGate traffic: can't reach, blocked, bandwidth, sessions, DNS, web filter, antivirus, IPS | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [cols-common.md](cols-common.md), [cols-tlog.md](cols-tlog.md), plus the column file of any security log you query (table below). For "it stopped working" or "what changed", also [fortigate-logmodel.md](fortigate-logmodel.md) for configuration changes |
+   | FortiGate traffic: can't reach, blocked, bandwidth, sessions, DNS, web filter, antivirus, IPS | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [cols-common.md](cols-common.md), [cols-tlog.md](cols-tlog.md), plus the column file of any security log you query (table below). For "it stopped working" or "what changed", also [fortigate-logmodel.md](fortigate-logmodel.md) and [cols-elog.md](cols-elog.md), and follow investigating.md "Order of work": the configuration changes around the flip are a required step |
    | FortiGate events: admin logins, configuration changes, FortiManager installs, VPN (SSL and IPsec), HA, SD-WAN, wireless | `fortigate` | [faz-sql-reference.md](faz-sql-reference.md), [fortigate-logmodel.md](fortigate-logmodel.md), [cols-elog.md](cols-elog.md) |
    | FortiMail: mail flow, quarantine, releases, spam, newsletters, attachments | `fortimail` | [faz-sql-reference.md](faz-sql-reference.md), [fortimail.md](fortimail.md), [fortimail-logmodel.md](fortimail-logmodel.md). Not cols-emailfilter.md or cols-common.md: those are FortiGate's |
    | FortiWeb | `fortiweb` | [faz-sql-reference.md](faz-sql-reference.md), [fortiweb.md](fortiweb.md), [fortiweb-logmodel.md](fortiweb-logmodel.md) |
@@ -158,6 +158,7 @@ These caused most failed queries in real sessions. Check every query against the
 | FortiGate names on other devices: `devid`, `level` on FortiMail, FortiWeb, FortiADC | `device_id`, `pri`. Columns differ per device type: take them from the device's file |
 | Unquoted `to` / `from` on FortiMail | `` `to` ``, `` `from` `` |
 | Read a date column as a date: `toDate()` and `dtime` come back as Unix epoch numbers | `toString(...)` around them |
+| Name a cause from traffic counts alone: "a policy is missing", "the host was offline", "the server didn't answer" | Find the minute the outcome flipped, then the configuration changes on that device around it: the policies on both sides of the flip, their zones, interfaces and services, and nearby address changes (investigating.md "Order of work"). Name the change that broke or fixed it, or say that none was logged |
 | Describe a window from the period's name ("30 days ending yesterday", "the week starts on Sunday") | Report the window the query covered (the tool's `window`). Whether "last N days" includes today and which day a week starts on differ between FAZes |
 
 When a query tool returns an error with a `hint:` line, apply the hint before retrying. Don't retry the same query with small changes more than twice: read the relevant file section instead.
