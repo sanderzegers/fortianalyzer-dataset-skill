@@ -2,6 +2,15 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.14.0 — 2026-10-16
+
+### Added
+- `investigating.md` "When a result hits the row cap": a truncated result is a partial, order-dependent subset, so never count it or infer absence from it; pick the query the question needs (one-row aggregate, `GROUP BY`, top N, tighter filters, or paging with a stable `ORDER BY` plus `OFFSET`, tested on both FAZes) and say when an answer rests on a top N. Weaker models used to take the 100 rows as the full answer.
+- `SKILL.md`: the Investigating routing line points to it.
+
+### Changed
+- `investigating.md` "Query tools": row caps are no longer left to the tool's own instructions.
+
 ## 0.13.0 — 2026-10-15
 
 ### Added
