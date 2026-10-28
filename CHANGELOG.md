@@ -2,6 +2,18 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.16.1 — 2026-10-28
+
+In two runs of a "DNS stopped working" question, the model found the 17 minutes of DNS traffic denied by policy 0 but reported "no policy allows this VLAN". The real cause and fix was a change at the minute of the flip that added the VLAN's zone to the policy which accepted the traffic afterwards. The model had that policy ID in its results but never looked at its configuration changes.
+
+### Added
+- `investigating.md` "Order of work": narrow the flip to the minute; finding the configuration change behind it is a required step before naming a cause. A table maps what the traffic log shows at the flip (other policy or policy 0, one host or VLAN, other route, no reply, security profile, FortiGate DNS) to the `cfgpath` values and events to check. Two queries: all changes on the device around the flip, with HA-secondary repeats, dashboards, admin and automation noise filtered out; and all changes to one policy. Notes that the logs don't say which addresses a policy uses, and that one production FAZ had 95 % automated address edits in a week.
+- `SKILL.md` "Mistakes that keep happening": don't name a cause from traffic counts alone.
+
+### Changed
+- `SKILL.md` checklist: for "stopped working / what changed", read cols-elog.md as well and treat the configuration check as required.
+- `cols-elog.md`: `cfgpath` is dot-separated with `:` for nested tables (`firewall.policy`, `webfilter.profile:ftgd-wf`), not `firewall policy`; 17 and 37 distinct values seen in a week on two production FAZes.
+
 ## 0.16.0 — 2026-10-28
 
 From a test round of 0.15.0 with the same model: single questions in a fresh session mostly passed (SSL VPN, FortiGate config changes, FortiWeb, releases per admin, FortiSandbox). A long session failed after a compaction, and the period documentation didn't match what the production FAZ returned.

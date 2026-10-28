@@ -38,9 +38,45 @@ What `action` says about a failing flow (definitions from the FortiOS Log Refere
 
 Order of work for "it worked, now it doesn't":
 
-1. **Outcome per hour** for the flow (query below). The hour where `act`, `reply`, `server`, `policyid` or `dstintf` changes is when it broke and what changed with it.
-2. **Event log of that device around that hour**: configuration changes (`0100044547` / `0100044546`, including FortiManager installs), interface, routing, SD-WAN and HA events (fortigate-logmodel.md).
+1. **Outcome per hour** for the flow (query below). The hour where `act`, `reply`, `server`, `policyid` or `dstintf` changes is when it broke and what changed with it. Then narrow it to the minute (`toStartOfMinute`) to get the **flip**: the first and last minute of the bad state.
+2. **Find the change behind the flip. Always do this before naming a cause.** Search the configuration changes of that device around the flip (queries below), then the other events the table points to. "A policy is missing", "the host was offline" or "the server didn't answer" are findings only after this search. In one real case, DNS from one VLAN was denied by policy 0 for 17 minutes. Two runs reported "no policy allows this VLAN". The logs also showed the same traffic accepted afterwards by a policy whose change entry, at the minute of the flip, added the VLAN's zone. That change was both the cause and the fix.
 3. **Security log** only where `countX` > 0 or `action = 'dns'`, for the profile's verdict.
+
+What the traffic log shows at the flip decides where to look in step 2. The configuration changes come first in every case:
+
+| Traffic log at the flip | Configuration paths (`cfgpath`) to check | Events to check (fortigate-logmodel.md) |
+|---|---|---|
+| Different `policyid`, or `deny` with `policyid` 0 | `firewall.policy` (the policies on both sides of the flip, by ID), `system.zone` and `system.interface` (the `srcintf`/`dstintf` names), `firewall.service%` (the `service` name), `firewall.address`, `firewall.addrgrp`, `user.group%` | |
+| Only one host or one VLAN affected | `switch-controller.managed-switch:ports` (port moved to another VLAN), `system.dhcp.server` (other DNS server or gateway), `system.interface` | |
+| Different `dstintf` or gateway | `router.static` | SD-WAN member and health-check, routing neighbour up/down |
+| `accept` but no reply (`rcvdpkt` 0, `timeout`, `ip-conn`) | | Interface link up/down, HA failover. Compare with other clients: all affected means the path, one means the client or server |
+| `accept`, but a security profile blocked it (`countX` > 0, `utmaction = 'block'`) | `webfilter.profile%`, `firewall.ssl-ssh-profile%`, `firewall.profile-%` | The matching security log for that session |
+| DNS answers wrong or failing, with the FortiGate as DNS server | `system.dns-database%` | |
+
+Nested settings carry a colon (`webfilter.profile:ftgd-wf`, `user.group:match`), so match them with `LIKE 'webfilter.profile%'`. The logs don't say which addresses a policy uses, so check address and address-group changes by time: those within a few minutes of the flip. Group them by `user` first: on one production FAZ, 95 % of a week's changes were `firewall.address` edits, far too many for people, so probably dynamic or automated objects. They show up as one line per user.
+
+```sql
+-- Step 2a: what changed on this device around the flip (custom period: about 30 min before to 10 min after)
+SELECT toString(toDateTime(itime, timezone())) AS time_faz, `user` AS admin_user, ui, action,
+       cfgpath, cfgobj, cfgattr
+FROM $log-event
+WHERE $filter AND devname = '<device>' AND logid IN ('0100044547', '0100044546')
+  AND ifNull(ui, '') != 'ha_daemon'
+  AND ifNull(cfgpath, '') NOT LIKE '%gui-dashboard%'
+  AND ifNull(cfgpath, '') NOT IN ('system.admin', 'system.sso-admin', 'system.automation-action')
+  AND ifNull(cfgpath, '') NOT LIKE 'system.replacemsg%'
+ORDER BY time_faz
+
+-- Step 2b: everything that touched one policy (the policy ID on the working side of the flip)
+SELECT toString(toDateTime(itime, timezone())) AS time_faz, devname, `user` AS admin_user, ui,
+       action, cfgattr
+FROM $log-event
+WHERE $filter AND logid = '0100044547' AND cfgpath = 'firewall.policy' AND cfgobj = '<policyid>'
+  AND ifNull(ui, '') != 'ha_daemon'
+ORDER BY time_faz
+```
+
+`cfgattr` holds the changed attributes, for example `srcintf[...]` with the old and new values. The HA secondary repeats every change with `ui = 'ha_daemon'`, so the queries leave those rows out.
 
 ```sql
 -- Is a flow working, and what changed? Outcome per hour for one client and one service
