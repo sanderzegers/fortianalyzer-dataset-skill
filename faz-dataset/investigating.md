@@ -135,7 +135,7 @@ LIMIT 50
 
 For a coarser view, keep only the first few words: `arrayStringConcat(arraySlice(splitByChar(' ', <templated msg>), 1, 5), ' ')`. Free-text parts such as file names, subjects and folder names still come through. Mask them with an extra `replaceRegexpAll` once you see them.
 
-**Hash identifiers to compare them without seeing them.** Two CRC32 values of the same text give the same number in two queries, so you can check that two rows concern the same recipient without returning the address. This also works across device types, because the number doesn't depend on the table. FAZ rejects every function with "Hash" in its name (`cityHash64`, `xxHash64`: "SQL query is forbidden"), so use `CRC32`:
+**Hash identifiers to compare them without seeing them.** Two CRC32 values of the same text give the same number in two queries, so you can check that two rows concern the same recipient without returning the address. This also works across device types, because the number doesn't depend on the table. Patched FAZ builds reject every function with "Hash" in its name (`cityHash64`, `xxHash64`: "SQL query is forbidden"), so use `CRC32`:
 
 ```sql
 SELECT toUInt64(CRC32(lower(`to`))) * 4294967296 + CRC32(concat('#', lower(`to`))) AS rcpt_hash, count(*) AS n

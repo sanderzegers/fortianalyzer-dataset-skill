@@ -8,10 +8,11 @@ An automated check on two production FAZes compared the columns of every device 
 
 ### Added
 - `cross-device-keys.md`: the confirmed and partial keys between FortiGate, FortiClient, FortiMail, FortiSandbox, FortiNAC, FortiManager, FortiAuthenticator and the UEBA tables, the normalisation each needs, the overlaps that are not keys, and the `fortifirewall` duplicate.
-- `SKILL.md`: a checklist row for questions about two device types; two "Mistakes" rows (`fortifirewall` returns the FortiGate logs again; compare normalised keys, not raw values).
+- `SKILL.md`: a checklist row for questions about two device types; three "Mistakes" rows (forbidden function names and aliases; `fortifirewall` returns the FortiGate logs again; compare normalised keys, not raw values).
 
 ### Fixed
-- `investigating.md`, `faz-sql-reference.md`: `cityHash64` replaced by a CRC32 pair. Two FAZes rejected every function with "Hash" in its name as "SQL query is forbidden".
+- `investigating.md`, `faz-sql-reference.md`: `cityHash64` replaced by a CRC32 pair. Two FAZes, probably after security patches, rejected every function with "Hash" in its name as "SQL query is forbidden".
+- "SQL query is forbidden" on the UEBA tables: the words `endpoints` / `endusers` trigger it anywhere in the query, also as an alias (`cols-adom-tables.md`, `faz-sql-reference.md`, SKILL.md "Mistakes"). In a test session, 5 of 12 failed calls were one `... AS endpoints` query retried.
 - `cols-fv-views.md`: `ffw` is FortiFirewall, not FortiProxy.
 
 ## 0.16.1 — 2026-10-28

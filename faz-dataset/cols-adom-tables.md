@@ -131,7 +131,7 @@ ORDER BY sessions DESC
 | `firstactive` / `lastactive` | First / last activity |
 | `epdevtopo` | Topology information |
 
-FAZ sometimes rejects queries on these tables (and on FortiClient tables) with "SQL query is forbidden", for example scalar subqueries such as `SELECT (SELECT count() FROM $ADOM_ENDPOINT)`. The exact trigger couldn't be pinned down; splitting the query into simple single-table queries worked every time.
+FAZ sometimes rejects queries on these tables (and on FortiClient tables) with "SQL query is forbidden", for example scalar subqueries such as `SELECT (SELECT count() FROM $ADOM_ENDPOINT)`. One trigger found later: on patched FAZ builds the filter rejects the words `endpoints` and `endusers` anywhere in the query, also as an alias (`count(*) AS endpoints` failed even on `$log-malware`, `AS n_ep` passed). Don't use them as aliases. If a query still fails, splitting it into simple single-table queries worked every time.
 
 ---
 

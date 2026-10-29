@@ -17,7 +17,7 @@ Compared with plain `=`, most of these pairs match nothing. Normalise both sides
 | Domain | `lower(if(position(x, '://') > 0, domain(x), splitByChar(':', trim(x))[1]))` | `url` holds a full URL on some devices and a host on others |
 | Hash, UUID, serial | `lower(trim(toString(x)))` | Case differs; FortiGate `fctuid` is a UUID type |
 
-To compare without returning the values, turn the normalised value into a number: `toUInt64(CRC32(v)) * 4294967296 + CRC32(concat('#', v))`. FAZ rejects every function with "Hash" in its name (`cityHash64`, `xxHash64`, "SQL query is forbidden"); `CRC32` is allowed.
+To compare without returning the values, turn the normalised value into a number: `toUInt64(CRC32(v)) * 4294967296 + CRC32(concat('#', v))`. Patched FAZ builds reject every function with "Hash" in its name (`cityHash64`, `xxHash64`, "SQL query is forbidden"); `CRC32` is allowed. `arrayJoin(...)` and `ARRAY JOIN` work.
 
 ## Keys by identifier
 

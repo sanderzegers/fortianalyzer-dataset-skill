@@ -669,7 +669,7 @@ The FAZ SQL dialect (ANTLR4 grammar) supports:
 
 **Other:** JSON attribute access, array constructors, subscript access, column aliases, table aliases
 
-**Not supported:** `WITH TOTALS` (fails with `unimplemented 7`). Tested and working: `WITH` CTEs, scalar subqueries in SELECT, `quantile`/`quantileIf`/`quantileExact`, window functions with `PARTITION BY`, `ARRAY JOIN`, `uniqExact`/`uniqExactIf`, `CRC32`. `cityHash64` worked on the FAZ where this list was tested, but two other FAZes rejected every function with "Hash" in its name (`cityHash64`, `xxHash64`) as "SQL query is forbidden"; use `CRC32` for portable queries
+**Not supported:** `WITH TOTALS` (fails with `unimplemented 7`). Tested and working: `WITH` CTEs, scalar subqueries in SELECT, `quantile`/`quantileIf`/`quantileExact`, window functions with `PARTITION BY`, `ARRAY JOIN`, `uniqExact`/`uniqExactIf`, `CRC32`. `cityHash64` worked when this list was tested, but later (probably after FAZ security patches) two FAZes rejected every function with "Hash" in its name (`cityHash64`, `xxHash64`) and the words `endpoints` / `endusers`, even as aliases, as "SQL query is forbidden". Use `CRC32` and other alias names for portable queries
 
 ---
 

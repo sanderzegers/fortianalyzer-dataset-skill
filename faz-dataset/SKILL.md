@@ -161,6 +161,7 @@ These caused most failed queries in real sessions. Check every query against the
 | Read a date column as a date: `toDate()` and `dtime` come back as Unix epoch numbers | `toString(...)` around them |
 | Name a cause from traffic counts alone: "a policy is missing", "the host was offline", "the server didn't answer" | Find the minute the outcome flipped, then the configuration changes on that device around it: the policies on both sides of the flip, their zones, interfaces and services, and nearby address changes (investigating.md "Order of work"). Name the change that broke or fixed it, or say that none was logged |
 | Query device type `fortifirewall` next to `fortigate`, or add their counts | Use `fortigate` only. On FAZ, `fortifirewall` returned the FortiGate logs again, so every count doubles |
+| `cityHash64()` / `xxHash64()`, or the alias `endpoints` / `endusers` (`count(*) AS endpoints`) | "SQL query is forbidden" on patched FAZ builds, whatever the table. Use `CRC32` and another alias (`n_ep`, `n_eu`). Don't retry the same query with small changes |
 | Compare a key across devices with plain `=` (`suser = to`, `user = euname`, `srcmac = mac`) | Normalise both sides first: split lists, strip `DOMAIN\` and `@domain`, remove MAC separators (cross-device-keys.md) |
 | Describe a window from the period's name ("30 days ending yesterday", "the week starts on Sunday") | Report the window the query covered (the tool's `window`). Whether "last N days" includes today and which day a week starts on differ between FAZes |
 
