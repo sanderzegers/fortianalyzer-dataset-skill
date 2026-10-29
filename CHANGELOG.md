@@ -2,6 +2,18 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.17.0 — 2026-10-29
+
+An automated check on two production FAZes compared the columns of every device type that hold the same kind of value (mail address, user, hash, serial, MAC, host name, domain, UUID): up to 300 distinct values per pair, normalised and turned into CRC32 keys on the FAZ, so only counts left it.
+
+### Added
+- `cross-device-keys.md`: the confirmed and partial keys between FortiGate, FortiClient, FortiMail, FortiSandbox, FortiNAC, FortiManager, FortiAuthenticator and the UEBA tables, the normalisation each needs, the overlaps that are not keys, and the `fortifirewall` duplicate.
+- `SKILL.md`: a checklist row for questions about two device types; two "Mistakes" rows (`fortifirewall` returns the FortiGate logs again; compare normalised keys, not raw values).
+
+### Fixed
+- `investigating.md`, `faz-sql-reference.md`: `cityHash64` replaced by a CRC32 pair. Two FAZes rejected every function with "Hash" in its name as "SQL query is forbidden".
+- `cols-fv-views.md`: `ffw` is FortiFirewall, not FortiProxy.
+
 ## 0.16.1 — 2026-10-28
 
 In two runs of a "DNS stopped working" question, the model found the 17 minutes of DNS traffic denied by policy 0 but reported "no policy allows this VLAN". The real cause and fix was a change at the minute of the flip that added the VLAN's zone to the policy which accepted the traffic afterwards. The model had that policy ID in its results but never looked at its configuration changes.

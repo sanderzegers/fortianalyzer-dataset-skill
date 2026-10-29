@@ -21,7 +21,7 @@ fv_{devtype}_{logtype}_{metric}_{interval}_{sp}
 **Examples:**
 - `fv_fgt_t_src_dst_5min_sp1` — FortiGate traffic, 5-min buckets
 - `fv_fgt_t_src_dst_hour_sp1` — FortiGate traffic, hourly buckets
-- `fv_ffw_e_ipsec_day_sp1` — FortiProxy event, daily buckets
+- `fv_ffw_e_ipsec_day_sp1` — FortiFirewall event, daily buckets (`fpx` is FortiProxy)
 - `fv_sim_X_sifv_hour_sp1` — SOC/integrated, hourly buckets
 
 > Views only exist for device types that have sent logs. Check availability:

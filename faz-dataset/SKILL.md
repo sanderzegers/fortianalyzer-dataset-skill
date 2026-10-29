@@ -23,9 +23,10 @@ Do these steps for every new question, before you write or run any SQL, **also f
    | FortiSandbox | `fortisandbox` | [faz-sql-reference.md](faz-sql-reference.md), [fortisandbox.md](fortisandbox.md) |
    | FortiManager, FortiAnalyzer | `fortimanager`, `fortianalyzer` | [faz-sql-reference.md](faz-sql-reference.md), [fortimanager-fortianalyzer.md](fortimanager-fortianalyzer.md) |
    | FortiADC, FortiAuthenticator | `fortiadc`, `fortiauthenticator` | [faz-sql-reference.md](faz-sql-reference.md), [fortiadc.md](fortiadc.md) or [fortiauthenticator.md](fortiauthenticator.md) |
-   | Endpoints, users, MAC addresses across devices (UEBA) | | [faz-sql-reference.md](faz-sql-reference.md), [cols-adom-tables.md](cols-adom-tables.md) |
+   | Endpoints, users, MAC addresses across devices (UEBA) | | [faz-sql-reference.md](faz-sql-reference.md), [cols-adom-tables.md](cols-adom-tables.md), [cross-device-keys.md](cross-device-keys.md) |
+   | Two device types: a file, recipient, user, host, MAC or FortiClient ID seen on one device and looked up on another | both | Both device rows, plus [cross-device-keys.md](cross-device-keys.md): which columns hold the same value and how to normalise them |
 
-   When you answer from live logs through a query tool, also read [investigating.md](investigating.md). A question about two device types needs both rows.
+   When you answer from live logs through a query tool, also read [investigating.md](investigating.md). A question about two device types needs both rows and cross-device-keys.md.
 3. **Read nothing else up front.** Open other files when the question leads there, not in advance. Grep the `.tsv` log-ID lists, never read them whole.
 4. **After a context compaction**, when the files above are only summarised in your context, read them again before the next query. A compaction summary never carries the skill's rules, so treat every file you read before it as unread.
 5. **If no FortiAnalyzer query tool is available** (no `faz_query` or similar), write the query for the user to run and say so. Don't look for credentials, environment variables or another tool's configuration.
@@ -159,6 +160,8 @@ These caused most failed queries in real sessions. Check every query against the
 | Unquoted `to` / `from` on FortiMail | `` `to` ``, `` `from` `` |
 | Read a date column as a date: `toDate()` and `dtime` come back as Unix epoch numbers | `toString(...)` around them |
 | Name a cause from traffic counts alone: "a policy is missing", "the host was offline", "the server didn't answer" | Find the minute the outcome flipped, then the configuration changes on that device around it: the policies on both sides of the flip, their zones, interfaces and services, and nearby address changes (investigating.md "Order of work"). Name the change that broke or fixed it, or say that none was logged |
+| Query device type `fortifirewall` next to `fortigate`, or add their counts | Use `fortigate` only. On FAZ, `fortifirewall` returned the FortiGate logs again, so every count doubles |
+| Compare a key across devices with plain `=` (`suser = to`, `user = euname`, `srcmac = mac`) | Normalise both sides first: split lists, strip `DOMAIN\` and `@domain`, remove MAC separators (cross-device-keys.md) |
 | Describe a window from the period's name ("30 days ending yesterday", "the week starts on Sunday") | Report the window the query covered (the tool's `window`). Whether "last N days" includes today and which day a week starts on differ between FAZes |
 
 When a query tool returns an error with a `hint:` line, apply the hint before retrying. Don't retry the same query with small changes more than twice: read the relevant file section instead.

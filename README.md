@@ -48,6 +48,7 @@ The skill was checked against two FAZ 7.6 instances. Their FortiGates run **Fort
   - `srczone`/`dstzone`, ZTNA EMS tags, TCP metrics in traffic logs: FortiOS 7.6+.
   - GenAI fields in app-control logs: FortiOS 7.6.4+.
 - **FortiMail, FortiWeb, FortiADC, FortiSandbox, FortiManager, FortiAuthenticator:** columns and types were read from the FAZ schema, values were sampled from production logs, and every example query in the product files was run. The checks found traps a FortiGate-trained query falls into, e.g. `device_id` instead of `devid`, FortiMail's `;`-joined `disposition`, a FortiSandbox `level` that is `alert` even for clean files, and a `timestamp` column in FortiManager/FortiAnalyzer logs that breaks the usual `$flex_timestamp AS timestamp`. FortiAnalyzer's own logs weren't available; its tables were verified by schema only.
+- **Cross-device keys** ([cross-device-keys.md](faz-dataset/cross-device-keys.md)): which columns of different device types hold the same file hash, mail recipient, user, host name, MAC, FortiClient ID or device serial, and how to normalise them before comparing (address lists, `DOMAIN\user`, MAC separators). Found by an automated check on two production FAZes that compared up to 300 values per column pair as CRC32 keys computed on the FAZ, so no log values left it. Also found: the device type `fortifirewall` returns the FortiGate logs a second time.
 - **FAZ UEBA (endpoint/user identification)** ([cols-adom-tables.md](faz-dataset/cols-adom-tables.md)): `epid`/`euid` are FAZ's own identification, derived from the logs per ADOM settings. The same endpoint/user gets the same ID across FortiGate, FortiClient and FortiAuthenticator (78/78, 48/48, 9/9); FortiMail and FortiWeb rows get none. The documented columns of `$ADOM_ENDPOINT`, `$ADOM_ENDUSER` and `$ADOM_EPEU_DEVMAP` were corrected from the real tables. Device log fields stay the source of truth.
 - **Cross-device links**, measured on both FAZes:
   - FortiGate sandbox submissions ↔ FortiSandbox jobs by SHA-256: 100 % for a FortiGate submitting to the FortiSandbox that logs to the same FAZ, 0 % for one submitting elsewhere.
@@ -100,7 +101,7 @@ It also covers the ADOM reference tables, the SOC tables (`$event`, `$incident`)
 
 ## Version
 
-Current version: **0.16.1**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
+Current version: **0.17.0**. The skill is usable but not yet extensively tested in practice, hence 0.x. See [CHANGELOG.md](CHANGELOG.md) for what changed per version.
 
 ## Installation
 

@@ -135,10 +135,11 @@ LIMIT 50
 
 For a coarser view, keep only the first few words: `arrayStringConcat(arraySlice(splitByChar(' ', <templated msg>), 1, 5), ' ')`. Free-text parts such as file names, subjects and folder names still come through. Mask them with an extra `replaceRegexpAll` once you see them.
 
-**Hash identifiers to compare them without seeing them.** `cityHash64(lower(addr))` gives the same number in two queries, so you can check that two rows concern the same recipient without returning the address. This also works across device types, because the hash doesn't depend on the table:
+**Hash identifiers to compare them without seeing them.** Two CRC32 values of the same text give the same number in two queries, so you can check that two rows concern the same recipient without returning the address. This also works across device types, because the number doesn't depend on the table. FAZ rejects every function with "Hash" in its name (`cityHash64`, `xxHash64`: "SQL query is forbidden"), so use `CRC32`:
 
 ```sql
-SELECT cityHash64(lower(`to`)) AS rcpt_hash, count(*) AS n FROM $log-history WHERE $filter AND session_id = '<id>' GROUP BY rcpt_hash
+SELECT toUInt64(CRC32(lower(`to`))) * 4294967296 + CRC32(concat('#', lower(`to`))) AS rcpt_hash, count(*) AS n
+FROM $log-history WHERE $filter AND session_id = '<id>' GROUP BY rcpt_hash
 ```
 
 
@@ -153,8 +154,10 @@ Otherwise, to correlate two devices, run one query per device and carry the keys
 1. Query device A for the keys (hashes, IDs). Filter to the cases you care about, since query tools usually cap the result size.
 2. Paste them into an `IN (...)` list in the query for device B, run with B's device type.
 
-   For larger sets, results are capped at 100 rows by the FAZ API itself (the CLI client of the MCP server too). Pack each side into **one row**, e.g. `SELECT arrayStringConcat(groupArray(concat(toString(h), ':', toString(t))), ',') FROM (...)`, write it to a file with the CLI client, and compare the two files locally. Hash identities with `cityHash64(CAST(col AS String))`: hashing a `LowCardinality` column directly can't be returned ("LowCardinality(UInt64) is not supported").
+   For larger sets, results are capped at 100 rows by the FAZ API itself (the CLI client of the MCP server too). Pack each side into **one row**, e.g. `SELECT arrayStringConcat(groupArray(concat(toString(h), ':', toString(t))), ',') FROM (...)`, write it to a file with the CLI client, and compare the two files locally. Hash identities with the CRC32 pair above on `toString(col)`: a `LowCardinality` column used directly can't be returned ("LowCardinality(UInt64) is not supported").
 3. Where no shared key exists, match on time window plus a hashed identifier, and treat the result as a lead until it is verified.
+
+[cross-device-keys.md](cross-device-keys.md) lists which columns hold the same file hash, recipient, user, host, MAC, FortiClient ID or serial on which device type, and how to normalise them. The table below adds tested procedures for specific links.
 
 | From | To | Key | Notes |
 |---|---|---|---|
@@ -165,7 +168,7 @@ Otherwise, to correlate two devices, run one query per device and carry the keys
 | FortiGate / FortiClient / FortiAuthenticator rows | each other | FAZ UEBA `epid` / `euid` (> 1024) | Same ID for the same endpoint/user across device types (see above); derived by FAZ, so check against device fields |
 | FortiClient `fct-traffic` / `fct-event` (`uid`) | FortiGate `traffic` (`fctuid`) | `toString(fctuid) = toString(uid)` (UUID) | Exact identity. Endpoints found: 45 of 46 (98 %) in one estate, 136 of 427 (32 %) in the other: only endpoints on the network pass these FortiGates. Session level (source IP + port + destination + port, within the session) matched 22 of 30 where the FortiGate saw the source IP |
 | FortiMail inbound (`client_ip`) | FortiGate traffic to FortiMail (port 25) | sending server IP + time (FortiMail logs no source port) | **Untested**: in the estate with FortiMail, inbound mail didn't pass a FortiGate logging to the same FAZ |
-| FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds, on `itime`) + `cityHash64` of recipient ↔ hash of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
+| FortiMail session | FortiSandbox jobs for its archive contents | time window (seconds, on `itime`) + CRC32 key of recipient ↔ key of each `suser` entry | No shared key. Confirm with the file names (`fname`) |
 | FortiMail tables | each other | `session_id` | See fortimail-logmodel.md "Linking records" |
 | FortiWeb attack | FortiWeb traffic | `device_id` + `src` + `src_port` + `http_url`, `dtime` within 2 s | 98.7–100 %; `msg_id` does **not** link them; see fortiweb-logmodel.md |
 | FortiGate VPN login | FortiAuthenticator RADIUS authentication | normalised user name (`DOMAIN\\user`, `user@domain` → `user`) + FortiAuthenticator event within ~2 min before, on `itime` | **Untested**: neither estate examined used FortiAuthenticator for VPN; see fortiauthenticator.md |
