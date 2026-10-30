@@ -31,7 +31,7 @@ These are FAZ-managed lookup tables, not ClickHouse log tables. They are backed 
 
 ## `$ADOM_ENDPOINT` — Endpoint Inventory
 
-Backed by `faz_fabric_endpoints`. Join key: `epid`. **Always filter `epid > 1024`**. Columns identical on two FAZ 7.6 instances.
+Backed by `faz_fabric_endpoints`. Join key: `epid`. **Always filter `epid > 1024`**. Columns identical on two FAZ 7.6 instances. Like all `$ADOM_*` tables it has no `itime`, so **don't use `$filter`** on it ("Missing columns: 'itime'"); filter on `lastseen` instead. Also the place to turn a host name into its IP (investigating.md "Start from a host name").
 
 | Column | Description |
 |---|---|

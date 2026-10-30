@@ -4,11 +4,29 @@ Read this when the user wants a question answered from the logs ("who released q
 
 ## Workflow
 
+0. **If the question names a host instead of an IP**, resolve the name first (see "Start from a host name"), then query the logs by IP.
 1. **Find where the event is logged** before writing the real query. Don't assume from the log type's name (see below). For traffic through a FortiGate ("can't reach", "blocked", "what changed"), start with the traffic log, also for DNS, web filter, antivirus and IPS questions (see "FortiGate: start with the traffic log").
 2. **Profile in aggregate**: counts per `type`/`subtype`, per enum value, per `msg` template. Look at the shape before the detail.
 3. **Correlate** through a documented key (session ID, hash, message ID). Only fall back to time windows when no key exists.
 4. **Verify** every link and every "nothing else" before reporting it (see "Verify before you claim").
 5. **Report** with the evidence level stated: observed in the logs, inferred from correlation, or assumed.
+
+## Start from a host name
+
+"host01 can't reach host02" names hosts, but the log rows hold IPs. Look the names up in FAZ's endpoint table first: it is small, so the query returns at once, while searching names in `$log-traffic` reads every row of the period and hit the FAZ query time limit in a test session.
+
+```sql
+SELECT epid, epname, epip, mac, detecttype, toString(toDateTime(lastseen)) AS seen
+FROM $ADOM_ENDPOINT
+WHERE epid > 1024 AND epname ILIKE '%host01%'
+ORDER BY lastseen DESC
+LIMIT 10
+```
+
+- **No `$filter`**: the `$ADOM_*` tables have no `itime`, so `$filter` fails with "Missing columns: 'itime'". Columns are `epname` and `epip`, not `name` and `ip` (cols-adom-tables.md).
+- **Several rows**: without FortiClient every network interface is its own endpoint, and an old row can hold an IP the host no longer has. Take the rows whose `lastseen` falls in the question's window, and say which IP you used.
+- **Then query by IP** (`ipstr(srcip) = '10.1.2.3'`) and confirm it in one result: `srcname` or the FortiClient `hostname` on those rows should match the name.
+- **Not found**: the endpoint table only has what the ADOM's UEBA identified. Try the DNS log (`qname ILIKE '%host01%'`, resolved addresses in `ipaddr`, cols-dlog.md), or `srcname` in `$log-traffic` over a short window (one hour). Otherwise ask the user for the IP.
 
 ## Data minimisation
 
