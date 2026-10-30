@@ -2,6 +2,18 @@
 
 All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
 
+## 0.17.1 — 2026-10-30
+
+In a "something blocks the traffic between these two servers" session, the question named the servers by host name. The model searched the names in `$log-traffic` (once as `ipstr(srcip) LIKE '%name%'`, which can never match), hit the FAZ query time limit three times, and only looked in the UEBA endpoint table when the user told it to. There, after two failed queries with `$filter` and wrong column names, one lookup per host returned the IPs at once, and the rest of the session worked by IP.
+
+### Added
+- `investigating.md` "Start from a host name", and a workflow step 0: resolve host names in `$ADOM_ENDPOINT` (`epname` → `epip`) before the first log query; no `$filter` on the table; several rows per host; confirm the IP on the log rows; fallbacks (DNS log, `srcname` over a short window, ask the user).
+- `SKILL.md`: a checklist row for questions that name a host instead of an IP; two "Mistakes" rows (host names searched in the logs; `$filter` and log column names on the `$ADOM_*` tables). A third "Mistakes" row for the forbidden function names and aliases (below).
+- `cols-adom-tables.md`: `$ADOM_ENDPOINT` has no `itime`, so no `$filter`.
+
+### Fixed
+- "SQL query is forbidden" on the UEBA tables: the words `endpoints` / `endusers` trigger it anywhere in the query, also as an alias (`cols-adom-tables.md`, `faz-sql-reference.md`, SKILL.md "Mistakes"). In a test session, 5 of 12 failed calls were one `... AS endpoints` query retried. The Hash-function ban is probably caused by FAZ security patches. Meant for 0.17.0, but committed after that release was merged.
+
 ## 0.17.0 — 2026-10-29
 
 An automated check on two production FAZes compared the columns of every device type that hold the same kind of value (mail address, user, hash, serial, MAC, host name, domain, UUID): up to 300 distinct values per pair, normalised and turned into CRC32 keys on the FAZ, so only counts left it.
