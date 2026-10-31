@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to the faz-dataset skill. Versions follow [semantic versioning](https://semver.org/); 0.x means the skill is usable but not yet extensively tested in practice.
+## Unreleased
+
+### Added
+- `faz-sql-reference.md` "Query Constraints": concise guidance on the function and table-source filters, safe CRC32 use, and the limits of the inspected allowlists.
+
+### Changed
+- `SKILL.md`: steer query generation toward documented macros and safe function choices, without loading exhaustive implementation lists into the skill prompt.
 
 ## 0.17.1 — 2026-10-30
 
