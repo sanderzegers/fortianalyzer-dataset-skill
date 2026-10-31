@@ -1244,6 +1244,18 @@ FROM siem.sp1_FGT_tlog
 FROM $log-traffic
 ```
 
+### Query validation and restricted sources
+
+Dataset SQL passes through validation before execution. Stay within the supported query surface:
+
+- Use documented `$log-*`, `$ADOM_*`, `$event` and `$incident` macros for table sources. The validator allows a defined set of table names and prefixes; arbitrary physical tables, `system.tables` and `information_schema` can be rejected. The allowlist is not a promise that every listed table exists or is appropriate to query.
+- Avoid hash-named functions, dictionary lookup functions, external source/table functions (such as `file`, `url`, `s3`, `hdfs`, `remote`, JDBC/ODBC and database connectors), random generators and sleep functions. Use `CRC32` when a stable hash key is needed. The bare word `hash` is not blocked.
+- The SQL filters also reject `version()` and the names `endpoints` / `endusers`, including when used as aliases. Use neutral aliases such as `n_ep`.
+
+Live dataset API probes confirmed that `cityHash64(1)`, `version()` and `endpoints` are rejected, while CRC32 examples work. The standalone guard exposes more denied functions and table rules than were individually exercised through the API, so treat appliance error hints as authoritative rather than assuming every rule has identical end-to-end behavior.
+
+---
+
 ### Mistake 8: Forgetting HAVING for time series zero-filtering
 
 ```sql

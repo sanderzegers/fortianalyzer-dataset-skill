@@ -37,6 +37,18 @@ GUI Dataset SQL
 
 ---
 
+## Query Constraints
+
+The dataset query engine applies function and table-name checks. Keep generated queries within these constraints:
+
+- Use `$log-{type}` and documented FAZ macros for table sources; do not guess physical tables or query `system.tables` / `information_schema`. The engine allows a defined set of table names and prefixes; that set is a validator allowlist, not a catalog of tables available on every unit.
+- Avoid hash-named functions, dictionary lookups, external-source/table functions (`file`, `url`, `remote`, `s3`, HDFS, JDBC/ODBC and database connectors), random generators, and sleep functions. Use `CRC32` when a stable hash key is needed. The bare SQL word `hash` is not itself forbidden.
+- Do not use `version()` or the names `endpoints` / `endusers` in SQL, including as aliases. These are caught by SQL filters; an alias such as `n_ep` is safe.
+
+Live API probes confirmed rejection of `cityHash64(1)`, `version()`, and `endpoints`; CRC32 examples worked. The exact function and table allowlists were inspected in the standalone guard but were not each tested through the API. Treat error hints as authoritative for the appliance and don't infer that every table listed by a validator exists.
+
+---
+
 ## Filter Variables
 
 | Variable | Use |
