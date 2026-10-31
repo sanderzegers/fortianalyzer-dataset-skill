@@ -1,8 +1,8 @@
 # FortiAnalyzer Dataset Query Writing Guide
 
-This guide covers everything needed to write dataset queries for the FortiAnalyzer GUI report engine. All examples are drawn from or consistent with the 998 real dataset queries in the FortiAnalyzer 7.6.6 Dataset reference.
+This guide targets FortiAnalyzer 7.6.8 dataset queries for the GUI report engine. Verification is in progress against a lab appliance reporting v7.6.8 build 3788. Sections not yet reviewed must not be treated as verified merely because this baseline has changed.
 
- 🤖 This guide is fully AI generated.
+> **Review status (2026-10-31):** This is an incremental 7.6.8 revision, not a fully validated reference. Architecture, selected schemas and helpers, join behavior, and SOC aggregate counts have supporting appliance checks. Report-context expansion, caching lifecycle, Fabric/drilldown behavior, and complete example execution remain open. FortiGate traffic/event views were empty during testing. See [verification notes](verification-7.6.8.md) for evidence and limitations.
 
 ---
 
@@ -39,90 +39,66 @@ B. [Materialized View Queries (`fv_*`)](#appendix-b-materialized-view-queries-fv
 
 ## 1. Architecture Overview
 
-Dataset queries are written in a FAZ-extended SQL dialect. They are **not** sent directly to ClickHouse. The full pipeline is:
+Dataset queries use FortiAnalyzer SQL variables and hints. The GUI submits SQL together with the ADOM, device selection, time range, log type, and device type. A successful parser rewrite alone does not establish that a dataset will execute correctly in that context.
 
+### Dataset execution and result polling
+
+The following flow is verified from the Python handlers on the 7.6.8 build 3788 lab appliance. It describes interactive dataset execution; scheduled report generation requires a separate trace.
+
+```mermaid
+sequenceDiagram
+    participant GUI as Browser
+    participant Django as Django dataset handlers
+    participant RPC as Report JSON-RPC API
+    GUI->>Django: Run SQL with device and time selections
+    Django->>RPC: add /report/adom/{adom}/sql-query/run (apiver 3)
+    RPC-->>Django: Request identifier
+    Django-->>GUI: Request identifier
+    loop Until completion
+        GUI->>Django: Fetch results
+        Django->>RPC: get /report/adom/{adom}/sql-query/run/{request_id}
+        RPC-->>Django: Running status or result rows
+        Django-->>GUI: Running status, cells, empty result, or error
+    end
+    Note over Django,RPC: Cancellation uses delete on the request URL
 ```
-Browser
-  └─► Apache httpd (faz-gui-proj)
-        └─► Django backend  (/usr/local/lib/python3.11/proj/)
-              ├── 1. Template expansion  (fazsqltool.py — FazReportSQL.parseFazKeyword)
-              │       $log-*, $filter, ${MACRO}, ###...### hcache
-              ├── 2. SQL dialect rewrite  (sql_rewriter service — port 5000)
-              │       FAZ SQL dialect → valid ClickHouse SQL
-              └── 3. Query execution
-                      ClickHouse (logs) + PostgreSQL (identity/SIEM, via CH proxy tables)
+
+The report data-access layer sends `query`, `device`, `time-range`, `logtype`, and `devtype` to the report API. The fetch endpoint retrieves an existing request; it is not the endpoint that submits the original SQL. Both logview and report expose dataset fetch handlers.
+
+On completion, the GUI handler converts returned row objects into a header row and cell rows. A query still running, an empty result, and an execution error are distinct outcomes. Diagnose them separately.
+
+### SQL parsing and rewriting
+
+The appliance includes `/usr/local/python/sql_rewriter/app.py`, a Flask JSON-RPC service with these methods:
+
+| Method | Implementation | Purpose |
+|---|---|---|
+| `sqlrewriter.rewrite` | `FazSQLConvertor` | Convert SQL syntax; accepts `skip_fabric` |
+| `sqlrewriter.fabricrewrite` | `FazFabricSQLConvertor` | Fabric SQL conversion |
+| `sqlrewriter.logfields` | `FazSQLField` | Extract referenced fields with device/log-type context |
+
+These classes use the bundled ANTLR parser. The service returns conversion status and rewritten SQL; conversion is separate from query execution and result caching.
+
+**Do not confuse report-template inspection with SQL variable expansion.** In this build, `FazReportSQL.parseFazKeyword(html_lines)` extracts names from `<fazchart>` and `<fazmacro>` HTML tags. `getReportSQL()` then maps charts to dataset SQL and substitutes its compiled macro dictionary. This does not establish that Django calls this class to expand `$log`, `$filter`, or hcache blocks at runtime.
+
+The inspected GUI code delegates execution to the report JSON-RPC API. The precise downstream ownership and ordering of variable expansion, cache lookup, and rewriting must be established in that backend; they cannot be inferred from the presence of the rewriter service.
+
+### Scope and storage
+
+Use logical sources such as `$log-traffic` and include `$filter` when reading logs. Keep ADOM, devices, and time selection in the execution context. Hardcoded physical table names bypass the portable dataset abstraction.
+
+The local ClickHouse metadata confirms a `MergeTree` log table (`tlog_sp1`), a FortiGate traffic view (`sp1_FGT_tlog`), and `PostgreSQL` engine tables including `faz_fabric_endpoints`, `faz_fabric_endusers`, and `faz_fabric_epeudevmap`. This verifies their definitions, not successful execution of every proposed join. Cache metadata does not establish the physical location or lifetime of cached result rows.
+
+```mermaid
+flowchart LR
+    L[ClickHouse MergeTree log storage] --> V[Device-specific log views]
+    V --> Q[Dataset query execution]
+    P[PostgreSQL identity and event data] --> B[ClickHouse PostgreSQL engine tables]
+    B --> Q
+    H[PostgreSQL hcache metadata] -. tracks result references .-> R[Report caching subsystem]
 ```
 
-### Component breakdown
-
-**Apache httpd (`faz-gui-proj`)**
-
-The web server. Runs as `apache` user with a custom Fortinet module (`fmg_request.so`) loaded alongside standard Apache modules. Two backends are configured:
-
-- `/jsonrpc` — handled directly by the compiled `fmg_request.so` C module. This is the FortiManager-style JSON-RPC API used for device management operations.
-- `/p/...` — all GUI application requests (log queries, reports, SIEM, etc.) are routed via `mod_wsgi` to the Django backend process.
-- `/flatui/...` and `/cgi-bin/module/flatui*` — proxied via FastCGI (Unix socket `/tmp/fmgd.domain`) to `fmgd`, the lower-level FortiManager daemon handling device config and provisioning.
-
-**Django backend (`faz-gui-proj` wsgi process)**
-
-The main FAZ application, written in Python/Django, running at `/usr/local/lib/python3.11/proj/`. It is the "FAZ Query Engine" — the component that understands report context (which ADOM, which devices, which time range) and orchestrates query execution. Key Django apps:
-
-- `logview/` — log search and dataset queries (the `logsearch/run/`, `dataset/sql/fetch/` endpoints)
-- `report/` — report scheduling and rendering
-- `alert/` — SIEM alert management
-- `incident/` — SIEM incident management
-- `siem/` — SIEM parser and event collector config
-- `fortisoc/`, `fortiview/`, `fabric/` — SOC, FortiView, and Fabric features
-
-The Django backend performs **step 1 (template expansion)** and then calls the sql_rewriter service for **step 2**.
-
-**`fazsqltool.py` (`/usr/local/python/sql_rewriter/fazsqltool.py`, 144 KB)**
-
-A Python library (not directly executable) that does two distinct jobs:
-
-1. **Template variable expansion** — the `FazReportSQL` class and its `parseFazKeyword()` method expand all FAZ-specific variables before the SQL is sent anywhere:
-   - `$log-traffic` → the actual ClickHouse view name scoped to the current ADOM/device (e.g. `sp1_FGT_tlog`)
-   - `$filter` → a concrete ClickHouse WHERE clause with the report time range and device filter
-   - `${MACRO}` → expands named macros like `${REPORT_SESSION}` → `(bitAnd(logflag,1)>0)`
-   - `$ADOM_ENDPOINT` → `faz_fabric_endpoints`, `$ADOM_ENDUSER` → `faz_fabric_endusers`, etc.
-   - `###(subquery)###` → triggers the hcache mechanism (see §5)
-
-2. **SQL dialect conversion** — the `FazSQLConvertor` and `FazFabricSQLConvertor` classes convert the FAZ SQL dialect (after variable expansion) into valid ClickHouse SQL. This handles FAZ-specific syntax that ClickHouse does not understand natively, such as FAZ aggregate functions, the `/*fabricStart*/`/`/*fabricEnd*/` hint, and `/*SkipSTART*/`/`/*SkipEND*/` hints.
-
-The parser is built on a custom **ANTLR4 grammar** (`parser/FazsqlLexer.py` 207 KB, `parser/FazsqlParser.py` 327 KB) that defines the full FAZ SQL dialect.
-
-**sql_rewriter Flask service (`/usr/local/python/sql_rewriter/app.py`, port 5000)**
-
-A lightweight Flask JSON-RPC service wrapping `fazsqltool.py`. It runs as a gunicorn process (master + worker) on `localhost:5000` and is only reachable from within the FAZ itself. The Django backend calls it during query processing.
-
-Exposed methods:
-- `sqlrewriter.rewrite` — converts a FAZ SQL string (after template expansion) to ClickHouse SQL. The `skip_fabric` parameter optionally neutralizes `/*fabricStart*/`/`/*fabricEnd*/` hints.
-- `sqlrewriter.fabricrewrite` — variant for fabric-wide queries using `FazFabricSQLConvertor`.
-- `sqlrewriter.logfields` — extracts the list of log fields referenced in a query, used by the GUI to determine column display.
-
-**ClickHouse (port 9000 native / 8123 HTTP, localhost only)**
-
-The query execution engine for all log data. The Django backend sends the final rewritten SQL here. The `siem` database contains:
-- Raw log tables (`tlog_sp1`, `elog_sp1`, etc.) — MergeTree, append-only, columnar
-- Log views (`sp1_FGT_tlog`, etc.) — filters raw tables by `_devlogtype` for each device type
-- Materialized views (`fv_*`) — pre-aggregated AggregatingMergeTree tables
-- PostgreSQL proxy tables — ClickHouse table definitions using the `PostgreSQL()` engine that forward reads to PostgreSQL at query time (this is how log JOINs to identity data work)
-
-**PostgreSQL (port 5432, localhost only)**
-
-Stores everything that is not raw log data: identity, SIEM events, device registry, policy, risk scores, and query cache. See the Data Storage section below for the full breakdown.
-
-### Step-by-step: what happens when a dataset query runs
-
-1. The GUI sends the dataset SQL (with all FAZ variables intact) to `POST /p/logview/dataset/sql/fetch/` on the Django backend.
-2. Django looks up the report context: current ADOM OID, selected devices, time range start/end.
-3. Django calls `FazReportSQL.parseFazKeyword()` (in `fazsqltool.py`) to expand all template variables. After this step the SQL contains only ClickHouse-compatible table names and filter expressions, except it is still in FAZ SQL dialect.
-4. For any `###(subquery)###` blocks, Django computes a hash of the subquery text. It checks the PostgreSQL hcache tables (`{DEV}-hcache_query/ref/res`) for a cached result. On a cache miss it executes the subquery in ClickHouse and stores the result in the hcache tables. The `###...###` wrapper is replaced with a reference to the cached result table.
-5. Django calls `sqlrewriter.rewrite` on the sql_rewriter service (port 5000), passing the template-expanded SQL. The service uses `FazSQLConvertor` (ANTLR4 parser + rewriter) to produce valid ClickHouse SQL.
-6. Django sends the final ClickHouse SQL to ClickHouse for execution. Any JOINs to `$ADOM_ENDPOINT` etc. go through the PostgreSQL proxy tables transparently.
-7. ClickHouse returns results. Django formats and returns them to the GUI.
-
-The key implication: **write queries using FAZ variables and macros, never hardcode table names or time ranges.** The engine handles device/ADOM scoping, time filtering, and database routing automatically.
+The physical log table uses typed storage slots such as `uint64_1` and `ip_1`; the device-specific view exposes semantic names such as `sentbyte` and `srcip`. Write datasets against logical log variables, not storage slots. In the inspected traffic view, `itime` and `dtime` are `DateTime`, IP fields are nullable `IPv6`, and byte counters are nullable `UInt64`. PostgreSQL template column types do not necessarily describe ClickHouse view types.
 
 ### Data Storage: ClickHouse vs PostgreSQL
 
@@ -212,7 +188,7 @@ Both work. The difference:
 - `$log` — resolves to whatever `log_category` is set to. More portable if you want to reuse the query with different categories, but makes the query's intent less obvious.
 - `$log-traffic` — explicit. Always resolves to traffic regardless of `log_category`. Preferred for clarity.
 
-In practice, all built-in datasets use the explicit `$log-{category}` form.
+Use the form appropriate to the dataset context. An explicit source improves readability; it does not replace device, ADOM, and time scoping.
 
 ---
 
@@ -239,7 +215,7 @@ Use `$log` or `$log-{category}` as the FROM table. The engine resolves these to 
 
 **Rules:**
 - For a dataset with `log_category: "traffic"`, use `$log` or `$log-traffic` — both resolve to the same thing.
-- Cross-category queries require separate log sources joined via subqueries or temp tables.
+- Combine categories using explicit sources and an appropriate JOIN or UNION ALL. Align output columns and types for a union; choose join keys that preserve the intended row count.
 - Never hardcode `sp1_FGT_tlog` or similar view names — these are internal and not ADOM-scoped.
 
 **Further log types:** `$log-ssl`, `$log-ssh`, `$log-waf`, `$log-voip`, `$log-gtp`, `$log-protocol`, `$log-security`, `$log-siem` and `$log-netscan` also work as `$log-` variables (tested on FAZ 7.6). Never hardcode the internal view names. `$log-netscan` holds logs of the FortiOS 5.x network vulnerability scanner, which current FortiOS no longer has. For full column details for each log source, see §16.
@@ -322,7 +298,7 @@ WHERE $filter
 GROUP BY timestamp, srcip
 ```
 
-`$flex_timestamp` is a column expression — it does not take arguments. It returns an integer epoch representing the bucket start.
+`$flex_timestamp` is a bucketing expression. The 7.6.8 parser accepts both the bare form and `$flex_timestamp(dtime)` with an explicit column; see the explicit-column example below. Parser acceptance does not establish the runtime bucket width, time zone, or result type: verify those through the dataset execution context.
 
 ### `$flex_timescale(col)`
 Formats a bucketed timestamp column for display. Use in the outermost SELECT when presenting time-series to the GUI.
@@ -348,7 +324,7 @@ ORDER BY time
 ### `$flex_datetime(col)` / `from_itime(col)` / `from_dtime(col)`
 Convert integer epoch timestamps to human-readable datetime strings.
 
-- `from_itime(itime)` — for `itime`-style Unix timestamps (Int32 seconds)
+- `from_itime(itime)` — formats the ingestion-time field; the inspected 7.6.8 ClickHouse traffic view exposes `itime` as `DateTime`, not `Int32`
 - `from_dtime(dtime)` — for `dtime`-style timestamps (used in event logs)
 - `$flex_datetime(timestamp)` — adapts to report period format
 
@@ -428,21 +404,30 @@ ORDER BY timestamp
 
 ## 6. The HCache Mechanism (`###...###`)
 
-The most important performance pattern in FAZ queries. HCache executes the inner subquery separately, caches the result by a hash of the query text, then the outer query reads from the cached result.
+HCache is FortiAnalyzer's report aggregation cache mechanism. The `###...###` markers identify an inner query for cache processing; the outer query consumes and can re-aggregate its output. Do not infer cache identity, lifetime, or physical result storage from the marker alone.
 
 ### How it works under the hood
 
-When the FAZ query engine encounters `###(subquery)###`, it:
+On the 7.6.8 lab appliance, PostgreSQL's `hcache` schema contains three related metadata tables per scope. For `sp1`, catalog inspection shows:
 
-1. Extracts the inner subquery text and computes a SHA hash of it (after template expansion, so `$filter` is already resolved to the actual time range).
-2. Looks up that hash in the PostgreSQL hcache tables (`{DEV}-hcache_query` and `{DEV}-hcache_res`).
-3. **Cache hit:** reads the previously stored result set directly from PostgreSQL — the expensive ClickHouse log scan is skipped entirely.
-4. **Cache miss:** executes the inner subquery against ClickHouse, stores the result rows in `{DEV}-hcache_res` in PostgreSQL, records the hash in `{DEV}-hcache_query`.
-5. Either way, the outer query runs against the (now-cached) result as if it were an inline subquery.
+| Table | Observed metadata |
+|---|---|
+| `sp1-hcache_query` | Query/base tags, normalized SQL, normalized aggregate SQL, creation time |
+| `sp1-hcache_ref` | Query hash, source table ID/version, result table ID, allowed and log time ranges, access/update times, row count, result size, runtime |
+| `sp1-hcache_res` | Result table ID/hash, result row count, reference-related count, flags |
 
-**Cache lifetime:** the cache is scoped to a report run session. Multiple datasets within the same report that share the same inner query text (same hash) all benefit from the single cached result. The cache does not persist across separate report runs.
+`hcache_res` is a result **metadata** table, not a table holding arbitrary dataset output rows. The hash columns are `bigint`; their existence does not establish a SHA algorithm. The running appliance also has separate `sqlreportd` and `sqlrptcached` processes.
 
-**What this means in practice:** the first dataset in a report that triggers a given inner query pays the full ClickHouse scan cost. Every subsequent dataset referencing the same inner query (or named base tag) gets the result from PostgreSQL for near-zero cost.
+```mermaid
+flowchart LR
+    Q[Query metadata: normalized SQL and tags] --> R[Cache reference metadata]
+    S[Source table version and time coverage] --> R
+    R --> M[Result metadata: table ID and row count]
+    M -. identifies .-> T[Physical cached result: location requires verification]
+    T --> O[Outer query aggregation and filtering]
+```
+
+The schema records source versions and time coverage as well as query identity. Do not assume that a matching SQL string or tag alone guarantees reuse, that a scan runs exactly once, or that reuse has negligible cost. Cache lifetime and the scheduled-report execution path remain to be verified on this build. The inspected `sp1-hcache_ref` table was empty, so this inspection establishes the schema rather than runtime cache behavior.
 
 ### When to use hcache
 
@@ -494,11 +479,11 @@ Any report that shows multiple charts from the same log source (e.g. "top users"
 
 **4. Time series queries**
 
-Always use hcache for time-series. The `$flex_timestamp` bucketing goes in the inner GROUP BY, `$flex_timescale()` wrapping goes in the outer SELECT. This is the standard two-level aggregation pattern.
+The following hcache pattern supports two-level time-series aggregation. The `$flex_timestamp` bucketing goes in the inner GROUP BY, `$flex_timescale()` wrapping goes in the outer SELECT. This is the standard two-level aggregation pattern.
 
 **5. You want sorted cache population for top-N**
 
-Adding `/*SkipSTART*/ORDER BY col DESC/*SkipEND*/` inside the hcache tells the engine to store the cache in sorted order, so the outer query can efficiently take the top-N without a full sort.
+The hint commonly wraps an inner ORDER BY. Its exact skip/trimming behavior remains unverified on this build; retain an outer ORDER BY for final top-N output.
 
 ### When NOT to use hcache
 
@@ -538,9 +523,9 @@ The alias `t` after `###` is required.
 
 ### Named base cache (`###base(...)base###`)
 
-When multiple datasets in a report share the same expensive base query, wrap it in `###base(/*tag:label*/...)base###`. All datasets in the same report run that reference the same tag share one cached result — the ClickHouse scan runs exactly once regardless of how many datasets reference it.
+When multiple datasets in a report share the same expensive base query, wrap it in `###base(/*tag:label*/...)base###`. Keep the base SQL and required dimensions consistent wherever it is reused. A shared tag alone does not prove that the backend will perform only one scan.
 
-The `/*tag:label*/` string is the cache key. It must be unique across your report. The convention from the built-in datasets is `rpt_base_{logtype}_{description}`.
+The `/*tag:label*/` string labels the base query. Use the same label for the same intended base definition; do not reuse it for unrelated SQL. Cache metadata also records normalized SQL, source versions, and time coverage, so the label should not be described as the complete cache key. The convention from the built-in datasets is `rpt_base_{logtype}_{description}`.
 
 **The most important predefined base cache — traffic bandwidth and sessions:**
 
@@ -586,7 +571,7 @@ GROUP BY hodex
 HAVING sum(traffic_out+traffic_in) > 0
 ORDER BY hodex
 
--- Dataset 2: top users by bandwidth (same report, same base — no second ClickHouse scan)
+-- Dataset 2: top users by bandwidth, reusing the same base definition
 SELECT user_src, sum(bandwidth) AS bandwidth
 FROM ###(
     SELECT user_src, sum(bandwidth) AS bandwidth
@@ -619,7 +604,7 @@ ORDER BY bandwidth DESC
 
 ## 7. ADOM Reference Tables
 
-These are FAZ-managed lookup tables scoped to the current ADOM. They are **not** ClickHouse tables — the FAZ engine resolves them before hitting ClickHouse.
+These are logical names for FAZ-managed reference data. The 7.6.8 appliance has ClickHouse `PostgreSQL` engine tables for sources such as `faz_fabric_endpoints` and `faz_fabric_endusers`: underlying data resides in PostgreSQL but is exposed through ClickHouse table definitions. ADOM and Fabric scoping depend on variable expansion and query context; a physical proxy table name alone does not establish the intended scope.
 
 | Variable | Contains |
 |---|---|
@@ -636,6 +621,8 @@ These are FAZ-managed lookup tables scoped to the current ADOM. They are **not**
 ### Joining endpoint data to log data
 
 The typical pattern for enriching log rows with endpoint/user information:
+
+Before using this pattern, establish that each reference side contains at most one matching row per ID in the selected scope. The installed Fabric endpoint and user tables also carry `fazuid` and `adomoid`; joining globally on `epid` or `euid` alone can duplicate or misattribute log rows. The variable-expansion scoping of this example still requires runtime verification.
 
 ```sql
 SELECT
@@ -728,7 +715,7 @@ These are **SIEM-layer tables**, distinct from `$log-event` (device logs). They 
 | `firstlogtime` / `lastlogtime` | Int32 | First/last log timestamps |
 | `logcount` | Int64 | Log count |
 | `assignto` | Nullable(String) | Assigned analyst |
-| `ackby` / `acktime` | String/Int64 | Acknowledged by/time |
+| `ackby` / `acktime` | Nullable(String)/Int64 | Acknowledged by/time |
 | `indicator` | Nullable(String) | IOC indicator |
 
 > **Severity decode:** `CASE severity WHEN 0 THEN 'Critical' WHEN 1 THEN 'High' WHEN 2 THEN 'Medium' WHEN 3 THEN 'Low' END`
@@ -751,7 +738,7 @@ These are **SIEM-layer tables**, distinct from `$log-event` (device logs). They 
 | `lastuser` | Nullable(String) | Last modifying user |
 | `assigned_to` | Nullable(String) | Assigned analyst |
 | `remedy_action` | Nullable(String) | Remediation action |
-| `executor` / `approver` | Nullable(String) | Executor/approver |
+| `remedy_executor` / `remedy_approver` | Nullable(String) | Executor/approver |
 | `remedy_time` | Nullable(Int32) | Remediation time |
 | `refinfo` | Nullable(String) | Reference info |
 
@@ -779,18 +766,21 @@ SELECT incid_to_str(incid) AS incnum,
 FROM $incident
 WHERE $cust_time_filter(createtime)
   AND status NOT IN ('closed','cancelled')
-ORDER BY severity DESC
+ORDER BY CASE lower(severity) WHEN 'critical' THEN 0 WHEN 'high' THEN 1
+         WHEN 'medium' THEN 2 WHEN 'low' THEN 3 ELSE 4 END, createtime DESC
 
--- Incident count trend (using pre-aggregated history)
+-- Peak open-incident snapshot in each display bucket (single scoped history source)
 SELECT $flex_timescale(agg_time) AS hodex,
-       max(num_sta_draft) + max(num_sta_analysis) + max(num_sta_response) AS open
+       max(num_sta_draft + num_sta_analysis + num_sta_response) AS peak_open
 FROM $incident_history
 WHERE $cust_time_filter(agg_time)
 GROUP BY hodex
 ORDER BY hodex
 ```
 
-> **`incid_to_str(incid)`:** Built-in function to convert numeric incid to a human-readable incident number string (e.g. `"INC-00123"`).
+> **`incid_to_str(incid)`:** The installed definition is `concat('IN', leftPad(toString(incid), 8, '0'))`; for example, 123 becomes `IN00000123`.
+
+The history example takes the maximum of each row's combined open-state count. Summing separate maxima could combine peaks from different snapshots. This is a peak-snapshot metric, not newly created incidents or a sum across multiple ADOMs.
 
 ---
 
@@ -805,7 +795,7 @@ ipstr(`dstip`)   -- → "10.0.0.1"
 ```
 
 ### `nullifna(col)`
-Returns NULL if the column value is `"N/A"`, `"n/a"`, or the literal string `"null"`. Essential for string columns that use these sentinel values instead of SQL NULL.
+Maps exactly `N/A`, `n/a`, `(none)`, and the empty string to SQL NULL. The literal string `null` is retained. Whitespace and other capitalization are not normalized by this helper.
 
 ```sql
 nullifna(`user`)         -- NULL if user is "N/A", otherwise the value
@@ -820,7 +810,7 @@ coalesce(nullifna(`user`), nullifna(`unauthuser`), ipstr(`srcip`)) AS user_src
 ```
 
 ### `app_group_name(app)`
-Maps application names to their application group. Use when grouping by application category at a higher level.
+Normalizes application-name strings using punctuation. The installed helper retains strings containing a second underscore; otherwise, when both a dot and an underscore occur, it keeps the prefix before the underscore. Other inputs are retained. This is not an application-category lookup; use `appcat` when category grouping is intended.
 
 ```sql
 app_group_name(app) AS app_group
@@ -840,14 +830,14 @@ Converts a numeric device type code to its string name.
 Converts a numeric virus ID to its string name.
 
 ### `logid_to_int(logid)`
-Converts a logid string to integer for numeric comparison.
+For strings longer than six characters, converts the rightmost six characters to UInt64. An empty string maps to 0; shorter nonempty strings are converted directly. It is not a general safe numeric parser for malformed text.
 
 ```sql
 WHERE logid_to_int(logid) = 26001   -- specific log ID filter
 ```
 
 ### `from_itime(col)` / `from_dtime(col)`
-Converts Unix epoch integer to a readable datetime string.
+Formats the input through the installed timestamp helpers. `from_itime` uses `toDateTime(t)`; `from_dtime` additionally applies UTC. Both format as `%Y-%m-%d %H:%i:%s`. The traffic view already exposes these columns as DateTime.
 
 ```sql
 from_itime(itime) AS event_time
@@ -858,7 +848,7 @@ from_dtime(dtime) AS config_time
 Display formatting helpers. Use at the outermost SELECT level only.
 
 ### `regexp_replace(col, pattern, replacement)`
-Standard regex replacement. FAZ uses PostgreSQL regex syntax in some contexts.
+`regexp_replace` was not registered in this appliance's ClickHouse function catalog, and the SQL rewriter left it unchanged. Do not rely on this spelling in a ClickHouse-backed dataset without verifying an additional backend translation step. The example below is not verified as executable.
 
 ```sql
 regexp_replace(msg, '[^ ]*$', '') AS msg_trim
@@ -871,17 +861,17 @@ Bitwise operations, required for `logflag` checks. See §10.
 For extracting fields from JSON-formatted string columns.
 
 ### `incid_to_str(incid)`
-Converts a numeric incident ID to a display string (e.g. `"INC-00042"`). Use in the outermost SELECT when presenting incident IDs.
+Converts a numeric incident ID to a display string (e.g. `"IN00000042"`). Use in the outermost SELECT when presenting incident IDs.
 
 ### `string_agg(col, delimiter)`
-Aggregate function that concatenates distinct string values. Useful for building comma-separated lists.
+Concatenates values using the delimiter. Duplicates are removed only with `DISTINCT`. The 7.6.8 rewriter converts the plain form to `arrayStringConcat(groupArray(...), delimiter)` and the DISTINCT form to `arrayStringConcat(groupArrayDistinct(...), delimiter)`. This does not guarantee a stable order of concatenated values.
 
 ```sql
 string_agg(distinct virus, ',') AS virus_list
 ```
 
-### `array_join(array_col)` / `arrayJoin(array_col)`
-Unnests an array column into individual rows. Used with `threats`, `ipaddr`, `apps`, etc.
+### `arrayJoin(array_col)`
+Expands an array into rows. Used with `threats`, `ipaddr`, `apps`, etc. Expansion changes row counts and can duplicate other columns, so perform session and byte aggregation at the intended grain. The separate spelling `array_join()` was left unchanged by the rewriter; it has not been verified as an executable alias.
 
 ```sql
 SELECT qname, ipstr(arrayJoin(ipaddr)) AS resolved_ip
@@ -889,7 +879,7 @@ FROM $log-dns WHERE $filter AND length(ipaddr) > 0
 ```
 
 ### `split_part(col, delimiter, n)`
-Splits a string by delimiter and returns the nth part (1-indexed). Useful for FCT `os` column.
+The installed helper uses `splitByChar(delimiter, coalesce(col, ''))[n]`: use a single-character delimiter and a positive 1-based index for the patterns here. NULL input is replaced by an empty string. Useful for the FCT `os` column.
 
 ```sql
 split_part(os, ',', 1) AS os_family   -- "Windows 10" from "Windows 10,x64,10.0.19041"
@@ -919,14 +909,14 @@ timestampDiff('nanosecond', reqtime, respfinishtime) AS latency_ns
 ```
 
 ### `severity_s2i(col)`
-Converts a severity string to a sortable integer (FortiClient vulnerability severity). Use for `ORDER BY severity_level DESC`.
+The installed mapping is case-sensitive: `low` → 1, `info` → 2, `medium` → 3, `high` → 4, `critical` → 5; an unrecognized string returns 0. Note that this implementation orders `info` above `low`. Confirm that this is the ordering your report intends before sorting on it.
 
 ```sql
 severity_s2i(vulnseverity) AS severity_level
 ```
 
 ### `fct_webcat(threat)`
-Returns the web category name from a FortiClient threat field.
+Returns the second colon-delimited component when it is nonempty; otherwise returns the original input. This is string extraction, not a category-ID lookup.
 
 ```sql
 fct_webcat(threat) AS category
@@ -948,8 +938,8 @@ link_status - lagInFrame(link_status) OVER (
 
 The `logflag` column exists on traffic log rows and controls which rows count as "real" sessions for reporting. Always apply the correct logflag filter in traffic queries.
 
-| Bit | Value | Meaning | Use when |
-|---|---|---|---|
+| Bit | Value | Macro flag | Meaning | Use when |
+|---|---|---|---|---|
 | 0 | 1 | `REPORT_SESSION` | Session counted in reports | Almost always |
 | 1 | 2 | `BLOCKED_ACTION` | Action was blocked | Blocked-only queries |
 | 2 | 4 | `CLOUD_APP` | Cloud app session | Cloud app queries |
@@ -966,8 +956,8 @@ WHERE $filter AND (bitAnd(logflag, 1) > 0)
 -- Include long-lived sessions (e.g. bandwidth queries — sessions that span report boundaries)
 WHERE $filter AND (bitAnd(logflag, bitOr(1,32)) > 0)
 
--- Blocked sessions only
-WHERE $filter AND (bitAnd(logflag, 2) > 0)
+-- Reportable blocked sessions: both report-session and blocked-action bits
+WHERE $filter AND (bitAnd(logflag, 3) = 3)
 
 -- Botnet sessions
 WHERE $filter AND (bitAnd(logflag, 16) > 0)
@@ -976,7 +966,7 @@ WHERE $filter AND (bitAnd(logflag, 16) > 0)
 WHERE $filter AND (bitAnd(logflag, 1) > 0) AND (bitAnd(logflag, 8) = 0)
 ```
 
-**Use `bitOr(1,32)` for bandwidth/bytes queries** — long-lived sessions (e.g. file downloads spanning hours) contribute bytes but logflag=32 instead of 1.
+**Use `bitOr(1,32)` for bandwidth/bytes queries** to include rows carrying either flag. Flags can coexist: test bits rather than equality with 1 or 32. Count reportable sessions with bit 1 separately from summing bytes across the selected rows. The installed `REPORT_BLOCK_SESSION` macro requires both bits 1 and 2, whereas `BLOCKED_ACTION` tests only bit 2.
 
 ---
 
@@ -1083,7 +1073,7 @@ ORDER BY totalnum DESC
 
 ---
 
-## 10. Multi-Statement Queries with Temp Tables
+## 12. Multi-Statement Queries with Temp Tables
 
 For complex queries requiring multiple passes, FAZ supports multi-statement queries using `CREATE TEMPORARY TABLE`.
 
@@ -1114,14 +1104,17 @@ FROM ###(
 GROUP BY devintf, mac;
 
 -- Final query joining temp tables
-SELECT t1.devintf, t1.mac,
-       CASE WHEN t2.mac IS NULL THEN 'New' ELSE 'Existing' END AS status
-FROM rpt_tmptbl_1 t1
-LEFT JOIN rpt_tmptbl_2 t2 ON t1.devintf=t2.devintf AND t1.mac=t2.mac;
+SELECT current_rows.devintf, current_rows.mac,
+       CASE WHEN history.matched IS NULL THEN 'New' ELSE 'Existing' END AS status
+FROM rpt_tmptbl_2 current_rows
+LEFT JOIN (SELECT devintf, mac, toNullable(1) AS matched FROM rpt_tmptbl_1) history
+  ON current_rows.devintf=history.devintf AND current_rows.mac=history.mac;
 ```
 
+This comparison requires a historical window that ends before the current window; if the windows overlap, current entries can match themselves. The example is not runtime-validated on 7.6.8. The explicit nullable marker preserves an unmatched NULL even when ClickHouse uses default values for unmatched non-nullable columns. This behavior was verified with a synthetic LEFT JOIN on the review connection; the complete multi-statement dataset still needs report-engine testing.
+
 **Rules:**
-- Always `DROP TABLE IF EXISTS` each temp table before creating it
+- Use report-local temporary table names and confirm multi-statement support in the execution path
 - Name temp tables `rpt_tmptbl_1`, `rpt_tmptbl_2`, etc.
 - Each statement is separated by `;`
 - The final SELECT (no trailing `;`) is the dataset output
@@ -1129,15 +1122,15 @@ LEFT JOIN rpt_tmptbl_2 t2 ON t1.devintf=t2.devintf AND t1.mac=t2.mac;
 
 ---
 
-## 11. The `SkipSTART`/`SkipEND` Hint
+## 13. The `SkipSTART`/`SkipEND` Hint
 
 ```sql
 /*SkipSTART*/ORDER BY col DESC/*SkipEND*/
 ```
 
-This hint tells the query engine to **include** the ORDER BY when executing the hcache subquery (so the cache is ordered for top-N retrieval), but **skip** it when the same query text is used in other contexts that don't need ordering.
+These markers identify SQL that may be omitted in cache processing. The exact conditions must be verified in the report backend; the presence of the hint does not guarantee physical result ordering.
 
-This appears in 217 of 998 queries. Always use it inside `###(...)###` when you want the hcache to be populated in sorted order:
+This marker occurs around inner ORDER BY clauses. Exact 7.6.8 cache trimming and skip behavior still require runtime verification. Keep an explicit outer ORDER BY for the final output:
 
 ```sql
 FROM ###(
@@ -1149,11 +1142,11 @@ FROM ###(
 )### t
 ```
 
-Without it, the ORDER BY inside hcache would conflict with outer query optimization. Without any ORDER BY in the hcache, the cache is unordered (fine for most aggregations, but wasteful for top-N).
+An inner ORDER BY does not guarantee final output order. Cache row limits and trimming can also affect totals; verify the generated cache query and compare results at the same scope before treating a top-N result as complete.
 
 ---
 
-## 12. Common Mistakes and How to Avoid Them
+## 14. Common Mistakes and How to Avoid Them
 
 ### Mistake 1: Missing `$filter`
 Every raw log query MUST have `$filter`. Without it the query scans all time and all devices.
@@ -1298,7 +1291,7 @@ WHERE $filter-drilldown
 
 ---
 
-## 13. Full Examples by Log Category
+## 15. Full Examples by Log Category
 
 ### Traffic — Top Users by Bandwidth
 
@@ -1389,19 +1382,21 @@ GROUP BY app_group, appcat
 ORDER BY bandwidth DESC
 ```
 
-### Attack — Top Attacks with Block Rate
+### Attack — Top Attacks by Recorded Action
+
+This example explicitly classifies `dropped` and `reset` as blocking actions. Review the source device's action vocabulary before extending that list; an unknown action must not automatically be counted as blocked. The percentage describes this classification of log rows, not independently confirmed prevention.
 
 ```sql
 SELECT
     attack,
     sum(totalnum) AS totalnum,
     sum(blocked) AS blocked,
-    cast(100.0 * sum(blocked) / sum(totalnum) AS decimal(10,2)) AS block_pct
+    cast(100.0 * sum(blocked) / nullif(sum(totalnum), 0) AS decimal(10,2)) AS classified_block_pct
 FROM ###(
     SELECT
         attack,
         count(*) AS totalnum,
-        sum(CASE WHEN action NOT IN ('detected','pass_session') THEN 1 ELSE 0 END) AS blocked
+        sum(CASE WHEN action IN ('dropped','reset') THEN 1 ELSE 0 END) AS blocked
     FROM $log-attack
     WHERE $filter AND subtype = 'ips' AND nullifna(attack) IS NOT NULL
     GROUP BY attack
@@ -1425,12 +1420,12 @@ WHERE $filter AND cfgtid > 0
 ORDER BY event_time DESC
 ```
 
-### Virus — Top Viruses by Victim Count
+### Virus — Top Viruses by Distinct Source Count
 
 ```sql
 SELECT
     virus,
-    count(DISTINCT ipstr(`srcip`)) AS victims,
+    count(DISTINCT ipstr(`srcip`)) AS distinct_sources,
     count(*) AS detections,
     sum(CASE WHEN action = 'blocked' THEN 1 ELSE 0 END) AS blocked
 FROM $log-virus
@@ -1468,7 +1463,7 @@ ORDER BY total_num DESC
 
 ---
 
-## 14. Column Reference by Log Source
+## 16. Column Reference by Log Source
 
 This section documents the key columns available in each log source. Columns marked **bold** are most commonly used in queries.
 
@@ -1522,7 +1517,7 @@ These exist on every `$log-*` source:
 | `profiletype` | Nullable(String) | Profile type |
 | `sessionid` | Nullable(UInt32) | Session ID |
 | `fctuid` | Nullable(UUID) | FortiClient UUID |
-| `eventtime` | Nullable(UInt64) | Event timestamp in microseconds |
+| `eventtime` | Nullable(UInt64) | Device-provided event timestamp; verify units for the source log version |
 | `agent` | LowCardinality(String) | HTTP user agent |
 | `direction` | LowCardinality(String) | Traffic direction (`incoming`, `outgoing`) |
 | `hostname` | LowCardinality(String) | Destination hostname |
@@ -1588,7 +1583,7 @@ The richest log type. Represents completed or sampled firewall sessions.
 | Column | Type | Description |
 |---|---|---|
 | **`utmaction`** | LowCardinality(String) | UTM action: `allow`, `block`, or empty (no UTM involved) |
-| **`utmevent`** | LowCardinality(String) | Always NULL in FortiGate traffic logs, because FortiOS doesn't send it. Use the `count*` columns |
+| **`utmevent`** | LowCardinality(Nullable(String)) | Nullable UTM event label; inspect data rather than assuming it is always NULL |
 | `utmsubtype` | Nullable(String) | UTM sub-event type |
 | `utmref` | Nullable(String) | UTM reference (links to UTM log) |
 | **`attack`** | LowCardinality(String) | IPS attack name (summary on traffic row) |
@@ -2128,17 +2123,17 @@ FortiClient events have a fundamentally different schema from FortiGate logs —
 | Column | Type | Description |
 |---|---|---|
 | `subtype` | LowCardinality(String) | `av`, `webfilter`, `app-ctrl`, `vpn`, `endpoint`, `vulnerability`, `ems` |
-| **`hostname`** | LowCardinality(String) | Client machine hostname |
+| **`hostname`** | LowCardinality(Nullable(String)) | Client machine hostname |
 | `deviceip` | Nullable(IPv6) | Client device IP |
 | `devicemac` | Nullable(String) | Client device MAC |
-| `user` | LowCardinality(String) | Logged-in user |
-| **`os`** | LowCardinality(String) | OS string, comma-separated: `"Windows 10,x64,10.0.19041"` — use `split_part(os,',',1)` |
+| `user` | LowCardinality(Nullable(String)) | Logged-in user |
+| **`os`** | LowCardinality(Nullable(String)) | OS string, comma-separated: `"Windows 10,x64,10.0.19041"` — use `split_part(os,',',1)` |
 | `fctver` | Nullable(String) | FortiClient version |
 | `emsserial` | LowCardinality(String) | EMS serial number |
 | `fgtserial` | LowCardinality(String) | Connected FortiGate serial |
 | `uid` | Nullable(UUID) | FortiClient instance UUID |
 | `fctsn` | Nullable(String) | FortiClient serial number |
-| **`action`** | LowCardinality(String) | `blocked`, `allowed`, `detected`, `quarantine`, `removed` |
+| **`action`** | LowCardinality(Nullable(String)) | `blocked`, `allowed`, `detected`, `quarantine`, `removed` |
 | **`virus`** | LowCardinality(String) | Detected virus/malware name |
 | `checksum` / `ref` / `sigid` | — | Signature info |
 | **`app`** | LowCardinality(String) | Application name |
@@ -2157,7 +2152,7 @@ FortiClient events have a fundamentally different schema from FortiGate logs —
 | `remotegw` | Nullable(IPv6) | Remote VPN gateway IP |
 | `cat` | LowCardinality(String) | Web category |
 | `catdesc` | LowCardinality(String) | Web category description |
-| `hostname` | LowCardinality(String) | Web destination hostname |
+| `hostname` | LowCardinality(Nullable(String)) | Web destination hostname |
 | `url` | Nullable(String) | URL |
 | `epmgmtst` | LowCardinality(String) | Endpoint management status |
 | `eponlinest` | LowCardinality(String) | Endpoint online status |
@@ -2170,7 +2165,7 @@ FortiClient events have a fundamentally different schema from FortiGate logs —
 
 ---
 
-## 15. Key Enum Values
+## 17. Key Enum Values
 
 Common string column values to use in WHERE clauses.
 
@@ -2187,7 +2182,7 @@ Common string column values to use in WHERE clauses.
 `allow`, `block`, or empty
 
 ### `utmevent` (traffic UTM event type)
-Always NULL in FortiGate traffic logs. Use `countweb>0`, `countips>0` and the other `count*` columns
+The traffic view exposes this as a nullable string. Its schema does not establish that every row is NULL. The installed report macro library tests values such as `webfilter` and `ips`; inspect the relevant logs before choosing between this field and summary counters such as `countweb` or `countips`.
 
 ### `apprisk`
 `critical`, `high`, `medium`, `low`, `elevated`
@@ -2212,7 +2207,7 @@ Always NULL in FortiGate traffic logs. Use `countweb>0`, `countips>0` and the ot
 
 ---
 
-## 16. Column Gotchas and Type Notes
+## 18. Column Gotchas and Type Notes
 
 ### IPv6 columns (`Nullable(IPv6)`)
 All IP address columns (`srcip`, `dstip`, `botnetip`, etc.) are stored as `IPv6` internally. IPv4 addresses are stored in IPv4-mapped format (`::ffff:192.168.1.1`). **Always use `ipstr(col)`** to get a clean display string. Raw comparison also works: `srcip = toIPv6('192.168.1.1')`.
@@ -2221,6 +2216,8 @@ All IP address columns (`srcip`, `dstip`, `botnetip`, etc.) are stored as `IPv6`
 Many string columns are `LowCardinality(String)`. These have implicit dictionary encoding. You can filter them with `= 'value'` or `IN (...)` normally. They support `IS NULL` but NOT `IS NOT DISTINCT FROM`.
 
 ### `N/A` sentinel values
+
+The installed 7.6.8 `nullifna()` definition maps exactly `N/A`, `n/a`, `(none)`, and the empty string to NULL. It does not trim whitespace or normalize arbitrary capitalization.
 String columns like `user`, `unauthuser`, `app` often contain the literal string `"N/A"` or `"n/a"` instead of SQL NULL. **Always use `nullifna(col)`** before checking `IS NOT NULL` or using the value in display.
 
 ### `sentbyte` vs `sentdelta`
@@ -2229,9 +2226,11 @@ String columns like `user`, `unauthuser`, `app` often contain the literal string
 - Use: `coalesce(sentdelta, sentbyte, 0)` to get the right value in all cases
 
 ### `itime` vs `dtime` vs `eventtime`
+
+The installed helpers distinguish formatting zones: `from_itime(t)` formats `toDateTime(t)`, while `from_dtime(t)` formats `toTimeZone(toDateTime(t), 'UTC')`. Do not assume these helpers display the same wall-clock time.
 - `itime` — when FAZ ingested the log (DateTime)
 - `dtime` — when the event occurred on the device (DateTime)
-- `eventtime` — UInt64 microseconds (for sub-second precision)
+- `eventtime` — nullable UInt64 in the inspected traffic and event views; the SQL type alone does not establish its unit. Verify the source log version before converting it.
 - `$filter` filters on `itime`. Use `from_itime(itime)` or `from_dtime(dtime)` for display.
 
 ### Array columns (traffic log)
@@ -2318,7 +2317,7 @@ Missing funcs:    ebtr_agg_flat()  ebtr_value()  — NOT installed, avoid these
 
 ---
 
-## 17. `logid` Reference
+## 19. `logid` Reference
 
 Common `logid` values used to filter specific event types. `logid` is a 10-digit string such as `0100032001`: two digits log type (`01` event, `02` antivirus, `15` DNS), two digits subtype, then the message ID. `logid_to_int(logid)` returns the message ID (`32001`), so `logid = '32001'` matches nothing; prefer the full string. This is a **selection**, not a complete list: the meanings follow the FortiOS 7.6.4 Log Message Reference, with notes from real logs added, and the last column says whether the logid occurred in real logs on two FAZ 7.6 instances. For every documented logid (FortiOS 7.2.13–8.0.1), grep [fortigate-logids.tsv](faz-dataset/fortigate-logids.tsv); for what your FAZ logs, group `$log-event` by `logid, logdesc`. The full map by topic is in [fortigate-logmodel.md](faz-dataset/fortigate-logmodel.md).
 
@@ -2379,14 +2378,15 @@ SELECT devintf, mac FROM ###(
 )### t GROUP BY devintf, mac;
 
 SELECT t2.devintf, t2.mac,
-       CASE WHEN t1.mac IS NULL THEN 'New' ELSE 'Existing' END AS status
+       CASE WHEN t1.matched IS NULL THEN 'New' ELSE 'Existing' END AS status
 FROM rpt_tmptbl_2 t2
-LEFT JOIN rpt_tmptbl_1 t1 ON t2.devintf=t1.devintf AND t2.mac=t1.mac
+LEFT JOIN (SELECT devintf, mac, toNullable(1) AS matched FROM rpt_tmptbl_1) t1
+  ON t2.devintf=t1.devintf AND t2.mac=t1.mac
 ```
 
 ---
 
-## 18. The `/*fabricStart*/` / `/*fabricEnd*/` Hint
+## 20. The `fabricStart`/`fabricEnd` Hint
 
 This hint wraps a per-ADOM subquery in SOC/SIEM datasets that need to aggregate across the Fabric (all ADOMs). The FAZ engine replaces the wrapped subquery with a UNION ALL across all ADOM-scoped versions.
 
@@ -2409,6 +2409,36 @@ ORDER BY status
 - The subquery inside the hints accesses ADOM-scoped tables (`$incident`, `$event`, etc.)
 - The outer query re-aggregates the UNION ALL result
 - Do not use `/*fabricStart*/`/`/*fabricEnd*/` in log-based datasets (`$log-*`) — those are already ADOM-scoped via `$filter`
+
+---
+
+## 21. Troubleshooting
+
+Troubleshoot each stage separately. Parser acceptance, successful execution, and correct report totals are different checks.
+
+```mermaid
+flowchart TD
+    A[Dataset problem] --> B{Syntax accepted?}
+    B -- No --> C[Check SQL syntax and FAZ markers]
+    B -- Yes --> D{Execution completed?}
+    D -- No --> E[Inspect request status and execution error]
+    D -- Yes --> F{Expected rows and totals?}
+    F -- No --> G[Check source, scope, time, nulls, joins and aggregation]
+    F -- Yes --> H[Check chart formatting and ordering]
+```
+
+| Symptom | Check |
+|---|---|
+| Parser accepts SQL but execution fails | Variable expansion, selected device/log type, actual column types, and helper availability; the rewriter can return SQL unchanged |
+| Fetch returns running | Poll the existing request; fetch retrieves a submitted query rather than starting a new one |
+| Successful query returns no rows | Confirm selected devices and time range contain matching logs, then narrow predicates incrementally |
+| Session counts exceed expectations | Distinguish log-row counts from session counts; apply the report-session bit for session metrics |
+| Blocked-session count differs from blocked-row count | Require both session and blocked-action bits for reportable blocked sessions |
+| Bytes increase after a join | Check whether the reference side has multiple matches per log row; include the relevant scope keys and aggregate at the intended grain |
+| Time labels differ | Check field choice, time-zone handling, and the distinction between from_itime and from_dtime |
+| Cached totals differ from direct totals | Compare identical scope and periods; inspect cache coverage and any truncation before assuming cache reuse is correct |
+
+Start with a small time range and a simple aggregation on the intended logical source. Add computed fields, joins, and cache wrappers one at a time. Record the dataset context together with each result so comparisons are reproducible. A zero-row result does not validate an expression against representative data.
 
 ---
 
@@ -2462,57 +2492,57 @@ WHERE $filter-drilldown
 
 ## Appendix B: Materialized View Queries (`fv_*`)
 
-> Users cannot create custom dashboard views. This appendix documents the `fv_*` materialized view pattern for reference when reading existing built-in dashboard datasets.
+This appendix describes internal dashboard storage inspected on the 7.6.8 lab appliance. These physical names are useful for understanding built-in queries; they are not a portable replacement for dataset source variables.
 
-Some built-in dashboard datasets read from pre-aggregated materialized views instead of raw logs. These views are maintained automatically by ClickHouse as data is ingested and provide much faster queries for time-series charts.
+### Materialized view versus destination table
 
-**View naming:** `fv_{devtype}_{logtype}_{metric}_{interval}_{sp}`
-- `devtype`: `fgt`, `ffw`, `fct`, `fpx`, `fwb`, `fml`, `fdd`, `sim`
-- `logtype`: `t` (traffic), `e` (event), `X` (SOC/extended)
-- `interval`: `5min`, `hour`, `day`
-- `sp`: service partition (e.g. `sp1`)
-- Examples: `fv_fgt_t_src_dst_5min_sp1`, `fv_ffw_e_ipsec_day_sp1`, `fv_sim_X_sifv_hour_sp1`
+The inspected `fv_fgt_t_src_dst_5min_mv_sp1` is a materialized view that writes into `fv_fgt_t_src_dst_5min_sp1`, an `AggregatingMergeTree` table. The destination contains dimensions and aggregate **states**. The event dashboard follows the same pattern.
 
-**Important:** Views only exist for device types that have sent logs. Always check before relying on them:
-```sql
-SELECT name FROM system.tables WHERE database='siem' AND name LIKE 'fv_%';
+```mermaid
+flowchart LR
+    L[Log rows] --> M[Materialized view: group dimensions and build states]
+    M --> T[AggregatingMergeTree destination]
+    T --> Q[Query: merge states at requested grain]
+    Q --> R[Numeric totals for display]
 ```
 
-**Common columns** (traffic views like `fv_fgt_t_src_dst_*`):
-
-| Column | Description |
+| Inspected traffic column | Type / interpretation |
 |---|---|
-| `timescale` | Pre-bucketed timestamp integer — use `$fv_line_timescale(timescale)` for display |
-| `traffic_in` | Bytes received (aggregated) |
-| `traffic_out` | Bytes sent (aggregated) |
-| `sessions` | Session count |
-| `agg_time` | Alternate name for `timescale` in some views |
+| `timescale` | DateTime bucket timestamp |
+| `_adomoid`, `dvid` | Scope dimensions |
+| `traffic_in_state` | AggregateFunction(sum, Int64) |
+| `traffic_out_state` | AggregateFunction(sum, Int64) |
+| `bandwidth_state` | AggregateFunction(sum, Int64) |
 
-Use `$fv_line_timescale(timescale)` (not `$flex_timescale`) when reading from these views — the column is already pre-bucketed by the view, not raw `itime`.
+Do not use `sum(traffic_in)` against this physical table: that is not its stored column name. Merge sum states with `sumMerge`; likewise, a max state requires its corresponding merge operation. Multiple state rows can contribute to the same output group.
+
+### Single-resolution example
+
+The following is an internal ClickHouse query template, not a directly pasteable GUI dataset. Replace the parameter values with the intended scope through a client that supports ClickHouse query parameters. Column names and types were verified from metadata. A grouped sumMerge query against this table executed successfully but returned no rows; parameterized scope and numerical correctness on populated traffic data remain unverified.
 
 ```sql
-SELECT
-    $fv_line_timescale(timescale) AS time,
-    sum(traffic_in) AS traffic_in,
-    sum(traffic_out) AS traffic_out,
-    sum(sessions) AS sessions
-FROM (
-    (SELECT timescale, sum(traffic_in) AS traffic_in,
-            sum(traffic_out) AS traffic_out,
-            sum(sessions) AS sessions
-     FROM fv_fgt_t_src_dst_5min_sp1
-     WHERE $filter
-     GROUP BY timescale)
-    UNION ALL
-    (SELECT timescale, sum(traffic_in) AS traffic_in,
-            sum(traffic_out) AS traffic_out,
-            sum(sessions) AS sessions
-     FROM fv_fgt_t_src_dst_hour_sp1
-     WHERE $filter
-     GROUP BY timescale)
-) combined
-GROUP BY time
-ORDER BY time
+SELECT timescale,
+       sumMerge(traffic_in_state) AS traffic_in,
+       sumMerge(traffic_out_state) AS traffic_out
+FROM siem.fv_fgt_t_src_dst_5min_sp1
+WHERE _adomoid = {adom:UInt64}
+  AND dvid IN {devices:Array(Int32)}
+  AND timescale >= {start:DateTime}
+  AND timescale < {end:DateTime}
+GROUP BY timescale
+ORDER BY timescale
 ```
 
-Note the UNION ALL pattern combining `5min` and `hour` views — dashboards typically union multiple granularities so the right resolution is used depending on the selected time range.
+Choose time boundaries aligned with stored buckets when exact whole-bucket totals are required. Filtering a bucket timestamp cannot recover the part of that bucket outside the requested period. Compare against raw-log totals using equivalent time and device scope.
+
+### Combining resolutions
+
+Do not UNION ALL five-minute and hourly aggregates covering the same logs and then sum them. That counts the overlap twice. Select one resolution, or define disjoint time coverage for each branch and align the cutover to bucket boundaries. Automatic resolution selection is a backend behavior that must be traced; UNION ALL itself does not choose the correct resolution.
+
+Check actual definitions before using any `fv_*` object. Its existence does not prove that it has data, and a naming convention does not establish the columns, aggregate types, or scope. The observed names include `5min`, `hour`, and `day` intervals, with `_mv_` identifying materialized-view definitions in these inspected examples.
+
+### Populated-data cross-check
+
+On the lab data, `count()` over `sp1_SIM_Xlog` returned 515. Independently, `countMerge(logcnt)` over each of `fv_sim_X_sifv_5min_sp1`, `fv_sim_X_sifv_hour_sp1`, and `fv_sim_X_sifv_day_sp1` also returned 515. These observations validate count-state merging on that sample and demonstrate why summing overlapping resolutions would duplicate events. They do not establish correctness for every metric or filtered time range.
+
+This SOC table uses `itime` for its bucket and `logcnt` of type `AggregateFunction(count)`. Its `sessions` column is also an aggregate state despite having no `_state` suffix. Inspect types rather than inferring scalar/state behavior from names.
