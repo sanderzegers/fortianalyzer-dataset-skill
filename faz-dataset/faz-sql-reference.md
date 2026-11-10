@@ -449,7 +449,7 @@ Rules: always DROP before CREATE, name as `rpt_tmptbl_N`, separate with `;`, fin
 
 ## Common Query Patterns
 
-Patterns A–F and the time series example above were all tested on FAZ 7.6 (FortiOS 7.2–7.6 logs), Pattern G on a production FAZ. The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
+Patterns A–F and the time series example above were all tested on FAZ 7.6 (FortiOS 7.2–7.6 logs), Patterns G and H on a production FAZ. The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
 
 ### Pattern A: Simple Top-N
 ```sql
@@ -551,6 +551,48 @@ ORDER BY total_n DESC
 LIMIT 20
 ```
 The same shape fits other "top member per group" questions (top user per policy, top destination per source); only the event-log query above was tested. Ranks: `ORDER BY` and the row number in the result. Share of the whole period: `count(*) * 100 / (SELECT count(*) FROM $log-event WHERE $filter)` (tested; the shares of all rows add up to 100 %, give or take rounding).
+
+### Pattern H: DNS name of a destination IP
+
+FAZ has no reverse DNS. The only names it knows are those in logged DNS answers (`$log-dns`, only where a DNS filter profile logs). The answer's addresses are in `ipaddr` (Array(IPv6)).
+
+One IP ("which name did 203.0.113.10 come from?"):
+```sql
+SELECT from_itime(max(itime)) AS last_seen, devname, ipstr(srcip) AS client, qname, qtype, count(*) AS lookups
+FROM $log-dns
+WHERE $filter AND qtype IN ('A', 'AAAA') AND has(ipaddr, toIPv6('203.0.113.10'))
+GROUP BY devname, srcip, qname, qtype
+ORDER BY last_seen DESC
+LIMIT 20
+```
+
+Many IPs ("top blocked connections, with the hostname of each destination") in one query: the traffic rows joined with the DNS answers that contained the destination IP. Tested on a production FAZ (FortiGate traffic and DNS logs, 24 hours and 7 days).
+```sql
+SELECT t.devname AS fortigate, ipstr(t.srcip) AS src, ipstr(t.dstip) AS dst, t.blocks AS blocks,
+       nullIf(argMaxIf(d.qname, d.n, has(d.clients, t.srcip)), '') AS client_dns_name,
+       nullIf(argMax(d.qname, d.n), '') AS dns_name,
+       if(sum(d.n) = 0, NULL, round(max(d.n) * 100 / sum(d.n), 1)) AS dns_name_pct,
+       countIf(d.n > 0) AS dns_names_n
+FROM (SELECT devname, srcip, dstip, count(*) AS blocks FROM $log-traffic
+      WHERE $filter AND action IN ('deny', 'drop')
+      GROUP BY devname, srcip, dstip ORDER BY blocks DESC LIMIT 20) t
+LEFT JOIN (
+  SELECT ip, lower(qname) AS qname, count(*) AS n, groupUniqArray(srcip) AS clients
+  FROM $log-dns ARRAY JOIN ipaddr AS ip
+  WHERE $filter AND qtype IN ('A', 'AAAA')
+    AND hasAny(ipaddr, (SELECT groupArray(dstip) FROM (SELECT dstip FROM $log-traffic
+          WHERE $filter AND action IN ('deny', 'drop')
+          GROUP BY devname, srcip, dstip ORDER BY count(*) DESC LIMIT 20)))
+  GROUP BY ip, qname) d ON d.ip = t.dstip
+GROUP BY t.devname, t.srcip, t.dstip, t.blocks
+ORDER BY blocks DESC
+```
+- **Only `qtype IN ('A', 'AAAA')`.** In `HTTPS` answers `ipaddr` holds other addresses: in the test, an internal server's IP appeared under dozens of public names through HTTPS answers, while its A records gave its one real name.
+- **Filter `ipaddr` with `hasAny` before `ARRAY JOIN`.** Unfiltered, 7 days of DNS log hit the FAZ's query time limit (90 s); with the filter the same question took about 45 s.
+- **`client_dns_name`**: the name this source itself looked up for the IP. Most precise; empty when the client resolves through another path (an internal DNS server, DNS over HTTPS).
+- **`dns_name` with `dns_name_pct` and `dns_names_n`**: the most frequent name for the IP across all clients. A low share with many names is a shared address (CDN, cloud): report it as "one of N names", not as the host. In the test, a CDN address had about 170 names and the top one 57 %.
+- **No name** (all three empty): the IP was in no logged DNS answer in the period. It was reached by IP, its DNS didn't pass a FortiGate that logs DNS, the lookup was before the period, or the IP is a DNS server itself. Say "no DNS name logged"; never guess a name. Check first whether the FortiGate logs DNS at all: `SELECT devname, count(*) AS n FROM $log-dns WHERE $filter GROUP BY devname`.
+- The same shape works for other traffic questions (top destinations, one host's sessions): change the traffic subquery, and use the same one inside `hasAny`.
 
 ---
 
