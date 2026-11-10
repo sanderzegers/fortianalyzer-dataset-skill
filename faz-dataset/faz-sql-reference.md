@@ -449,7 +449,7 @@ Rules: always DROP before CREATE, name as `rpt_tmptbl_N`, separate with `;`, fin
 
 ## Common Query Patterns
 
-Patterns A–F and the time series example above were all tested on FAZ 7.6 (FortiOS 7.2–7.6 logs). The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
+Patterns A–F and the time series example above were all tested on FAZ 7.6 (FortiOS 7.2–7.6 logs), Pattern G on a production FAZ. The outer query can only use columns the hcache returns, so re-aggregate the hcache's aliases (`sum(bandwidth)`), not the raw log columns. Raw columns there fail with "Missing columns".
 
 ### Pattern A: Simple Top-N
 ```sql
@@ -536,6 +536,21 @@ WHERE $filter AND subtype='ips'
 GROUP BY attacker, victim
 ORDER BY hits DESC
 ```
+
+### Pattern G: Top value per group, with its share
+
+"Top 20 event IDs, the FortiGate that logs each most, and its share" in one query: count per pair in a subquery, then per group take the total, the top member with `argMax` and its percentage. Every column of the answer comes from one result, so the numbers fit together. Tested on a production FAZ (FortiGate event logs, 24 hours).
+```sql
+SELECT logid, any(desc_n) AS logdesc_n, sum(n) AS total_n,
+       argMax(devname, n) AS top_dev, max(n) AS top_dev_n,
+       round(max(n) * 100 / sum(n), 1) AS top_pct, count() AS devices_n
+FROM (SELECT logid, any(logdesc) AS desc_n, devname, count(*) AS n
+      FROM $log-event WHERE $filter GROUP BY logid, devname)
+GROUP BY logid
+ORDER BY total_n DESC
+LIMIT 20
+```
+The same shape fits other "top member per group" questions (top user per policy, top destination per source); only the event-log query above was tested. Ranks: `ORDER BY` and the row number in the result. Share of the whole period: `count(*) * 100 / (SELECT count(*) FROM $log-event WHERE $filter)` (tested; the shares of all rows add up to 100 %, give or take rounding).
 
 ---
 
