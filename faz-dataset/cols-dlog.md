@@ -26,11 +26,13 @@ All common columns apply (see cols-common.md).
 
 ## Key Patterns
 
+For the name of a destination IP from the traffic log (one IP, or many in one query), see faz-sql-reference.md Pattern H.
+
 ```sql
--- Resolved IPs from DNS queries
+-- Resolved IPs from DNS queries (A and AAAA answers only: HTTPS answers carry other addresses)
 SELECT qname, ipstr(arrayJoin(ipaddr)) AS resolved_ip
 FROM $log-dns
-WHERE $filter AND length(ipaddr) > 0
+WHERE $filter AND qtype IN ('A', 'AAAA') AND length(ipaddr) > 0
 
 -- Botnet domain queries
 SELECT botnet, count(DISTINCT nullifna(`qname`)) AS qname_cnt,

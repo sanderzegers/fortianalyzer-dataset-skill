@@ -4,12 +4,17 @@
 
 In a "top repeating event IDs, with the top FortiGate and its share" session, the model ran one query for the totals and several for the devices, then wrote the table itself: a device count above the total, one share ("~41 %") copied into 12 rows, and a share of 20 % where the device logged 100 %. A follow-up that re-ran only some queries mixed counts from different windows. One query with `argMax` returned the whole table consistently.
 
+In a follow-up asking for the DNS hostname of each blocked destination IP, the model wrote a table of hostnames without running a query. Tests on a production FAZ showed how to get them: only A/AAAA answers (HTTPS answers put other addresses in `ipaddr`), `hasAny` before `ARRAY JOIN` to stay within the FAZ's query time limit, and a share per name because shared addresses have many names.
+
 ### Added
+- `faz-sql-reference.md` Pattern H: DNS name of a destination IP, for one IP and for many in one query (traffic joined with DNS answers), with when a name is ambiguous or missing.
+- `SKILL.md`: a "Mistakes" row: never name an IP from memory; one query following Pattern H.
 - `faz-sql-reference.md` Pattern G: top member per group with its count and share in one query (`argMax`, `max(n) / sum(n)`).
 - `SKILL.md`: a "Mistakes" row: one query returns every column of the answer; never combine results or compute shares, ranks or totals by hand.
 - `faz-sql-reference.md` "Query Constraints": concise guidance on the function and table-source filters, safe CRC32 use, and the limits of the inspected allowlists.
 
 ### Changed
+- `cols-dlog.md`: the "Resolved IPs" example filters `qtype IN ('A', 'AAAA')` and points to Pattern H.
 - `SKILL.md`: steer query generation toward documented macros and safe function choices, without loading exhaustive implementation lists into the skill prompt.
 
 ## 0.17.1 — 2026-10-30
