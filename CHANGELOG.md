@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+In a "top repeating event IDs, with the top FortiGate and its share" session, the model ran one query for the totals and several for the devices, then wrote the table itself: a device count above the total, one share ("~41 %") copied into 12 rows, and a share of 20 % where the device logged 100 %. A follow-up that re-ran only some queries mixed counts from different windows. One query with `argMax` returned the whole table consistently.
+
 ### Added
+- `faz-sql-reference.md` Pattern G: top member per group with its count and share in one query (`argMax`, `max(n) / sum(n)`).
+- `SKILL.md`: a "Mistakes" row: one query returns every column of the answer; never combine results or compute shares, ranks or totals by hand.
 - `faz-sql-reference.md` "Query Constraints": concise guidance on the function and table-source filters, safe CRC32 use, and the limits of the inspected allowlists.
 
 ### Changed
