@@ -2,11 +2,14 @@
 
 ## Unreleased
 
+In a "sessions per hour by action, stacked" chart, the model grouped the logs in an hcache without counting them and used `count(*)` in the outer query: every bar showed 2 sessions (two 30-minute buckets per hour), 200 in total, where the 12 hours had about 79 million. Measured with the on-prem model on the same question, alternating blocks of 5 runs: the error occurred in 5 of 20 runs with the previous text and in 0 of 20 with this rule.
+
 In a "top repeating event IDs, with the top FortiGate and its share" session, the model ran one query for the totals and several for the devices, then wrote the table itself: a device count above the total, one share ("~41 %") copied into 12 rows, and a share of 20 % where the device logged 100 %. A follow-up that re-ran only some queries mixed counts from different windows. One query with `argMax` returned the whole table consistently.
 
 In a follow-up asking for the DNS hostname of each blocked destination IP, the model wrote a table of hostnames without running a query. Tests on a production FAZ showed how to get them: only A/AAAA answers (HTTPS answers put other addresses in `ipaddr`), `hasAny` before `ARRAY JOIN` to stay within the FAZ's query time limit, and a share per name because shared addresses have many names.
 
 ### Added
+- `faz-sql-reference.md` Common Mistake #19 and a line in the hcache section: count logs inside an hcache (`count(*) AS n`) and add them up outside (`sum(n)`, `sumIf(n, ...)`); counting outside (`count(*)`, `countIf`, `sum(CASE ... THEN 1 ...)`) counts the hcache's rows. `SKILL.md`: a "Mistakes" row for it.
 - `faz-sql-reference.md` Pattern H: DNS name of a destination IP, for one IP and for many in one query (traffic joined with DNS answers), with when a name is ambiguous or missing.
 - `SKILL.md`: a "Mistakes" row: never name an IP from memory; one query following Pattern H.
 - `faz-sql-reference.md` Pattern G: top member per group with its count and share in one query (`argMax`, `max(n) / sum(n)`).
