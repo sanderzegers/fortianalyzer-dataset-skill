@@ -44,6 +44,7 @@ The dataset query engine applies function and table-name checks. Keep generated 
 - Use `$log-{type}` and documented FAZ macros for table sources; do not guess physical tables or query `system.tables` / `information_schema`. The engine allows a defined set of table names and prefixes; that set is a validator allowlist, not a catalog of tables available on every unit.
 - Avoid hash-named functions, dictionary lookups, external-source/table functions (`file`, `url`, `remote`, `s3`, HDFS, JDBC/ODBC and database connectors), random generators, and sleep functions. Use `CRC32` when a stable hash key is needed. The bare SQL word `hash` is not itself forbidden.
 - Do not use `version()` or the names `endpoints` / `endusers` in SQL, including as aliases. These are caught by SQL filters; an alias such as `n_ep` is safe.
+- **"SQL query is forbidden" is also FAZ's answer to every syntax error**, so ClickHouse never sees the query and gives no detail. Before looking for a blocked word, check the clause order (`FROM ... ARRAY JOIN ... JOIN ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... LIMIT`), that every parenthesis and every `###( ... )###` pair is closed, and that no keyword is glued to the word before it. Write keywords inside strings (`LIKE '%delete%'`, `'drop'`) are not refused.
 
 Live API probes confirmed rejection of `cityHash64(1)`, `version()`, and `endpoints`; CRC32 examples worked. The exact function and table allowlists were inspected in the standalone guard but were not each tested through the API. Treat error hints as authoritative for the appliance and don't infer that every table listed by a validator exists.
 
@@ -566,6 +567,7 @@ GROUP BY devname, srcip, qname, qtype
 ORDER BY last_seen DESC
 LIMIT 20
 ```
+This form has no address column: without `ARRAY JOIN` there is no `ip`, only the array `ipaddr`. For an address per row, use the query below (`FROM $log-dns ARRAY JOIN ipaddr AS ip`, before `WHERE`); to format it, give the element another name (`ARRAY JOIN ipaddr AS a` … `ipstr(a) AS ip`), since `ipstr(ip) AS ip` fails with "Duplicate alias".
 
 Many IPs ("top blocked connections, with the hostname of each destination") in one query: the traffic rows joined with the DNS answers that contained the destination IP. Tested on a production FAZ (FortiGate traffic and DNS logs, 24 hours and 7 days).
 ```sql
@@ -589,7 +591,7 @@ GROUP BY t.devname, t.srcip, t.dstip, t.blocks
 ORDER BY blocks DESC
 ```
 - **Only `qtype IN ('A', 'AAAA')`.** In `HTTPS` answers `ipaddr` holds other addresses: in the test, an internal server's IP appeared under dozens of public names through HTTPS answers, while its A records gave its one real name.
-- **Filter `ipaddr` with `hasAny` before `ARRAY JOIN`.** Unfiltered, 7 days of DNS log hit the FAZ's query time limit (90 s); with the filter the same question took about 45 s.
+- **Keep `ARRAY JOIN` right after `FROM $log-dns`, before `WHERE`, and keep the `hasAny` condition in `WHERE`.** That is ClickHouse's clause order; the `WHERE` condition on `ipaddr` still filters the rows before they are expanded. Written after `WHERE`, `ARRAY JOIN` is a syntax error, which FAZ reports only as "SQL query is forbidden". Without the `hasAny` filter, 7 days of DNS log hit the FAZ's query time limit (90 s); with it the same question took about 45 s.
 - **`client_dns_name`**: the name this source itself looked up for the IP. Most precise; empty when the client resolves through another path (an internal DNS server, DNS over HTTPS).
 - **`dns_name` with `dns_name_pct` and `dns_names_n`**: the most frequent name for the IP across all clients. A low share with many names is a shared address (CDN, cloud): report it as "one of N names", not as the host. In the test, a CDN address had about 170 names and the top one 57 %.
 - **No name** (all three empty): the IP was in no logged DNS answer in the period. It was reached by IP, its DNS didn't pass a FortiGate that logs DNS, the lookup was before the period, or the IP is a DNS server itself. Say "no DNS name logged"; never guess a name. Check first whether the FortiGate logs DNS at all: `SELECT devname, count(*) AS n FROM $log-dns WHERE $filter GROUP BY devname`.
