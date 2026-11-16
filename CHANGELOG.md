@@ -8,6 +8,8 @@ In a "top repeating event IDs, with the top FortiGate and its share" session, th
 
 In a follow-up asking for the DNS hostname of each blocked destination IP, the model wrote a table of hostnames without running a query. Tests on a production FAZ showed how to get them: only A/AAAA answers (HTTPS answers put other addresses in `ipaddr`), `hasAny` before `ARRAY JOIN` to stay within the FAZ's query time limit, and a share per name because shared addresses have many names.
 
+In "blocked destinations with their DNS name" questions, the on-prem model often moved `ARRAY JOIN` after `WHERE`: Pattern H's note said to filter with `hasAny` "before `ARRAY JOIN`". That is a syntax error, and FAZ reports every syntax error only as "SQL query is forbidden", so the model looked for a blocked word instead. Tests on a production FAZ: a misplaced `ARRAY JOIN`, an unclosed parenthesis and a broken `###` marker all return "forbidden"; write keywords inside strings (`LIKE '%delete%'`) don't.
+
 ### Added
 - `faz-sql-reference.md` Common Mistake #19 and a line in the hcache section: count logs inside an hcache (`count(*) AS n`) and add them up outside (`sum(n)`, `sumIf(n, ...)`); counting outside (`count(*)`, `countIf`, `sum(CASE ... THEN 1 ...)`) counts the hcache's rows. `SKILL.md`: a "Mistakes" row for it.
 - `faz-sql-reference.md` Pattern H: DNS name of a destination IP, for one IP and for many in one query (traffic joined with DNS answers), with when a name is ambiguous or missing.
@@ -17,6 +19,7 @@ In a follow-up asking for the DNS hostname of each blocked destination IP, the m
 - `faz-sql-reference.md` "Query Constraints": concise guidance on the function and table-source filters, safe CRC32 use, and the limits of the inspected allowlists.
 
 ### Changed
+- `faz-sql-reference.md` Query Constraints: "SQL query is forbidden" also means a syntax error; what to check first. Pattern H: `ARRAY JOIN` stays right after `FROM`, before `WHERE`.
 - `cols-dlog.md`: the "Resolved IPs" example filters `qtype IN ('A', 'AAAA')` and points to Pattern H.
 - `SKILL.md`: steer query generation toward documented macros and safe function choices, without loading exhaustive implementation lists into the skill prompt.
 
