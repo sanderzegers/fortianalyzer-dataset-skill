@@ -567,6 +567,7 @@ GROUP BY devname, srcip, qname, qtype
 ORDER BY last_seen DESC
 LIMIT 20
 ```
+This form has no address column: without `ARRAY JOIN` there is no `ip`, only the array `ipaddr`. For an address per row, use the query below (`FROM $log-dns ARRAY JOIN ipaddr AS ip`, before `WHERE`); to format it, give the element another name (`ARRAY JOIN ipaddr AS a` … `ipstr(a) AS ip`), since `ipstr(ip) AS ip` fails with "Duplicate alias".
 
 Many IPs ("top blocked connections, with the hostname of each destination") in one query: the traffic rows joined with the DNS answers that contained the destination IP. Tested on a production FAZ (FortiGate traffic and DNS logs, 24 hours and 7 days).
 ```sql
