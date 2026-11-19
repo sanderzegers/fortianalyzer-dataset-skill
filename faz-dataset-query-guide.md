@@ -98,7 +98,9 @@ Stores identity, SIEM, device and cache metadata.
 
 Dataset Test submits SQL to `/p/report/dataset/sql/run/` and fetches the result from `/p/report/dataset/sql/fetch/`. The report app forwards execution to `/report/adom/<adom>/sql-query/run`. On 7.6.8 the captured data query expanded `$log-traffic` and `$filter`, and executed the wrapped aggregation as an ordinary subquery over the ADOM log view. A separate `EXPLAIN AST` statement validated the SQL.
 
-The generated report populated or reused a ClickHouse hcache result and summed its intermediate groups for the chart. Use Analyze to inspect the report rewrite, then check the generated chart and its data-loss diagnostics over a settled window when verifying totals.
+The generated report populated or reused a ClickHouse hcache result and summed its intermediate groups for the chart. Use Analyze to inspect the report rewrite. To check a particular run in the GUI, open **Reports → Generated Reports**, right-click the run and select **Retrieve Diagnostic** if your account has that action. Search the log for the chart name and `data-loss`. On 7.6.8, the on-box report status showed `1 data-loss` for a chart whose hcache was trimmed. The count refers to affected hcaches. The lab did not verify the counter in the GUI download or establish the minimum GUI role. [Fortinet’s instructions for retrieving report diagnostic logs](https://docs.fortinet.com/document/fortianalyzer/7.6.4/administration-guide/477457/retrieving-report-diagnostic-logs)
+
+If the download or counter is unavailable, run a Dataset Test query that returns the total in one row. Compare it with the generated chart total for the same metric, devices, filters and settled time window.
 
 ### Data Storage: ClickHouse vs PostgreSQL
 

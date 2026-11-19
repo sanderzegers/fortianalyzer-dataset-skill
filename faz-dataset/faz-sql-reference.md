@@ -248,7 +248,7 @@ WHERE $filter AND (bitAnd(logflag,1)>0) AND (bitAnd(logflag,8)=0)  -- exclude FC
 
 ## HCache Mechanism (`###...###`)
 
-On FAZ 7.6.8 build 3788, Dataset Test ran a wrapped aggregation over the log view. The generated report built or reused a persistent ClickHouse hcache and then aggregated the retained rows. Analyze can add this stage to a plain `$log` aggregation. A report with many intermediate groups can lose counts even if only six rows reach the chart. Check report data-loss diagnostics when totals matter.
+On FAZ 7.6.8 build 3788, Dataset Test ran a wrapped aggregation over the log view. The generated report built or reused a persistent ClickHouse hcache and then aggregated the retained rows. Analyze can add this stage to a plain `$log` aggregation. A report with many intermediate groups can lose counts even if only six rows reach the chart. When totals matter, open **Reports → Generated Reports**, right-click the run and select **Retrieve Diagnostic** if available. Search for the chart name and `data-loss`. A positive count flags affected hcaches. If the counter is unavailable, compare the chart total with a single-total Dataset Test query using the same devices, filters and settled time window.
 
 Use an explicit intermediate grouping when:
 - You need to filter on a computed/aliased column
