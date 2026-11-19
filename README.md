@@ -35,9 +35,10 @@ When Claude can run SQL against your FAZ (for example through an MCP server that
 
 ## Tested on live FortiAnalyzers
 
-The skill was checked against two FAZ 7.6 instances. Their FortiGates run **FortiOS 7.6.7, 7.4.12 and 7.2.10**, so every rule was tested across three FortiOS releases:
+The skill was checked against two FAZ 7.6 instances. Their FortiGates run **FortiOS 7.6.7, 7.4.12 and 7.2.10**, providing log data from three FortiOS releases:
 
 - **Generated queries:** top IPS victims, sessions per subnet by application, malicious websites with source IPs, and failed admin logins per device over time all ran correctly.
+- **Dataset Test and generated reports (FAZ 7.6.8 build 3788):** A traffic count by action matched across both paths. Grouping by unique log ID before summing by action triggered report-cache trimming. See the [hcache comparison](faz-dataset-query-guide.md#how-trimming-affects-totals).
 - **Reference patterns:** every core pattern the skill copies from (Top-N, hcache, bandwidth, time series, IPS block rate, attacker/victim) has been run.
 - **Columns:** every column named in the column files for traffic, event, webfilter, app-ctrl, attack, virus, dns, dlp, file-filter, ssl and voip exists in the FAZ schema. For ten of these, the full schema was compared between both FAZes and is identical. For log types without sample data, the column names were checked against the schema, which works on empty tables too.
 - **Macros:**

@@ -187,8 +187,8 @@ When a query tool returns an error with a `hint:` line, apply the hint before re
 - Use `coalesce(sentdelta,sentbyte,0)` / `coalesce(rcvddelta,rcvdbyte,0)` for bytes
 - Use `bitAnd(logflag,bitOr(1,32))>0` for bandwidth (includes long-lived sessions)
 - Use `bitAnd(logflag,1)>0` for session counts
-- Use `###(subquery)### t` for hcache cached subqueries
-- Use `/*SkipSTART*/ORDER BY col DESC/*SkipEND*/` inside hcache for sorted cache
+- For live SQL through Dataset Test, the 7.6.8 preview executed the wrapped query against logs. For a report, verify totals in the generated chart: hcache can trim intermediate groups even when Test returns only a few rows.
+- In reports, use `/*SkipSTART*/ORDER BY metric DESC/*SkipEND*/` to prioritize intermediate groups for retention. Apply final ordering and limits outside `###(...)###`.
 - Use `ipstr()` to format IP addresses for display
 - Use `nullifna()` on `user`, `unauthuser`, `app` columns (they use "N/A" sentinel)
 - Use `coalesce(nullifna(\`user\`), nullifna(\`unauthuser\`), ipstr(\`srcip\`))` for user identity
