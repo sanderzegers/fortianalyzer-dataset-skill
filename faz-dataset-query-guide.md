@@ -459,7 +459,7 @@ GROUP BY user_src
 ORDER BY bandwidth DESC
 ```
 
-**3. Multiple datasets in the same report share the same base scan**
+**3. Multiple datasets use the same named base definition**
 
 Charts that need the same grouping and measures can use a common named base query. See the named base example below.
 
@@ -473,7 +473,7 @@ Rank intermediate groups by the measure whose retention matters, then sort the f
 
 ### When plain SQL is sufficient
 
-For a single aggregation, write the chart directly. Analyze shows whether FAZ adds an implicit hcache stage.
+Start with plain SQL when it expresses the chart directly. In Analyze, look at the grouping and ordering that feed `row_number()`. Use an explicit wrapper when you need to control which groups enter the cache or how they rank for retention.
 
 ```sql
 SELECT catdesc, count(*) AS hits
@@ -482,6 +482,8 @@ WHERE $filter AND action = 'blocked' AND catdesc IS NOT NULL
 GROUP BY catdesc
 ORDER BY hits DESC
 ```
+
+On FAZ 7.6.8 build 3788, a plain traffic query counted by event ID and action in a subquery, then summed by action. Analyze showed that the automatic rewrite rolled the counts up by action before ranking. With the ID grouping inside an explicit wrapper, Analyze showed ranking on the ID-level groups before the outer sum. Both versions returned the same six action totals in Dataset Test. To check whether the report preserved those totals, inspect the generated report and its data-loss diagnostics.
 
 ### Basic syntax
 
@@ -507,7 +509,7 @@ Use an explicit alias such as `t` for readability. On FAZ 7.6.8, simple ordinary
 
 A named base supplies an intermediate result that other report aggregations can read. In a 7.6.8 trace, FAZ built the base, grouped its rows into a report hcache, then queried that result for the chart. Changing the base measure from `count(*)` to `sum(2)` while keeping the same tag produced a distinct result and doubled every count.
 
-Use a descriptive tag such as `rpt_base_{logtype}_{description}` and a common SQL definition when several charts need the same base. To verify reuse, check which base result each chart reads.
+Use a descriptive tag such as `rpt_base_{logtype}_{description}` and a common SQL definition when several charts need the same base. To verify reuse, trace both charts to the same base result table and result ID (`hid`). The effect of changing only the tag remains unverified.
 
 **Traffic bandwidth and sessions base from the built-in datasets**
 
@@ -531,7 +533,7 @@ Use a descriptive tag such as `rpt_base_{logtype}_{description}` and a common SQ
 
 This base query intentionally carries many dimensions (`dvid`, `srcip`, `dstip`, `epid`, `euid`, `appcat`, `apprisk`, `user_src`, `service`, `timestamp`) so that any dataset reading from it can group or filter by any subset. The outer query then re-aggregates to the specific dimensions it needs.
 
-**Example: two datasets sharing the base**
+**Example: two datasets using the same base definition**
 
 ```sql
 -- Dataset 1: bandwidth timeline
@@ -968,7 +970,7 @@ Use when:
 
 ### Pattern B: Top-N with HCache (most common)
 
-Best for: top-N lists where you need to filter by computed columns or share the base result.
+Best for: top-N lists where you need to filter after an inner aggregation or control how intermediate groups rank.
 
 ```sql
 SELECT user_src, sum(sessions) AS sessions

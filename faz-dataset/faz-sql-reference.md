@@ -253,8 +253,10 @@ On FAZ 7.6.8 build 3788, Dataset Test ran a wrapped aggregation over the log vie
 Use an explicit intermediate grouping when:
 - You need to filter on a computed/aliased column
 - Two levels of aggregation needed
-- Multiple datasets share the same base scan
+- Multiple datasets use the same named base definition
 - Time series queries (standard pattern)
+
+In Analyze, check the grouping and ordering that feed `row_number()`. The automatic rewrite can roll up a plain query before ranking, even when its subquery groups by event ID. An explicit wrapper lets you choose which groups enter the ranking.
 
 **Basic syntax** (template: `col_a`/`col_b`/`col_c` are placeholders):
 ```sql
@@ -273,7 +275,7 @@ ORDER BY total DESC
 
 Use an explicit alias such as `t` for readability. On FAZ 7.6.8, simple ordinary and named base subqueries without a trailing alias passed Analyze and returned rows in Dataset Test.
 
-**Named base cache.** Give a common base definition a descriptive tag. Changing the SQL under the same tag produced a distinct result on 7.6.8.
+**Named base cache.** Give a common base definition a descriptive tag. Changing the SQL under the same tag produced a distinct result on 7.6.8. To verify reuse, trace both charts to the same base result table and result ID (`hid`). The effect of changing only the tag remains unverified.
 ```sql
 ###base(/*tag:rpt_base_t_bndwdth_sess*/
     SELECT $flex_timestamp AS timestamp,
