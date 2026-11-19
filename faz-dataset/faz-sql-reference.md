@@ -5,10 +5,9 @@
 ## Pipeline
 
 ```
-GUI Dataset SQL
-  ↓ FazReportSQL.parseFazKeyword()   (expands $log-*, $filter, ${MACRO}, ###...###)
-  ↓ sql_rewriter (ANTLR4 Flask — dialect rewrite to ClickHouse SQL)
-  ↓ ClickHouse (log data) / PostgreSQL (identity, SIEM — proxied via CH)
+FAZ 7.6.8 traffic aggregation
+  Dataset Test  → expanded SQL over the ClickHouse log view → preview rows
+  Report chart  → build or reuse intermediate hcache rows → aggregate for display
 ```
 
 ---
@@ -249,7 +248,9 @@ WHERE $filter AND (bitAnd(logflag,1)>0) AND (bitAnd(logflag,8)=0)  -- exclude FC
 
 ## HCache Mechanism (`###...###`)
 
-Executes inner subquery once, caches result, outer query reads from cache. Use when:
+On FAZ 7.6.8 build 3788, Dataset Test ran a wrapped aggregation over the log view. The generated report built or reused a persistent ClickHouse hcache and then aggregated the retained rows. Analyze can add this stage to a plain `$log` aggregation. A report with many intermediate groups can lose counts even if only six rows reach the chart. Check report data-loss diagnostics when totals matter.
+
+Use an explicit intermediate grouping when:
 - You need to filter on a computed/aliased column
 - Two levels of aggregation needed
 - Multiple datasets share the same base scan
@@ -270,9 +271,9 @@ GROUP BY col_a
 ORDER BY total DESC
 ```
 
-The alias `t` after `###` is required.
+Use an explicit alias such as `t` for readability. On FAZ 7.6.8, simple ordinary and named base subqueries without a trailing alias passed Analyze and returned rows in Dataset Test.
 
-**Named base cache (shared across datasets in same report):**
+**Named base cache.** Give a common base definition a descriptive tag. Changing the SQL under the same tag produced a distinct result on 7.6.8.
 ```sql
 ###base(/*tag:rpt_base_t_bndwdth_sess*/
     SELECT $flex_timestamp AS timestamp,
@@ -299,7 +300,7 @@ The alias `t` after `###` is required.
 
 ## `/*SkipSTART*/`/`/*SkipEND*/` Hint
 
-Tells the engine to include ORDER BY when populating hcache but skip it in other contexts. Always use inside `###(...)###` for sorted top-N cache:
+Put the ranking metric inside the markers when the report should retain the most significant groups. Apply the display order and limit to the outer totals. In a 7.6.8 test, an inner `LIMIT 3` restricted Dataset Test to three actions. A fresh report cache build removed the inner limit and returned six actions.
 
 ```sql
 FROM ###(
@@ -602,7 +603,7 @@ ORDER BY blocks DESC
 ## Common Mistakes
 
 1. **Missing `$filter`** — always include on raw log queries
-2. **Filter on computed column**: `WHERE user_src IS NOT NULL` on a SELECT alias works on FAZ 7.6 (ClickHouse resolves aliases), but prefer hcache when the result is reused, so the scan is cached
+2. **Filter on computed column**: `WHERE user_src IS NOT NULL` on a SELECT alias works on FAZ 7.6 (ClickHouse resolves aliases), and an explicit inner stage lets the outer query filter or re-aggregate the grouped value
 3. **Raw IP display** — always use `ipstr(srcip)`, not raw `srcip`
 4. **N/A strings** — use `nullifna(user)` not `user IS NOT NULL`
 5. **logflag missing** — traffic queries without `bitAnd(logflag,1)>0` inflate counts

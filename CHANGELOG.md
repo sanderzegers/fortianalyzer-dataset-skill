@@ -19,6 +19,7 @@ In "blocked destinations with their DNS name" questions, the on-prem model often
 - `faz-sql-reference.md` "Query Constraints": concise guidance on the function and table-source filters, safe CRC32 use, and the limits of the inspected allowlists.
 
 ### Changed
+- Document the Dataset Test and report hcache paths observed on FAZ 7.6.8, including trimming, inner limits, cross-run reuse, and named bases.
 - `faz-sql-reference.md` Query Constraints: "SQL query is forbidden" also means a syntax error; what to check first. Pattern H: `ARRAY JOIN` stays right after `FROM`, before `WHERE`; the one-IP form has no `ip` column, and `ipstr(ip) AS ip` with `ARRAY JOIN ipaddr AS ip` fails ("Duplicate alias").
 - `cols-dlog.md`: the "Resolved IPs" example filters `qtype IN ('A', 'AAAA')` and points to Pattern H.
 - `SKILL.md`: steer query generation toward documented macros and safe function choices, without loading exhaustive implementation lists into the skill prompt.

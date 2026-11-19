@@ -20,7 +20,7 @@ This guide covers everything needed to write dataset queries for the FortiAnalyz
 10. [The `logflag` Bitmask](#10-the-logflag-bitmask)
 11. [Query Patterns by Use Case](#11-query-patterns-by-use-case)
 12. [Multi-Statement Queries with Temp Tables](#12-multi-statement-queries-with-temp-tables)
-13. [The `SkipSTART`/`SkipEND` Hint](#13-the-skipstartskipend-hint)
+13. [The `SkipSTART`/`SkipEND` Hint](#11-the-skipstartskipend-hint)
 14. [Common Mistakes and How to Avoid Them](#14-common-mistakes-and-how-to-avoid-them)
 15. [Full Examples by Log Category](#15-full-examples-by-log-category)
 16. [Column Reference by Log Source](#16-column-reference-by-log-source)
@@ -39,18 +39,11 @@ B. [Materialized View Queries (`fv_*`)](#appendix-b-materialized-view-queries-fv
 
 ## 1. Architecture Overview
 
-Dataset queries are written in a FAZ-extended SQL dialect. They are **not** sent directly to ClickHouse. The full pipeline is:
+FAZ expands dataset macros using the selected ADOM, devices and time range. Dataset Test and report generation can execute the same aggregation differently. On FAZ 7.6.8 build 3788 the two paths were:
 
-```
-Browser
-  └─► Apache httpd (faz-gui-proj)
-        └─► Django backend  (/usr/local/lib/python3.11/proj/)
-              ├── 1. Template expansion  (fazsqltool.py — FazReportSQL.parseFazKeyword)
-              │       $log-*, $filter, ${MACRO}, ###...### hcache
-              ├── 2. SQL dialect rewrite  (sql_rewriter service — port 5000)
-              │       FAZ SQL dialect → valid ClickHouse SQL
-              └── 3. Query execution
-                      ClickHouse (logs) + PostgreSQL (identity/SIEM, via CH proxy tables)
+```text
+Dataset Test → dataset SQL run/fetch → ClickHouse log view → preview
+Report chart → build or reuse hcache for the source interval → aggregate cached groups → chart
 ```
 
 ### Component breakdown
@@ -65,35 +58,24 @@ The web server. Runs as `apache` user with a custom Fortinet module (`fmg_reques
 
 **Django backend (`faz-gui-proj` wsgi process)**
 
-The main FAZ application, written in Python/Django, running at `/usr/local/lib/python3.11/proj/`. It is the "FAZ Query Engine" — the component that understands report context (which ADOM, which devices, which time range) and orchestrates query execution. Key Django apps:
+The main FAZ application, written in Python/Django, running at `/usr/local/lib/python3.11/proj/`. Key Django apps:
 
-- `logview/` — log search and dataset queries (the `logsearch/run/`, `dataset/sql/fetch/` endpoints)
-- `report/` — report scheduling and rendering
+- `logview/` — log search
+- `report/` — dataset Test and Analyze, report scheduling and rendering
 - `alert/` — SIEM alert management
 - `incident/` — SIEM incident management
 - `siem/` — SIEM parser and event collector config
 - `fortisoc/`, `fortiview/`, `fabric/` — SOC, FortiView, and Fabric features
 
-The Django backend performs **step 1 (template expansion)** and then calls the sql_rewriter service for **step 2**.
+**SQL processing** (`/usr/local/python/sql_rewriter/fazsqltool.py`)
 
-**`fazsqltool.py` (`/usr/local/python/sql_rewriter/fazsqltool.py`, 144 KB)**
-
-A Python library (not directly executable) that does two distinct jobs:
-
-1. **Template variable expansion** — the `FazReportSQL` class and its `parseFazKeyword()` method expand all FAZ-specific variables before the SQL is sent anywhere:
-   - `$log-traffic` → the actual ClickHouse view name scoped to the current ADOM/device (e.g. `sp1_FGT_tlog`)
-   - `$filter` → a concrete ClickHouse WHERE clause with the report time range and device filter
-   - `${MACRO}` → expands named macros like `${REPORT_SESSION}` → `(bitAnd(logflag,1)>0)`
-   - `$ADOM_ENDPOINT` → `faz_fabric_endpoints`, `$ADOM_ENDUSER` → `faz_fabric_endusers`, etc.
-   - `###(subquery)###` → triggers the hcache mechanism (see §5)
-
-2. **SQL dialect conversion** — the `FazSQLConvertor` and `FazFabricSQLConvertor` classes convert the FAZ SQL dialect (after variable expansion) into valid ClickHouse SQL. This handles FAZ-specific syntax that ClickHouse does not understand natively, such as FAZ aggregate functions, the `/*fabricStart*/`/`/*fabricEnd*/` hint, and `/*SkipSTART*/`/`/*SkipEND*/` hints.
+`FazReportSQL.parseFazKeyword()` identifies chart and macro references in report layout HTML. The SQL dialect converters include `FazSQLConvertor` and `FazFabricSQLConvertor`. The report daemon (`sqlreportd`) contains the hcache query builder.
 
 The parser is built on a custom **ANTLR4 grammar** (`parser/FazsqlLexer.py` 207 KB, `parser/FazsqlParser.py` 327 KB) that defines the full FAZ SQL dialect.
 
 **sql_rewriter Flask service (`/usr/local/python/sql_rewriter/app.py`, port 5000)**
 
-A lightweight Flask JSON-RPC service wrapping `fazsqltool.py`. It runs as a gunicorn process (master + worker) on `localhost:5000` and is only reachable from within the FAZ itself. The Django backend calls it during query processing.
+A lightweight Flask JSON-RPC service wrapping `fazsqltool.py`. It runs as a gunicorn process (master + worker) on `localhost:5000` and is only reachable from within the FAZ itself.
 
 Exposed methods:
 - `sqlrewriter.rewrite` — converts a FAZ SQL string (after template expansion) to ClickHouse SQL. The `skip_fabric` parameter optionally neutralizes `/*fabricStart*/`/`/*fabricEnd*/` hints.
@@ -102,7 +84,7 @@ Exposed methods:
 
 **ClickHouse (port 9000 native / 8123 HTTP, localhost only)**
 
-The query execution engine for all log data. The Django backend sends the final rewritten SQL here. The `siem` database contains:
+The query execution engine for all log data. The `siem` database contains:
 - Raw log tables (`tlog_sp1`, `elog_sp1`, etc.) — MergeTree, append-only, columnar
 - Log views (`sp1_FGT_tlog`, etc.) — filters raw tables by `_devlogtype` for each device type
 - Materialized views (`fv_*`) — pre-aggregated AggregatingMergeTree tables
@@ -110,25 +92,20 @@ The query execution engine for all log data. The Django backend sends the final 
 
 **PostgreSQL (port 5432, localhost only)**
 
-Stores everything that is not raw log data: identity, SIEM events, device registry, policy, risk scores, and query cache. See the Data Storage section below for the full breakdown.
+Stores identity, SIEM, device and cache metadata.
 
-### Step-by-step: what happens when a dataset query runs
+### Running the same dataset in Test and in a report
 
-1. The GUI sends the dataset SQL (with all FAZ variables intact) to `POST /p/logview/dataset/sql/fetch/` on the Django backend.
-2. Django looks up the report context: current ADOM OID, selected devices, time range start/end.
-3. Django calls `FazReportSQL.parseFazKeyword()` (in `fazsqltool.py`) to expand all template variables. After this step the SQL contains only ClickHouse-compatible table names and filter expressions, except it is still in FAZ SQL dialect.
-4. For any `###(subquery)###` blocks, Django computes a hash of the subquery text. It checks the PostgreSQL hcache tables (`{DEV}-hcache_query/ref/res`) for a cached result. On a cache miss it executes the subquery in ClickHouse and stores the result in the hcache tables. The `###...###` wrapper is replaced with a reference to the cached result table.
-5. Django calls `sqlrewriter.rewrite` on the sql_rewriter service (port 5000), passing the template-expanded SQL. The service uses `FazSQLConvertor` (ANTLR4 parser + rewriter) to produce valid ClickHouse SQL.
-6. Django sends the final ClickHouse SQL to ClickHouse for execution. Any JOINs to `$ADOM_ENDPOINT` etc. go through the PostgreSQL proxy tables transparently.
-7. ClickHouse returns results. Django formats and returns them to the GUI.
+Dataset Test submits SQL to `/p/report/dataset/sql/run/` and fetches the result from `/p/report/dataset/sql/fetch/`. The report app forwards execution to `/report/adom/<adom>/sql-query/run`. On 7.6.8 the captured data query expanded `$log-traffic` and `$filter`, and executed the wrapped aggregation as an ordinary subquery over the ADOM log view. A separate `EXPLAIN AST` statement validated the SQL.
 
-The key implication: **write queries using FAZ variables and macros, never hardcode table names or time ranges.** The engine handles device/ADOM scoping, time filtering, and database routing automatically.
+The generated report populated or reused a ClickHouse hcache result and summed its intermediate groups for the chart. Use Analyze to inspect the report rewrite, then check the generated chart and its data-loss diagnostics over a settled window when verifying totals.
 
 ### Data Storage: ClickHouse vs PostgreSQL
 
 FAZ uses two databases internally. Understanding which data lives where explains why certain joins work and why the FAZ variables exist.
 
 **ClickHouse** — log storage (fast columnar analytics):
+- Report hcache payloads on 7.6.8, stored in MergeTree tables such as `hcache."sp1-HCACHE_1"`. One table can hold multiple results identified by `hid`.
 - All raw log data — the rows behind `$log-traffic`, `$log-event`, `$log-webfilter`, etc.
   Stored as MergeTree tables: `tlog_sp1`, `elog_sp1`, `ulog_sp1`, `Xlog_sp1`
 - Log views — `sp1_FGT_tlog`, `adom3_FGT_tlog`, etc. (scoped views over raw tables)
@@ -143,7 +120,7 @@ FAZ uses two databases internally. Understanding which data lives where explains
 - Risk scores: `risk_score_evts`, `risk_score_hist`
 - UEBA events: `ueba_epeu_events`
 - Policy info: `fgt_policy`, `fgt_policy_conf`, `fgt_policy_stats`
-- Query cache (hcache): `{DEV}-hcache_query/ref/res`
+- Hcache metadata: normalized query definitions, source-table/version references and result-table bookkeeping (for example, `sp1-hcache_query`, `sp1-hcache_ref`, `sp1-hcache_res`)
 - Fabric aggregated views: `faz_fabric_endpoints`, `faz_fabric_endusers`, etc.
 - Log metadata/stats: `log_tablst`, `logstat-*`
 
@@ -428,29 +405,21 @@ ORDER BY timestamp
 
 ## 6. The HCache Mechanism (`###...###`)
 
-The most important performance pattern in FAZ queries. HCache executes the inner subquery separately, caches the result by a hash of the query text, then the outer query reads from the cached result.
+A report can build or reuse an intermediate result for a source log interval, then re-aggregate the retained rows. On FAZ 7.6.8 build 3788, a second report run read the same ClickHouse table and result ID. Analyze also added an hcache stage to a plain `$log-traffic` aggregation without explicit hashes.
 
-### How it works under the hood
+### How trimming affects totals
 
-When the FAZ query engine encounters `###(subquery)###`, it:
+On that build the report grouped traffic by device and action, ranked the intermediate groups within each ADOM for the source interval, and applied the cache limit before summing by action. Five devices produced 30 cached groups and six chart rows. Test and the chart agreed on all six counts.
 
-1. Extracts the inner subquery text and computes a SHA hash of it (after template expansion, so `$filter` is already resolved to the actual time range).
-2. Looks up that hash in the PostgreSQL hcache tables (`{DEV}-hcache_query` and `{DEV}-hcache_res`).
-3. **Cache hit:** reads the previously stored result set directly from PostgreSQL — the expensive ClickHouse log scan is skipped entirely.
-4. **Cache miss:** executes the inner subquery against ClickHouse, stores the result rows in `{DEV}-hcache_res` in PostgreSQL, records the hash in `{DEV}-hcache_query`.
-5. Either way, the outer query runs against the (now-cached) result as if it were an inline subquery.
+Adding the unique log ID to the inner grouping made almost every event a separate group. Test then counted 102,526 events, while the report retained 100,001 groups and flagged data loss. Both returned six actions. The input was still arriving within the fixed window, so the exact number of omitted events cannot be inferred by subtracting the totals. The report limit on that appliance was 100,000 and the executed predicate was `ranking <= 100001`. A fresh High Accuracy build used `ranking <= 400001`. An immediate rerun after enabling High Accuracy reused the existing trimmed result. Check the configured limits with `diagnose sql config hcache-max-rpt-row` and `diagnose sql config hcache-max-high-accu-row`.
 
-**Cache lifetime:** the cache is scoped to a report run session. Multiple datasets within the same report that share the same inner query text (same hash) all benefit from the single cached result. The cache does not persist across separate report runs.
+For an accurate total, group only by dimensions the chart needs. Use the marked inner ordering to prioritize groups when trimming matters. Use the outer order and chart row settings to control what readers see. Fortinet describes precomputation for rolled log tables. This lab also observed an on-demand build for an active interval. [Fortinet hcache documentation](https://docs.fortinet.com/document/fortianalyzer/7.6.0/sql-query-documentation/852854/hcache)
 
-**What this means in practice:** the first dataset in a report that triggers a given inner query pays the full ClickHouse scan cost. Every subsequent dataset referencing the same inner query (or named base tag) gets the result from PostgreSQL for near-zero cost.
-
-### When to use hcache
-
-Use hcache when **any** of the following apply:
+### When to write an explicit hcache stage
 
 **1. You need to filter on a computed or aliased column**
 
-Tested on FAZ 7.6: ClickHouse does accept a SELECT alias in the same query's WHERE clause, so a plain `WHERE user_src IS NOT NULL` works. Hcache is still the better pattern when the computed column is reused, re-aggregated or shared with other datasets, because the expensive scan is cached.
+Tested on FAZ 7.6: ClickHouse does accept a SELECT alias in the same query's WHERE clause, so a plain `WHERE user_src IS NOT NULL` works. An explicit inner stage is useful when several outer groups or filters use the computed value.
 
 ```sql
 -- Filter on the coalesce result in the outer query (cached inner scan)
@@ -490,25 +459,21 @@ ORDER BY bandwidth DESC
 
 **3. Multiple datasets in the same report share the same base scan**
 
-Any report that shows multiple charts from the same log source (e.g. "top users", "top apps", "traffic over time" — all from traffic logs) should use a named base cache so the ClickHouse scan happens once. See the named base cache section below.
+Charts that need the same grouping and measures can use a common named base query. See the named base example below.
 
 **4. Time series queries**
 
-Always use hcache for time-series. The `$flex_timestamp` bucketing goes in the inner GROUP BY, `$flex_timescale()` wrapping goes in the outer SELECT. This is the standard two-level aggregation pattern.
+Use the inner `$flex_timestamp` bucket and outer `$flex_timescale()` when the chart re-aggregates into display intervals.
 
-**5. You want sorted cache population for top-N**
+**5. Top-N reports**
 
-Adding `/*SkipSTART*/ORDER BY col DESC/*SkipEND*/` inside the hcache tells the engine to store the cache in sorted order, so the outer query can efficiently take the top-N without a full sort.
+Rank intermediate groups by the measure whose retention matters, then sort the final totals in the outer query.
 
-### When NOT to use hcache
+### When plain SQL is sufficient
 
-Skip hcache when:
-- The query is a simple single-pass aggregation with no computed column filtering — the overhead of writing and reading the cache outweighs any benefit.
-- You are querying a reference table (`$ADOM_ENDPOINT`, `$event`, etc.) rather than raw logs — these are already small and fast.
-- The query is a detail/list query (no aggregation at all, just `SELECT ... ORDER BY itime DESC LIMIT 100`) — hcache is designed for aggregations, not row fetches.
+For a single aggregation, write the chart directly. Analyze shows whether FAZ adds an implicit hcache stage.
 
 ```sql
--- Simple enough — no hcache needed
 SELECT catdesc, count(*) AS hits
 FROM $log-webfilter
 WHERE $filter AND action = 'blocked' AND catdesc IS NOT NULL
@@ -534,17 +499,15 @@ GROUP BY col_a
 ORDER BY total DESC
 ```
 
-The alias `t` after `###` is required.
+Use an explicit alias such as `t` for readability. On FAZ 7.6.8, simple ordinary and named base subqueries without a trailing alias passed Analyze and returned rows in Dataset Test.
 
 ### Named base cache (`###base(...)base###`)
 
-When multiple datasets in a report share the same expensive base query, wrap it in `###base(/*tag:label*/...)base###`. All datasets in the same report run that reference the same tag share one cached result — the ClickHouse scan runs exactly once regardless of how many datasets reference it.
+A named base supplies an intermediate result that other report aggregations can read. In a 7.6.8 trace, FAZ built the base, grouped its rows into a report hcache, then queried that result for the chart. Changing the base measure from `count(*)` to `sum(2)` while keeping the same tag produced a distinct result and doubled every count.
 
-The `/*tag:label*/` string is the cache key. It must be unique across your report. The convention from the built-in datasets is `rpt_base_{logtype}_{description}`.
+Use a descriptive tag such as `rpt_base_{logtype}_{description}` and a common SQL definition when several charts need the same base. To verify reuse, check which base result each chart reads.
 
-**The most important predefined base cache — traffic bandwidth and sessions:**
-
-This is the base query used by the built-in bandwidth, top-users, top-apps, and sessions reports. If you are writing any traffic-based dataset that belongs in a report alongside those, reuse this exact tag and query structure so your dataset shares the cache.
+**Traffic bandwidth and sessions base from the built-in datasets**
 
 ```sql
 ###base(/*tag:rpt_base_t_bndwdth_sess*/
@@ -586,7 +549,7 @@ GROUP BY hodex
 HAVING sum(traffic_out+traffic_in) > 0
 ORDER BY hodex
 
--- Dataset 2: top users by bandwidth (same report, same base — no second ClickHouse scan)
+-- Dataset 2: top users by bandwidth (same base definition)
 SELECT user_src, sum(bandwidth) AS bandwidth
 FROM ###(
     SELECT user_src, sum(bandwidth) AS bandwidth
@@ -604,12 +567,12 @@ ORDER BY bandwidth DESC
 
 **Inside the `###(...)###`:**
 - `FROM $log-*` with `WHERE $filter` — the raw log scan must be here
-- All columns you might ever need to filter or group by in the outer query — you cannot reference a column in the outer WHERE if it was not selected in the inner query
-- Aggregations at the finest granularity needed (user + app + timestamp, not just user)
-- `/*SkipSTART*/ORDER BY col DESC/*SkipEND*/` when you want the cache sorted for top-N (see §13)
+- The columns the outer filters and groups actually use
+- Only the grouping dimensions the chart requires. Each additional dimension can increase the number of groups subject to trimming.
+- `/*SkipSTART*/ORDER BY col DESC/*SkipEND*/` to prioritize intermediate groups for retention (see §11)
 
 **Outside the `###(...)###`:**
-- Final re-aggregation (SUM, COUNT over the cached rows)
+- Final re-aggregation: count events inside and sum their counts outside. An outer count measures retained groups.
 - Filter conditions on computed columns (`WHERE user_src IS NOT NULL`, `WHERE app = 'HTTP'`)
 - `HAVING` to filter on aggregated values (`HAVING sum(bytes) > 0`)
 - Final `ORDER BY` and `LIMIT`
@@ -982,7 +945,7 @@ WHERE $filter AND (bitAnd(logflag, 1) > 0) AND (bitAnd(logflag, 8) = 0)
 
 ## 11. Query Patterns by Use Case
 
-### Pattern A: Simple Top-N (no hcache)
+### Pattern A: Simple Top-N (no explicit hcache wrapper)
 
 Best for: simple counts or sums with no need for intermediate filtering.
 
@@ -1000,7 +963,6 @@ ORDER BY requests DESC
 Use when:
 - Single aggregation pass is sufficient
 - No computed columns need filtering after aggregation
-- Query is simple enough that hcache overhead isn't worth it
 
 ### Pattern B: Top-N with HCache (most common)
 
@@ -1040,7 +1002,7 @@ HAVING sum(traffic_out + traffic_in) > 0
 ORDER BY hodex
 ```
 
-> See §6 for when to use hcache for time series and §13 for the SkipSTART hint.
+> See §6 for when to use hcache for time series and §11 for the SkipSTART hint.
 
 ### Pattern D: Hour-of-Day / Day-of-Week Distribution
 
@@ -1135,9 +1097,7 @@ LEFT JOIN rpt_tmptbl_2 t2 ON t1.devintf=t2.devintf AND t1.mac=t2.mac;
 /*SkipSTART*/ORDER BY col DESC/*SkipEND*/
 ```
 
-This hint tells the query engine to **include** the ORDER BY when executing the hcache subquery (so the cache is ordered for top-N retrieval), but **skip** it when the same query text is used in other contexts that don't need ordering.
-
-This appears in 217 of 998 queries. Always use it inside `###(...)###` when you want the hcache to be populated in sorted order:
+The marked order gives the report a measure to rank candidate groups by when trimming. Fortinet documents that auto-cache can omit this order when trimming is unnecessary. On 7.6.8 the captured Test query kept the marked order, and the report build used it inside `row_number() OVER (PARTITION BY _adomoid ...)`. The observed MergeTree sorting key was `(hid, _adomoid)`.
 
 ```sql
 FROM ###(
@@ -1149,7 +1109,7 @@ FROM ###(
 )### t
 ```
 
-Without it, the ORDER BY inside hcache would conflict with outer query optimization. Without any ORDER BY in the hcache, the cache is unordered (fine for most aggregations, but wasteful for top-N).
+For a displayed top N, order the final aggregation by its metric and apply the desired outer limit. In the 7.6.8 experiment, adding `LIMIT 3` after the marked inner order returned three actions in Test. A fresh report build removed that inner limit and the chart returned all six actions.
 
 ---
 
@@ -1168,19 +1128,19 @@ SELECT srcip FROM $log-traffic WHERE $filter GROUP BY srcip
 
 ### Mistake 2: Filtering on computed columns without hcache
 
-On FAZ 7.6 (ClickHouse) the first form below actually works, because ClickHouse resolves SELECT aliases in WHERE. Prefer the hcache form anyway when the result is reused, so the scan is cached.
+On FAZ 7.6 (ClickHouse) the first form below actually works, because ClickHouse resolves SELECT aliases in WHERE. Use the two-stage form when you want to filter or re-aggregate intermediate groups.
 
 ```sql
--- Works on FAZ 7.6, but uncached
+-- Filter on the alias in a single SELECT
 SELECT coalesce(nullifna(`user`), ipstr(srcip)) AS user_src
 FROM $log-traffic
 WHERE $filter AND user_src IS NOT NULL
 GROUP BY user_src
 
--- PREFERRED — hcache, reusable and cached
-SELECT user_src, count(*) AS sessions
+-- Count sessions inside and sum the retained counts outside
+SELECT user_src, sum(n) AS sessions
 FROM ###(
-    SELECT coalesce(nullifna(`user`), ipstr(`srcip`)) AS user_src
+    SELECT coalesce(nullifna(`user`), ipstr(`srcip`)) AS user_src, count(*) AS n
     FROM $log-traffic
     WHERE $filter AND (bitAnd(logflag,1)>0)
     GROUP BY user_src
